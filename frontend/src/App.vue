@@ -240,6 +240,18 @@ onMounted(() => {
 /* Import global style variables if any */
 @import './assets/styles/global.css';
 
+/*
+ * Ionic only applies `flex: 1` to the split-pane main pane in its
+ * `.split-pane-visible` state (≥992px, the `when="lg"` breakpoint). Below that
+ * the content pane falls back to `flex: 0 1 auto` and collapses to zero WIDTH —
+ * blanking every routed page on tablet/mobile. Make it fill the row in both the
+ * split and collapsed states. (`min-width: 0` lets it shrink past content.)
+ */
+.main-content {
+  flex: 1;
+  min-width: 0;
+}
+
 /* Custom Sidemenu Styling */
 .sidebar-container {
   display: flex;
