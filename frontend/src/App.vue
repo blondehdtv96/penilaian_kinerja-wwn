@@ -1,8 +1,8 @@
 <template>
   <ion-app>
-    <ion-split-pane content-id="main-content" when="lg">
-      <!-- Sidemenu (Only visible when authenticated) -->
-      <ion-menu v-if="authStore.isAuthenticated" content-id="main-content" type="overlay">
+    <!-- Sidemenu: always an overlay drawer, opened by the hamburger (ion-menu-button)
+         in each page's header. No ion-split-pane — the rail must never auto-reveal. -->
+    <ion-menu v-if="authStore.isAuthenticated" content-id="main-content" type="overlay">
         <div class="sidebar-container">
           <!-- Top Brand Header (PT Bridgestone style) -->
           <div class="brand-header">
@@ -82,17 +82,15 @@
           </transition>
         </router-view>
       </div>
-    </ion-split-pane>
   </ion-app>
 </template>
 
 <script setup lang="ts">
-import { 
-  IonApp, 
-  IonSplitPane, 
-  IonMenu, 
-  IonIcon, 
-  IonMenuToggle 
+import {
+  IonApp,
+  IonMenu,
+  IonIcon,
+  IonMenuToggle
 } from '@ionic/vue';
 import { onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
@@ -239,18 +237,6 @@ onMounted(() => {
 <style>
 /* Import global style variables if any */
 @import './assets/styles/global.css';
-
-/*
- * Ionic only applies `flex: 1` to the split-pane main pane in its
- * `.split-pane-visible` state (≥992px, the `when="lg"` breakpoint). Below that
- * the content pane falls back to `flex: 0 1 auto` and collapses to zero WIDTH —
- * blanking every routed page on tablet/mobile. Make it fill the row in both the
- * split and collapsed states. (`min-width: 0` lets it shrink past content.)
- */
-.main-content {
-  flex: 1;
-  min-width: 0;
-}
 
 /* Custom Sidemenu Styling */
 .sidebar-container {
@@ -538,10 +524,15 @@ onMounted(() => {
   box-shadow: 0 0 8px #10b981;
 }
 
-/* Main Content Area */
+/* Main Content Area — with no split-pane, this element takes over filling
+   ion-app. The routed `.ion-page` is position:absolute inset:0, so #main-content
+   must be a sized, positioned containing block of its own. */
 .main-content {
-  position: relative;
-  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   overflow-y: auto;
   background: #f5f7fa;
 }
