@@ -107,7 +107,7 @@
             <!-- Personal Merits -->
             <div class="activity-card">
               <div class="activity-header">
-                <h2>Merit Saya</h2>
+                <h2><ion-icon :icon="trophyOutline" class="head-icon merit"></ion-icon>Merit Saya</h2>
                 <ion-badge color="success">{{ dashboard.recentMerits?.length || 0 }}</ion-badge>
               </div>
               <div class="activity-list">
@@ -135,7 +135,7 @@
             <!-- Personal Misconducts -->
             <div class="activity-card">
               <div class="activity-header">
-                <h2>Misconduct Saya</h2>
+                <h2><ion-icon :icon="alertCircleOutline" class="head-icon misconduct"></ion-icon>Misconduct Saya</h2>
                 <ion-badge color="danger">{{ dashboard.recentMisconducts?.length || 0 }}</ion-badge>
               </div>
               <div class="activity-list">
@@ -241,7 +241,7 @@
         <!-- Top Performers Section -->
         <div class="section-card">
           <div class="section-header">
-            <h2>5 Operator Terbaik</h2>
+            <h2><ion-icon :icon="trophyOutline" class="head-icon rank"></ion-icon>5 Operator Terbaik</h2>
             <ion-button fill="clear" size="small" @click="viewAllOperators">
               Lihat Semua
             </ion-button>
@@ -277,7 +277,7 @@
         <div class="activities-grid">
           <div class="activity-card">
             <div class="activity-header">
-              <h2>Merit Terbaru</h2>
+              <h2><ion-icon :icon="trophyOutline" class="head-icon merit"></ion-icon>Merit Terbaru</h2>
               <ion-badge color="success">
                 {{ dashboard?.recentMerits?.length || 0 }}
               </ion-badge>
@@ -306,7 +306,7 @@
 
           <div class="activity-card">
             <div class="activity-header">
-              <h2>Misconduct Terbaru</h2>
+              <h2><ion-icon :icon="alertCircleOutline" class="head-icon misconduct"></ion-icon>Misconduct Terbaru</h2>
               <ion-badge color="danger">
                 {{ dashboard?.recentMisconducts?.length || 0 }}
               </ion-badge>
@@ -337,7 +337,7 @@
         <!-- Pending Approvals -->
         <div class="section-card" v-if="hasPendingApprovals">
           <div class="section-header">
-            <h2>Menunggu Persetujuan</h2>
+            <h2><ion-icon :icon="timeOutline" class="head-icon neutral"></ion-icon>Menunggu Persetujuan</h2>
           </div>
           <div class="pending-grid">
             <div class="pending-card" v-if="dashboard?.summary.pendingMerits > 0">
@@ -740,7 +740,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 1rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
 }
 
 .kpi-card:hover {
@@ -758,23 +758,24 @@ onUnmounted(() => {
   font-size: 28px;
 }
 
+/* Flat semantic fills — one color per role (DESIGN.md §5: no multi-step gradients). */
 .kpi-card.blue .kpi-icon {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #3b82f6;
   color: white;
 }
 
 .kpi-card.green .kpi-icon {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: #10b981;
   color: white;
 }
 
 .kpi-card.red .kpi-icon {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: #ef4444;
   color: white;
 }
 
 .kpi-card.purple .kpi-icon {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  background: #8b5cf6;
   color: white;
 }
 
@@ -849,7 +850,18 @@ onUnmounted(() => {
   font-weight: 600;
   color: #1f2937;
   margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
+
+/* Leading section icons — Ionicons replace the former emoji indicators
+   (DESIGN.md: emoji → Ionicons + semantic color). */
+.head-icon { font-size: 1.2rem; flex-shrink: 0; }
+.head-icon.merit       { color: #10b981; }
+.head-icon.misconduct  { color: #ef4444; }
+.head-icon.rank        { color: #374151; }
+.head-icon.neutral     { color: #6b7280; }
 
 /* ======================================== */
 /* Performers List                          */
@@ -867,7 +879,7 @@ onUnmounted(() => {
   padding: 1rem;
   background: #f9fafb;
   border-radius: 8px;
-  transition: background 0.2s;
+  transition: background 0.2s ease-out;
 }
 
 .performer-item:hover {
@@ -887,9 +899,10 @@ onUnmounted(() => {
   color: #6b7280;
 }
 
-.rank.gold   { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; }
-.rank.silver { background: linear-gradient(135deg, #d1d5db, #9ca3af); color: white; }
-.rank.bronze { background: linear-gradient(135deg, #fb923c, #f97316); color: white; }
+/* Flat medal fills; dark/white text chosen per fill for ≥3:1 on the rank numeral. */
+.rank.gold   { background: #fbbf24; color: #1f2937; }
+.rank.silver { background: #cbd5e1; color: #1f2937; }
+.rank.bronze { background: #d97706; color: #ffffff; }
 
 .performer-info { flex: 1; }
 .performer-info h3 { font-size: 1rem; font-weight: 600; color: #1f2937; margin: 0 0 0.25rem 0; }
@@ -927,7 +940,7 @@ onUnmounted(() => {
   margin-bottom: 1rem;
 }
 
-.activity-header h2 { font-size: 1.125rem; font-weight: 600; color: #1f2937; margin: 0; }
+.activity-header h2 { font-size: 1.125rem; font-weight: 600; color: #1f2937; margin: 0; display: inline-flex; align-items: center; gap: 0.5rem; }
 
 .activity-list { display: flex; flex-direction: column; gap: 0.75rem; }
 
@@ -968,7 +981,7 @@ onUnmounted(() => {
 .empty-state {
   text-align: center;
   padding: 2rem;
-  color: #9ca3af;
+  color: #6b7280;
   font-size: 0.875rem;
 }
 
@@ -995,5 +1008,18 @@ onUnmounted(() => {
   .dashboard-container { padding: 1rem; }
   .kpi-grid, .charts-grid, .activities-grid { grid-template-columns: 1fr; }
   .operator-info-card { flex-direction: column; text-align: center; }
+}
+
+/* ======================================== */
+/* Reduced Motion                            */
+/* ======================================== */
+@media (prefers-reduced-motion: reduce) {
+  .kpi-card,
+  .performer-item {
+    transition: none;
+  }
+  .kpi-card:hover {
+    transform: none;
+  }
 }
 </style>
