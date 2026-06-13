@@ -8,29 +8,35 @@
             <p class="text-gray-600 mt-2">PT Bridgestone Tire Indonesia</p>
           </div>
 
-          <form @submit.prevent="handleLogin">
+          <form @submit.prevent="handleLogin" :aria-describedby="error ? 'login-error' : undefined">
             <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2">
+              <label for="username" class="block text-gray-700 text-sm font-bold mb-2">
                 Username
               </label>
               <input
+                id="username"
                 v-model="form.username"
                 type="text"
-                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+                autocomplete="username"
+                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-red-500"
                 placeholder="Enter username"
+                :disabled="loading"
                 required
               />
             </div>
 
             <div class="mb-6">
-              <label class="block text-gray-700 text-sm font-bold mb-2">
+              <label for="password" class="block text-gray-700 text-sm font-bold mb-2">
                 Password
               </label>
               <input
+                id="password"
                 v-model="form.password"
                 type="password"
-                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+                autocomplete="current-password"
+                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-red-500"
                 placeholder="Enter password"
+                :disabled="loading"
                 required
               />
             </div>
@@ -38,12 +44,13 @@
             <button
               type="submit"
               :disabled="loading"
-              class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              :aria-busy="loading"
+              class="w-full bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {{ loading ? 'Loading...' : 'Login' }}
+              {{ loading ? 'Signing in...' : 'Sign In' }}
             </button>
 
-            <div v-if="error" class="mt-4 text-red-600 text-center text-sm">
+            <div v-if="error" id="login-error" role="alert" class="mt-4 text-red-600 text-center text-sm">
               {{ error }}
             </div>
           </form>

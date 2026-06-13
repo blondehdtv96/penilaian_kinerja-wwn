@@ -9,7 +9,7 @@
           {{ isOperatorView ? 'Dashboard Kinerja Saya' : 'Dashboard KPI' }}
         </ion-title>
         <ion-buttons slot="end">
-          <ion-button @click="refresh">
+          <ion-button @click="refresh" aria-label="Refresh dashboard">
             <ion-icon :icon="refreshOutline"></ion-icon>
           </ion-button>
         </ion-buttons>
@@ -360,7 +360,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, nextTick } from 'vue';
+import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import {
   IonPage,
@@ -543,9 +543,17 @@ const createPieChart = () => {
 };
 
 const updatePerformanceChart = (data: any) => {
-  if (performanceChartInstance && data) {
-    performanceChartInstance.update();
+  if (!performanceChartInstance || !data) return;
+  if (Array.isArray(data.labels)) {
+    performanceChartInstance.data.labels = data.labels;
   }
+  if (Array.isArray(data.merits)) {
+    performanceChartInstance.data.datasets[0].data = data.merits;
+  }
+  if (Array.isArray(data.misconducts)) {
+    performanceChartInstance.data.datasets[1].data = data.misconducts;
+  }
+  performanceChartInstance.update();
 };
 
 const getRankClass = (index: number) => {
@@ -575,6 +583,11 @@ const refresh = () => {
 
 onMounted(() => {
   loadDashboard();
+});
+
+onUnmounted(() => {
+  performanceChartInstance?.destroy();
+  pieChartInstance?.destroy();
 });
 </script>
 
@@ -883,7 +896,7 @@ onMounted(() => {
 .performer-info p  { font-size: 0.875rem; color: #6b7280; margin: 0; }
 
 .performer-score { text-align: right; }
-.performer-score .score { font-size: 1.5rem; font-weight: 700; color: #3b82f6; margin-bottom: 0.5rem; }
+.performer-score .score { font-size: 1.5rem; font-weight: 700; color: #1f2937; margin-bottom: 0.5rem; }
 .performer-score .badges { display: flex; gap: 0.5rem; }
 
 .badge { padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
@@ -945,7 +958,7 @@ onMounted(() => {
 .activity-info { flex: 1; }
 .activity-info h4 { font-size: 0.875rem; font-weight: 600; color: #1f2937; margin: 0 0 0.25rem 0; }
 .activity-info p  { font-size: 0.75rem; color: #6b7280; margin: 0 0 0.25rem 0; }
-.activity-info .timestamp { font-size: 0.625rem; color: #9ca3af; }
+.activity-info .timestamp { font-size: 0.75rem; color: #6b7280; }
 
 .activity-points { font-size: 1rem; font-weight: 700; }
 .activity-item.merit     .activity-points { color: #10b981; }

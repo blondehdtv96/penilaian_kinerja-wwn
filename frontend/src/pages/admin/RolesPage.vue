@@ -7,7 +7,7 @@
         </ion-buttons>
         <ion-title>Role & Permission Management</ion-title>
         <ion-buttons slot="end">
-          <ion-button @click="refreshData">
+          <ion-button @click="refreshData" aria-label="Refresh roles">
             <ion-icon :icon="refreshOutline"></ion-icon>
           </ion-button>
           <ion-button @click="openCreateModal" v-if="canCreateRole">

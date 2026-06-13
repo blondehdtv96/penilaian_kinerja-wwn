@@ -43,7 +43,12 @@
                 <div
                   class="nav-item"
                   :class="{ active: router.currentRoute.value.path === item.path }"
+                  :aria-current="router.currentRoute.value.path === item.path ? 'page' : undefined"
+                  tabindex="0"
+                  role="link"
                   @click="navigateTo(item.path)"
+                  @keydown.enter="navigateTo(item.path)"
+                  @keydown.space.prevent="navigateTo(item.path)"
                 >
                   <ion-icon :icon="item.icon" class="nav-icon"></ion-icon>
                   <span class="nav-label">{{ item.title }}</span>
@@ -421,6 +426,13 @@ onMounted(() => {
   transition: all 0.25s ease;
   font-size: 0.9rem;
   font-weight: 500;
+  outline: none;
+}
+
+.nav-item:focus-visible {
+  outline: 2px solid #ef4444;
+  outline-offset: -2px;
+  border-radius: 4px;
 }
 
 .nav-item:hover {

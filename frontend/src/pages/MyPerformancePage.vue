@@ -7,7 +7,7 @@
         </ion-buttons>
         <ion-title>Kinerja Saya</ion-title>
         <ion-buttons slot="end">
-          <ion-button @click="refreshData">
+          <ion-button @click="refreshData" aria-label="Refresh performance data">
             <ion-icon :icon="refreshOutline"></ion-icon>
           </ion-button>
         </ion-buttons>
@@ -189,7 +189,7 @@
             <ion-card-title>My QR Code</ion-card-title>
           </ion-card-header>
           <ion-card-content class="ion-text-center">
-            <img :src="operator.qrCode" alt="QR Code" class="qr-code" />
+            <img :src="operator.qrCode" alt="Personal QR code for attendance and verification" class="qr-code" loading="lazy" />
             <p class="text-small ion-margin-top">Show this QR code for attendance and verification</p>
           </ion-card-content>
         </ion-card>
@@ -231,7 +231,7 @@ import {
   trophyOutline,
   warningOutline
 } from 'ionicons/icons';
-import axios from 'axios';
+import { operatorService } from '@/services/operator.service';
 import { useAuthStore } from '@/stores/auth';
 
 const authStore = useAuthStore();
@@ -245,28 +245,13 @@ const loadMyPerformance = async () => {
   error.value = '';
 
   try {
-    const token = localStorage.getItem('token');
-    
-    // Get current user's operator data
-    const response = await axios.get(
-      `${import.meta.env.VITE_API_URL}/auth/me`,
-      {
-        headers: { Authorization: `Bearer ${token}` }
-      }
-    );
+    await authStore.refreshUser();
+    const operatorId = authStore.user?.operator?.id;
 
-    if (response.data.success && response.data.data.operator) {
-      // Load full operator details including events
-      const operatorId = response.data.data.operator.id;
-      const operatorResponse = await axios.get(
-        `${import.meta.env.VITE_API_URL}/operators/${operatorId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
-
-      if (operatorResponse.data.success) {
-        operator.value = operatorResponse.data.data;
+    if (operatorId) {
+      const response = await operatorService.getById(operatorId);
+      if (response.success) {
+        operator.value = response.data;
       }
     } else {
       operator.value = null;
@@ -389,7 +374,7 @@ onMounted(() => {
 .performance-overview {
   text-align: center;
   padding: 20px;
-  background: linear-gradient(135deg, var(--ion-color-primary-tint), var(--ion-color-secondary-tint));
+  background: linear-gradient(135deg, #1e3a5f 0%, #1a56a0 100%);
   border-radius: 12px;
   margin-bottom: 20px;
 }
