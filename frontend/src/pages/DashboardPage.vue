@@ -9,7 +9,7 @@
           {{ isOperatorView ? 'Dashboard Kinerja Saya' : 'Dashboard KPI' }}
         </ion-title>
         <ion-buttons slot="end">
-          <ion-button @click="refresh" aria-label="Refresh dashboard">
+          <ion-button @click="refresh" aria-label="Muat ulang dashboard">
             <ion-icon :icon="refreshOutline"></ion-icon>
           </ion-button>
         </ion-buttons>
@@ -20,7 +20,7 @@
       <!-- Loading State -->
       <div v-if="loading" class="loading-container">
         <ion-spinner color="primary" name="crescent"></ion-spinner>
-        <p>Loading dashboard...</p>
+        <p>Memuat dashboard…</p>
       </div>
 
       <!-- ======================================================= -->
@@ -29,7 +29,7 @@
       <div v-else-if="isOperatorView" class="dashboard-container">
         <!-- Welcome Header -->
         <div class="dashboard-header">
-          <h1>Selamat Datang, {{ authStore.user?.fullName }} 👋</h1>
+          <h1>Selamat datang, {{ authStore.user?.fullName }}</h1>
           <p class="subtitle">{{ currentDate }}</p>
         </div>
 
@@ -55,7 +55,7 @@
               <div class="rank-number">
                 #{{ dashboard.summary.ranking }}
               </div>
-              <div class="rank-label">Ranking</div>
+              <div class="rank-label">Peringkat</div>
             </div>
           </div>
 
@@ -67,7 +67,7 @@
               </div>
               <div class="kpi-content">
                 <h3>{{ dashboard.summary.totalMerit }}</h3>
-                <p>Total Merit Poin</p>
+                <p>Total Poin Merit</p>
               </div>
             </div>
 
@@ -77,7 +77,7 @@
               </div>
               <div class="kpi-content">
                 <h3>{{ dashboard.summary.totalMisconduct }}</h3>
-                <p>Total Misconduct</p>
+                <p>Total Poin Misconduct</p>
               </div>
             </div>
 
@@ -107,7 +107,7 @@
             <!-- Personal Merits -->
             <div class="activity-card">
               <div class="activity-header">
-                <h2>✅ Merit Saya</h2>
+                <h2>Merit Saya</h2>
                 <ion-badge color="success">{{ dashboard.recentMerits?.length || 0 }}</ion-badge>
               </div>
               <div class="activity-list">
@@ -135,7 +135,7 @@
             <!-- Personal Misconducts -->
             <div class="activity-card">
               <div class="activity-header">
-                <h2>⚠️ Misconduct Saya</h2>
+                <h2>Misconduct Saya</h2>
                 <ion-badge color="danger">{{ dashboard.recentMisconducts?.length || 0 }}</ion-badge>
               </div>
               <div class="activity-list">
@@ -169,7 +169,7 @@
       <div v-else class="dashboard-container">
         <!-- Header Section -->
         <div class="dashboard-header">
-          <h1>Welcome, {{ authStore.user?.fullName }}</h1>
+          <h1>Selamat datang, {{ authStore.user?.fullName }}</h1>
           <p class="subtitle">{{ currentDate }}</p>
         </div>
 
@@ -181,7 +181,7 @@
             </div>
             <div class="kpi-content">
               <h3>{{ dashboard?.summary.totalOperators || 0 }}</h3>
-              <p>Total Operators</p>
+              <p>Total Operator</p>
             </div>
           </div>
 
@@ -191,7 +191,7 @@
             </div>
             <div class="kpi-content">
               <h3>{{ dashboard?.summary.totalMerits || 0 }}</h3>
-              <p>Total Merits</p>
+              <p>Total Merit</p>
             </div>
           </div>
 
@@ -201,7 +201,7 @@
             </div>
             <div class="kpi-content">
               <h3>{{ dashboard?.summary.totalMisconducts || 0 }}</h3>
-              <p>Total Misconducts</p>
+              <p>Total Misconduct</p>
             </div>
           </div>
 
@@ -211,7 +211,7 @@
             </div>
             <div class="kpi-content">
               <h3>{{ dashboard?.summary.totalBlocks || 0 }}</h3>
-              <p>Blockchain Blocks</p>
+              <p>Blok Blockchain</p>
             </div>
           </div>
         </div>
@@ -220,11 +220,11 @@
         <div class="charts-grid">
           <div class="chart-card">
             <div class="chart-header">
-              <h2>Performance Trend</h2>
+              <h2>Tren Kinerja</h2>
               <ion-select v-model="chartPeriod" @ionChange="loadChartData">
-                <ion-select-option value="daily">Daily</ion-select-option>
-                <ion-select-option value="weekly">Weekly</ion-select-option>
-                <ion-select-option value="monthly">Monthly</ion-select-option>
+                <ion-select-option value="daily">Harian</ion-select-option>
+                <ion-select-option value="weekly">Mingguan</ion-select-option>
+                <ion-select-option value="monthly">Bulanan</ion-select-option>
               </ion-select>
             </div>
             <canvas ref="performanceChart"></canvas>
@@ -241,9 +241,9 @@
         <!-- Top Performers Section -->
         <div class="section-card">
           <div class="section-header">
-            <h2>🏆 Top 5 Performers</h2>
+            <h2>5 Operator Terbaik</h2>
             <ion-button fill="clear" size="small" @click="viewAllOperators">
-              View All
+              Lihat Semua
             </ion-button>
           </div>
           <div class="performers-list">
@@ -277,7 +277,7 @@
         <div class="activities-grid">
           <div class="activity-card">
             <div class="activity-header">
-              <h2>✅ Recent Merits</h2>
+              <h2>Merit Terbaru</h2>
               <ion-badge color="success">
                 {{ dashboard?.recentMerits?.length || 0 }}
               </ion-badge>
@@ -306,7 +306,7 @@
 
           <div class="activity-card">
             <div class="activity-header">
-              <h2>⚠️ Recent Misconducts</h2>
+              <h2>Misconduct Terbaru</h2>
               <ion-badge color="danger">
                 {{ dashboard?.recentMisconducts?.length || 0 }}
               </ion-badge>
@@ -337,20 +337,20 @@
         <!-- Pending Approvals -->
         <div class="section-card" v-if="hasPendingApprovals">
           <div class="section-header">
-            <h2>⏳ Pending Approvals</h2>
+            <h2>Menunggu Persetujuan</h2>
           </div>
           <div class="pending-grid">
             <div class="pending-card" v-if="dashboard?.summary.pendingMerits > 0">
               <ion-icon :icon="timeOutline" color="warning"></ion-icon>
               <h3>{{ dashboard.summary.pendingMerits }}</h3>
-              <p>Merit Approvals</p>
-              <ion-button size="small" fill="outline">Review</ion-button>
+              <p>Persetujuan Merit</p>
+              <ion-button size="small" fill="outline">Tinjau</ion-button>
             </div>
             <div class="pending-card" v-if="dashboard?.summary.pendingMisconducts > 0">
               <ion-icon :icon="timeOutline" color="danger"></ion-icon>
               <h3>{{ dashboard.summary.pendingMisconducts }}</h3>
-              <p>Misconduct Approvals</p>
-              <ion-button size="small" fill="outline">Review</ion-button>
+              <p>Persetujuan Misconduct</p>
+              <ion-button size="small" fill="outline">Tinjau</ion-button>
             </div>
           </div>
         </div>
@@ -479,17 +479,17 @@ const createPerformanceChart = () => {
   performanceChartInstance = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
       datasets: [
         {
-          label: 'Merits',
+          label: 'Merit',
           data: [12, 19, 15, 25, 22, 30, 28],
           borderColor: '#10b981',
           backgroundColor: 'rgba(16, 185, 129, 0.1)',
           tension: 0.4
         },
         {
-          label: 'Misconducts',
+          label: 'Misconduct',
           data: [5, 8, 6, 10, 7, 12, 9],
           borderColor: '#ef4444',
           backgroundColor: 'rgba(239, 68, 68, 0.1)',
@@ -524,7 +524,7 @@ const createPieChart = () => {
   pieChartInstance = new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels: ['Merits', 'Misconducts'],
+      labels: ['Merit', 'Misconduct'],
       datasets: [
         {
           data: [totalMerits, totalMisconducts],
