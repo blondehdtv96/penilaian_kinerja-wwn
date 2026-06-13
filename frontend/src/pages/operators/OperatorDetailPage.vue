@@ -7,7 +7,7 @@
         </ion-buttons>
         <ion-title>Operator Detail</ion-title>
         <ion-buttons slot="end">
-          <ion-button @click="refreshData">
+          <ion-button @click="refreshData" aria-label="Refresh operator details">
             <ion-icon :icon="refreshOutline"></ion-icon>
           </ion-button>
         </ion-buttons>
@@ -147,7 +147,7 @@
             <ion-card-title>QR Code</ion-card-title>
           </ion-card-header>
           <ion-card-content class="ion-text-center">
-            <img :src="operator.qrCode" alt="QR Code" class="qr-code" />
+            <img :src="operator.qrCode" alt="QR Code for this operator" class="qr-code" loading="lazy" />
             <p class="text-small ion-margin-top">Scan this QR code for quick access</p>
           </ion-card-content>
         </ion-card>
@@ -237,7 +237,7 @@ import {
   trophyOutline,
   warningOutline
 } from 'ionicons/icons';
-import axios from 'axios';
+import { operatorService } from '@/services/operator.service';
 
 const route = useRoute();
 
@@ -250,18 +250,10 @@ const loadOperatorDetail = async () => {
   error.value = '';
 
   try {
-    const token = localStorage.getItem('token');
-    const operatorId = route.params.id;
-    
-    const response = await axios.get(
-      `${import.meta.env.VITE_API_URL}/operators/${operatorId}`,
-      {
-        headers: { Authorization: `Bearer ${token}` }
-      }
-    );
-
-    if (response.data.success) {
-      operator.value = response.data.data;
+    const operatorId = parseInt(route.params.id as string);
+    const response = await operatorService.getById(operatorId);
+    if (response.success) {
+      operator.value = response.data;
     }
   } catch (err: any) {
     error.value = err.response?.data?.message || 'Failed to load operator details';
@@ -371,7 +363,7 @@ onMounted(() => {
 .performance-overview {
   text-align: center;
   padding: 20px;
-  background: linear-gradient(135deg, var(--ion-color-primary-tint), var(--ion-color-secondary-tint));
+  background: linear-gradient(135deg, #1e3a5f 0%, #1a56a0 100%);
   border-radius: 12px;
   margin-bottom: 20px;
 }

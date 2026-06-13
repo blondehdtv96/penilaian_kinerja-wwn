@@ -7,7 +7,7 @@
         </ion-buttons>
         <ion-title>Operators</ion-title>
         <ion-buttons slot="end">
-          <ion-button @click="refreshData">
+          <ion-button @click="refreshData" aria-label="Refresh operators">
             <ion-icon :icon="refreshOutline"></ion-icon>
           </ion-button>
         </ion-buttons>
@@ -161,7 +161,7 @@ import {
   IonCol
 } from '@ionic/vue';
 import { refreshOutline, trophyOutline, warningOutline } from 'ionicons/icons';
-import axios from 'axios';
+import { operatorService } from '@/services/operator.service';
 
 const router = useRouter();
 
@@ -197,13 +197,9 @@ const loadOperators = async () => {
   error.value = '';
 
   try {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${import.meta.env.VITE_API_URL}/operators`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    if (response.data.success) {
-      operators.value = response.data.data;
+    const response = await operatorService.getAll();
+    if (response.success) {
+      operators.value = response.data;
     }
   } catch (err: any) {
     error.value = err.response?.data?.message || 'Failed to load operators';

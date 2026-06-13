@@ -5,6 +5,15 @@ import App from './App.vue';
 import router from './router';
 import { useAuthStore } from '@/stores/auth';
 
+// Inter — the system's sole typeface (self-hosted, no runtime network dependency).
+// Weights map to the DESIGN.md hierarchy: 400 body, 500 labels, 600 titles,
+// 700 headlines/display, 800 the Extrabold Ceiling (KPI/rank numbers only).
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/inter/700.css';
+import '@fontsource/inter/800.css';
+
 // Ionic CSS
 import '@ionic/vue/css/core.css';
 import '@ionic/vue/css/normalize.css';

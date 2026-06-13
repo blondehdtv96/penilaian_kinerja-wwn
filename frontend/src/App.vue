@@ -1,8 +1,8 @@
 <template>
   <ion-app>
-    <ion-split-pane content-id="main-content" when="lg">
-      <!-- Sidemenu (Only visible when authenticated) -->
-      <ion-menu v-if="authStore.isAuthenticated" content-id="main-content" type="overlay">
+    <!-- Sidemenu: always an overlay drawer, opened by the hamburger (ion-menu-button)
+         in each page's header. No ion-split-pane — the rail must never auto-reveal. -->
+    <ion-menu v-if="authStore.isAuthenticated" content-id="main-content" type="overlay">
         <div class="sidebar-container">
           <!-- Top Brand Header (PT Bridgestone style) -->
           <div class="brand-header">
@@ -43,7 +43,12 @@
                 <div
                   class="nav-item"
                   :class="{ active: router.currentRoute.value.path === item.path }"
+                  :aria-current="router.currentRoute.value.path === item.path ? 'page' : undefined"
+                  tabindex="0"
+                  role="link"
                   @click="navigateTo(item.path)"
+                  @keydown.enter="navigateTo(item.path)"
+                  @keydown.space.prevent="navigateTo(item.path)"
                 >
                   <ion-icon :icon="item.icon" class="nav-icon"></ion-icon>
                   <span class="nav-label">{{ item.title }}</span>
@@ -77,17 +82,15 @@
           </transition>
         </router-view>
       </div>
-    </ion-split-pane>
   </ion-app>
 </template>
 
 <script setup lang="ts">
-import { 
-  IonApp, 
-  IonSplitPane, 
-  IonMenu, 
-  IonIcon, 
-  IonMenuToggle 
+import {
+  IonApp,
+  IonMenu,
+  IonIcon,
+  IonMenuToggle
 } from '@ionic/vue';
 import { onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
@@ -421,6 +424,13 @@ onMounted(() => {
   transition: all 0.25s ease;
   font-size: 0.9rem;
   font-weight: 500;
+  outline: none;
+}
+
+.nav-item:focus-visible {
+  outline: 2px solid #ef4444;
+  outline-offset: -2px;
+  border-radius: 4px;
 }
 
 .nav-item:hover {
@@ -514,10 +524,15 @@ onMounted(() => {
   box-shadow: 0 0 8px #10b981;
 }
 
-/* Main Content Area */
+/* Main Content Area — with no split-pane, this element takes over filling
+   ion-app. The routed `.ion-page` is position:absolute inset:0, so #main-content
+   must be a sized, positioned containing block of its own. */
 .main-content {
-  position: relative;
-  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   overflow-y: auto;
   background: #f5f7fa;
 }

@@ -1,0 +1,206 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-13T00:00:00.000Z",
+  "title": "Design System: Merit-Misconduct System",
+  "extensions": {
+    "colorMeta": {
+      "red-accent": {
+        "role": "primary",
+        "displayName": "Bridgestone Red",
+        "canonical": "oklch(0.63 0.24 27)",
+        "tonalRamp": ["#5a0e0e", "#8b1a1a", "#b91c1c", "#dc2626", "#ef4444", "#f87171", "#fca5a5", "#fee2e2"]
+      },
+      "red-deep": {
+        "role": "primary-deep",
+        "displayName": "Deep Red",
+        "canonical": "oklch(0.45 0.22 27)",
+        "tonalRamp": ["#3b0707", "#5a0e0e", "#7f1d1d", "#991b1b", "#b91c1c", "#dc2626", "#ef4444", "#f87171"]
+      },
+      "merit-green": {
+        "role": "secondary",
+        "displayName": "Merit Green",
+        "canonical": "oklch(0.69 0.18 162)",
+        "tonalRamp": ["#022c22", "#064e3b", "#065f46", "#047857", "#059669", "#10b981", "#34d399", "#a7f3d0"]
+      },
+      "merit-deep": {
+        "role": "secondary-deep",
+        "displayName": "Merit Deep",
+        "canonical": "oklch(0.55 0.18 162)",
+        "tonalRamp": ["#022c22", "#064e3b", "#065f46", "#047857", "#059669", "#10b981", "#34d399", "#d1fae5"]
+      },
+      "rail": {
+        "role": "neutral-dark",
+        "displayName": "Night Rail",
+        "canonical": "oklch(0.18 0.02 260)",
+        "tonalRamp": ["#060b12", "#0d1117", "#111827", "#1f2937", "#374151", "#6b7280", "#9ca3af", "#e5e7eb"]
+      },
+      "rail-elevated": {
+        "role": "neutral-dark-elevated",
+        "displayName": "Rail Elevated",
+        "canonical": "oklch(0.25 0.02 260)",
+        "tonalRamp": ["#0d1117", "#111827", "#1f2937", "#374151", "#4b5563", "#6b7280", "#9ca3af", "#f3f4f6"]
+      },
+      "content-bg": {
+        "role": "neutral-bg",
+        "displayName": "Workshop Light",
+        "canonical": "oklch(0.97 0.005 240)",
+        "tonalRamp": ["#c9d1d9", "#d0d7de", "#e1e4e8", "#eaecef", "#f0f2f5", "#f5f7fa", "#f8fafc", "#ffffff"]
+      },
+      "card": {
+        "role": "surface",
+        "displayName": "Clean Sheet",
+        "canonical": "oklch(1.0 0 0)",
+        "tonalRamp": ["#d1d5db", "#e5e7eb", "#f3f4f6", "#f9fafb", "#ffffff", "#ffffff", "#ffffff", "#ffffff"]
+      },
+      "ink": {
+        "role": "on-surface",
+        "displayName": "Ink",
+        "canonical": "oklch(0.25 0.02 260)",
+        "tonalRamp": ["#030712", "#111827", "#1f2937", "#374151", "#4b5563", "#6b7280", "#9ca3af", "#d1d5db"]
+      },
+      "ink-muted": {
+        "role": "on-surface-muted",
+        "displayName": "Steel Muted",
+        "canonical": "oklch(0.50 0.02 260)",
+        "tonalRamp": ["#111827", "#1f2937", "#374151", "#4b5563", "#6b7280", "#9ca3af", "#d1d5db", "#f3f4f6"]
+      },
+      "ink-subtle": {
+        "role": "on-surface-subtle",
+        "displayName": "Steel Light",
+        "canonical": "oklch(0.65 0.02 260)",
+        "tonalRamp": ["#374151", "#4b5563", "#6b7280", "#9ca3af", "#d1d5db", "#e5e7eb", "#f3f4f6", "#ffffff"]
+      },
+      "divider": {
+        "role": "outline",
+        "displayName": "Divider",
+        "canonical": "oklch(0.90 0.01 260)",
+        "tonalRamp": ["#9ca3af", "#d1d5db", "#e5e7eb", "#f3f4f6", "#f9fafb", "#ffffff", "#ffffff", "#ffffff"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "KPI metric numbers — one or two per card maximum." },
+      "headline": { "displayName": "Headline", "purpose": "Page-level welcome text and major section titles. Maximum one per screen." },
+      "title": { "displayName": "Title", "purpose": "Card headers, section group titles." },
+      "body": { "displayName": "Body", "purpose": "Event descriptions, list content, form fields. Cap at 65–75ch." },
+      "label": { "displayName": "Label", "purpose": "Timestamps, nav section titles, role badges, table column headers." }
+    },
+    "shadows": [
+      { "name": "ambient-rest", "value": "0 1px 3px rgba(0, 0, 0, 0.10)", "purpose": "At-rest shadow for all standard cards. Separation, not elevation." },
+      { "name": "lifted-hover", "value": "0 4px 6px rgba(0, 0, 0, 0.10)", "purpose": "Card hover and interactive list item focus." },
+      { "name": "featured-element", "value": "0 8px 24px rgba(30, 58, 95, 0.25)", "purpose": "Operator identity card — colored shadow matching the navy gradient." },
+      { "name": "brand-action", "value": "0 4px 12px rgba(239, 68, 68, 0.25)", "purpose": "Red CTA hover states. Shadow shares the button's hue." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.25, 0, 0, 1)", "purpose": "Default easing for state transitions (hover, focus, active)." },
+      { "name": "fade-page", "value": "opacity 0.2s ease", "purpose": "Page transition between routes (router-view fade)." },
+      { "name": "nav-slide", "value": "padding-left 0.25s ease", "purpose": "Navigation item hover micro-slide (indent +0.25rem on hover)." }
+    ],
+    "breakpoints": [
+      { "name": "lg", "value": "992px", "purpose": "Ionic split-pane breakpoint — sidebar appears at lg and above." },
+      { "name": "md", "value": "768px", "purpose": "Dashboard grid collapses to single column below md." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Default action trigger. Solid red fill, white label, slightly rounded. Used for form submit, primary CTAs.",
+      "html": "<button class=\"ds-btn-primary\">Login</button>",
+      "css": ".ds-btn-primary { background: #ef4444; color: #ffffff; padding: 10px 24px; font-family: 'Inter', system-ui, sans-serif; font-size: 0.875rem; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; transition: background 0.2s cubic-bezier(0.25,0,0,1), box-shadow 0.2s cubic-bezier(0.25,0,0,1); } .ds-btn-primary:hover { background: #b91c1c; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25); } .ds-btn-primary:focus-visible { outline: 2px solid #ef4444; outline-offset: 2px; } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; } @media (prefers-reduced-motion: reduce) { .ds-btn-primary { transition: none; } }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary / destructive action. Red-tinted outline. Used for logout, cancel, low-priority actions.",
+      "html": "<button class=\"ds-btn-ghost\">Sign Out</button>",
+      "css": ".ds-btn-ghost { background: rgba(239,68,68,0.1); color: #fca5a5; padding: 10px 24px; font-family: 'Inter', system-ui, sans-serif; font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(239,68,68,0.2); border-radius: 8px; cursor: pointer; transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease; display: flex; align-items: center; gap: 0.75rem; justify-content: center; } .ds-btn-ghost:hover { background: #ef4444; color: #ffffff; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25); } .ds-btn-ghost:focus-visible { outline: 2px solid #ef4444; outline-offset: 2px; } @media (prefers-reduced-motion: reduce) { .ds-btn-ghost { transition: none; } }"
+    },
+    {
+      "name": "KPI Card",
+      "kind": "card",
+      "refersTo": "kpi-card",
+      "description": "Primary information unit on the management dashboard. Colored icon block + metric number + label.",
+      "html": "<div class=\"ds-kpi-card\"><div class=\"ds-kpi-icon ds-kpi-icon--green\"><svg width=\"28\" height=\"28\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z\"/></svg></div><div class=\"ds-kpi-content\"><h3 class=\"ds-kpi-number\">247</h3><p class=\"ds-kpi-label\">Total Merits</p></div></div>",
+      "css": ".ds-kpi-card { background: #ffffff; border-radius: 12px; padding: 24px; display: flex; align-items: center; gap: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.10); transition: transform 0.2s ease, box-shadow 0.2s ease; } .ds-kpi-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.10); } .ds-kpi-icon { width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #ffffff; flex-shrink: 0; } .ds-kpi-icon--green { background: #10b981; } .ds-kpi-icon--red { background: #ef4444; } .ds-kpi-icon--blue { background: #3b82f6; } .ds-kpi-icon--purple { background: #8b5cf6; } .ds-kpi-number { font-family: 'Inter', system-ui, sans-serif; font-size: 2rem; font-weight: 700; color: #1f2937; margin: 0; line-height: 1; } .ds-kpi-label { font-family: 'Inter', system-ui, sans-serif; font-size: 0.875rem; color: #6b7280; margin: 4px 0 0 0; } @media (prefers-reduced-motion: reduce) { .ds-kpi-card { transition: none; } }"
+    },
+    {
+      "name": "Activity Item — Merit",
+      "kind": "card",
+      "refersTo": "card-default",
+      "description": "Feed row showing a merit event. Green-tinted background, green avatar, positive points.",
+      "html": "<div class=\"ds-activity-item ds-activity-item--merit\"><div class=\"ds-activity-avatar\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z\"/></svg></div><div class=\"ds-activity-info\"><h4>Keselamatan Kerja</h4><p>Laporan K3 tepat waktu</p><span class=\"ds-timestamp\">09:30 · 13 Jun</span></div><div class=\"ds-activity-points ds-activity-points--positive\">+15</div></div>",
+      "css": ".ds-activity-item { display: flex; align-items: center; gap: 16px; padding: 12px; border-radius: 8px; } .ds-activity-item--merit { background: #ecfdf5; } .ds-activity-item--misconduct { background: #fef2f2; } .ds-activity-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #ffffff; } .ds-activity-item--merit .ds-activity-avatar { background: #10b981; } .ds-activity-item--misconduct .ds-activity-avatar { background: #ef4444; } .ds-activity-info { flex: 1; } .ds-activity-info h4 { font-family: 'Inter', system-ui, sans-serif; font-size: 0.875rem; font-weight: 600; color: #1f2937; margin: 0 0 2px 0; } .ds-activity-info p { font-family: 'Inter', system-ui, sans-serif; font-size: 0.75rem; color: #6b7280; margin: 0 0 2px 0; } .ds-timestamp { font-family: 'Inter', system-ui, sans-serif; font-size: 0.625rem; color: #9ca3af; } .ds-activity-points { font-family: 'Inter', system-ui, sans-serif; font-size: 1rem; font-weight: 700; } .ds-activity-points--positive { color: #10b981; } .ds-activity-points--negative { color: #ef4444; }"
+    },
+    {
+      "name": "Input Field",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "Standard text input. White fill, divider stroke, red focus border. Placeholder uses #6b7280 to pass WCAG AA.",
+      "html": "<div class=\"ds-input-wrap\"><label class=\"ds-input-label\">Username</label><input class=\"ds-input\" type=\"text\" placeholder=\"Enter username\"></div>",
+      "css": ".ds-input-wrap { display: flex; flex-direction: column; gap: 6px; } .ds-input-label { font-family: 'Inter', system-ui, sans-serif; font-size: 0.875rem; font-weight: 600; color: #374151; } .ds-input { width: 100%; padding: 10px 12px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px; font-family: 'Inter', system-ui, sans-serif; font-size: 0.875rem; color: #1f2937; outline: none; transition: border-color 0.2s ease; box-sizing: border-box; } .ds-input::placeholder { color: #6b7280; } .ds-input:focus { border-color: #ef4444; } @media (prefers-reduced-motion: reduce) { .ds-input { transition: none; } }"
+    },
+    {
+      "name": "Navigation Rail",
+      "kind": "nav",
+      "refersTo": "card-default",
+      "description": "Dark sidebar rail. Brand header with red logomark, user profile section, filtered nav items, system status footer.",
+      "html": "<nav class=\"ds-rail\"><div class=\"ds-rail-brand\"><div class=\"ds-brand-logo\">B</div><div class=\"ds-brand-text\"><span class=\"ds-brand-name\">PT Bridgestone</span><span class=\"ds-brand-sub\">Tire Indonesia</span></div></div><div class=\"ds-nav-item ds-nav-item--active\"><svg class=\"ds-nav-icon\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"7\"/><rect x=\"3\" y=\"14\" width=\"7\" height=\"7\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\"/></svg><span>Dashboard KPI</span><div class=\"ds-active-strip\"></div></div><div class=\"ds-nav-item\"><svg class=\"ds-nav-icon\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/></svg><span>Monitoring Kinerja</span></div></nav>",
+      "css": ".ds-rail { display: flex; flex-direction: column; width: 260px; height: 100%; background: #111827; color: #f3f4f6; font-family: 'Inter', system-ui, sans-serif; border-right: 1px solid #1f2937; } .ds-rail-brand { position: relative; display: flex; align-items: center; gap: 12px; padding: 24px; background: #1f2937; } .ds-rail-brand::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: #ef4444; } .ds-brand-logo { width: 36px; height: 36px; border-radius: 8px; background: #ef4444; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem; color: white; box-shadow: 0 4px 6px rgba(239,68,68,0.2); flex-shrink: 0; } .ds-brand-name { display: block; font-size: 1.1rem; font-weight: 700; color: #ffffff; line-height: 1.2; } .ds-brand-sub { display: block; font-size: 0.75rem; color: #9ca3af; letter-spacing: 0.05em; font-weight: 500; } .ds-nav-item { position: relative; display: flex; align-items: center; gap: 16px; padding: 14px 24px; color: #9ca3af; cursor: pointer; transition: background 0.25s ease, color 0.25s ease, padding-left 0.25s ease; font-size: 0.9rem; font-weight: 500; } .ds-nav-item:hover { background: rgba(31,41,55,0.5); color: #ffffff; padding-left: 28px; } .ds-nav-item--active { background: rgba(239,68,68,0.08); color: #ffffff; font-weight: 600; } .ds-nav-item--active .ds-nav-icon { color: #ef4444; } .ds-nav-icon { flex-shrink: 0; transition: transform 0.25s ease; } .ds-nav-item:hover .ds-nav-icon { transform: scale(1.1); } .ds-active-strip { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: #ef4444; } @media (prefers-reduced-motion: reduce) { .ds-nav-item, .ds-nav-icon { transition: none; } }"
+    },
+    {
+      "name": "Role Badge",
+      "kind": "chip",
+      "refersTo": "card-default",
+      "description": "Inline role identifier chip for the sidebar user profile section. One color per role, uppercase label.",
+      "html": "<div style=\"display:flex;gap:4px;\"><span class=\"ds-role-badge ds-role--superadmin\">Super Admin</span><span class=\"ds-role-badge ds-role--operator\">Operator</span></div>",
+      "css": ".ds-role-badge { font-family: 'Inter', system-ui, sans-serif; font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.025em; display: inline-block; } .ds-role--superadmin { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); } .ds-role--hrd { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); } .ds-role--manager { background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.3); } .ds-role--foreman { background: rgba(249,115,22,0.15); color: #ff9736; border: 1px solid rgba(249,115,22,0.3); } .ds-role--operator { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Control Room",
+    "overview": "This system is built like precision instrumentation. It exists in a high-stakes industrial environment where every performance event is recorded permanently on a blockchain — no edits, no erasure. The interface reflects that permanence: deliberate, unambiguous, and load-bearing. Every pixel earns its place. Density is a feature, not a failure.\n\nThe visual language pairs a dark charcoal navigation rail with a clean, bright content area. The sidebar is the anchor — always present, always grounding the operator or manager in where they are and what role they hold. The content area is neutral and bright, designed to make data the protagonist. Bridgestone red appears as a precise signal: active navigation state, primary action, critical status. It is never decorative.\n\nThe system explicitly rejects: the default blue-and-white admin aesthetic; consumer-app decoration; the hacker dark-mode terminal aesthetic; and joyless corporate grey that communicates indifference to the people this system evaluates.",
+    "keyCharacteristics": [
+      "Dark navigation rail (#111827) paired with bright content area (#f5f7fa) — structured contrast, not uniform tone",
+      "Bridgestone red used at ≤10% of any screen surface — its scarcity makes it signal",
+      "Inter as the sole typeface across all weights — consistency communicates control",
+      "Flat-by-default cards, lifted on hover — stillness is authority; elevation is earned",
+      "Color carries meaning, never decoration — red is warning/action, green is merit, white is truth"
+    ],
+    "rules": [
+      { "name": "The One Signal Rule", "body": "Red appears as a signal, not a brand wash. Reserve it for: active nav item, primary button, misconduct badges, and critical warnings. Nowhere else.", "section": "colors" },
+      { "name": "The Anti-Cream Rule", "body": "The content background is #f5f7fa — a cool grey-blue, not a warm off-white. This is a factory floor system, not an editorial magazine.", "section": "colors" },
+      { "name": "The Weight-as-Voice Rule", "body": "This system uses one font family across all contexts. Hierarchy is carried entirely by weight and size, not by font switching.", "section": "typography" },
+      { "name": "The Extrabold Ceiling", "body": "Font weight 800 is reserved for KPI numbers in operator info cards and display-level rank indicators only.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Cards do not assert elevation at rest. The ambient shadow reads as separation, not depth. Elevation is earned through interaction, not decoration.", "section": "elevation" },
+      { "name": "The Colored Shadow Principle", "body": "When a shadow appears on a colored element, it uses a tinted version of that element's color — never a generic rgba(0,0,0,x).", "section": "elevation" },
+      { "name": "The Color-Is-Not-Enough Rule", "body": "Activity type must be labeled in text alongside color. Never rely solely on green/red to distinguish merit from misconduct.", "section": "components" }
+    ],
+    "dos": [
+      "Do use Bridgestone Red (#ef4444) on ≤10% of any screen surface. Its scarcity makes it signal.",
+      "Do keep the sidebar dark (#111827) and the content area bright (#f5f7fa). This contrast is the system's structural identity.",
+      "Do use #6b7280 or darker for placeholder text to meet WCAG 2.1 AA 4.5:1 contrast against white.",
+      "Do always pair the merit/misconduct green/red signal with a text label or icon — color alone is never sufficient.",
+      "Do use colored tinted shadows on brand-colored elements.",
+      "Do use 8px radius on interactive elements, 12px on cards, 16px on featured hero elements.",
+      "Do keep KPI metric numbers at 2rem 700 weight maximum.",
+      "Do use Inter at weights 400–700 for all body and UI. Weight 800 only for display KPI numbers.",
+      "Do cap body text at 65–75ch maximum line length.",
+      "Do include @media (prefers-reduced-motion: reduce) for every transition and hover animation.",
+      "Do use flat semantic fills for KPI icon blocks — one color per semantic role, no multi-stop gradients."
+    ],
+    "donts": [
+      "Don't use a generic blue as the primary action color. The real product primary is Bridgestone Red.",
+      "Don't use the warm cream/sand/off-white band for backgrounds. The content area is Workshop Light (#f5f7fa) — cool grey-blue.",
+      "Don't use gradient text (background-clip: text). Prohibited.",
+      "Don't use a colored border-left stripe (>1px) as the sole distinguishing treatment for cards or list items.",
+      "Don't use emoji as primary UI indicators. Replace with Ionicons and semantic color + text labels.",
+      "Don't apply multi-stop gradient fills to KPI icon blocks. Use flat semantic fills.",
+      "Don't make the app feel like a generic blue admin panel. The dark rail and red accent are the primary differentiators.",
+      "Don't use consumer-app patterns: bright bubble gradients, oversized rounded pill cards, playful illustrations.",
+      "Don't extend the dark aesthetic to the content area. Sidebar dark, content area light.",
+      "Don't produce cold, grey, and lifeless screens."
+    ]
+  }
+}

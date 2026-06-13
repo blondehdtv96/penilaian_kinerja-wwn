@@ -9,7 +9,7 @@
           {{ isOperatorView ? 'Dashboard Kinerja Saya' : 'Dashboard KPI' }}
         </ion-title>
         <ion-buttons slot="end">
-          <ion-button @click="refresh">
+          <ion-button @click="refresh" aria-label="Muat ulang dashboard">
             <ion-icon :icon="refreshOutline"></ion-icon>
           </ion-button>
         </ion-buttons>
@@ -20,7 +20,7 @@
       <!-- Loading State -->
       <div v-if="loading" class="loading-container">
         <ion-spinner color="primary" name="crescent"></ion-spinner>
-        <p>Loading dashboard...</p>
+        <p>Memuat dashboard…</p>
       </div>
 
       <!-- ======================================================= -->
@@ -29,7 +29,7 @@
       <div v-else-if="isOperatorView" class="dashboard-container">
         <!-- Welcome Header -->
         <div class="dashboard-header">
-          <h1>Selamat Datang, {{ authStore.user?.fullName }} 👋</h1>
+          <h1>Selamat datang, {{ authStore.user?.fullName }}</h1>
           <p class="subtitle">{{ currentDate }}</p>
         </div>
 
@@ -55,7 +55,7 @@
               <div class="rank-number">
                 #{{ dashboard.summary.ranking }}
               </div>
-              <div class="rank-label">Ranking</div>
+              <div class="rank-label">Peringkat</div>
             </div>
           </div>
 
@@ -67,7 +67,7 @@
               </div>
               <div class="kpi-content">
                 <h3>{{ dashboard.summary.totalMerit }}</h3>
-                <p>Total Merit Poin</p>
+                <p>Total Poin Merit</p>
               </div>
             </div>
 
@@ -77,7 +77,7 @@
               </div>
               <div class="kpi-content">
                 <h3>{{ dashboard.summary.totalMisconduct }}</h3>
-                <p>Total Misconduct</p>
+                <p>Total Poin Misconduct</p>
               </div>
             </div>
 
@@ -107,7 +107,7 @@
             <!-- Personal Merits -->
             <div class="activity-card">
               <div class="activity-header">
-                <h2>✅ Merit Saya</h2>
+                <h2><ion-icon :icon="trophyOutline" class="head-icon merit"></ion-icon>Merit Saya</h2>
                 <ion-badge color="success">{{ dashboard.recentMerits?.length || 0 }}</ion-badge>
               </div>
               <div class="activity-list">
@@ -135,7 +135,7 @@
             <!-- Personal Misconducts -->
             <div class="activity-card">
               <div class="activity-header">
-                <h2>⚠️ Misconduct Saya</h2>
+                <h2><ion-icon :icon="alertCircleOutline" class="head-icon misconduct"></ion-icon>Misconduct Saya</h2>
                 <ion-badge color="danger">{{ dashboard.recentMisconducts?.length || 0 }}</ion-badge>
               </div>
               <div class="activity-list">
@@ -169,7 +169,7 @@
       <div v-else class="dashboard-container">
         <!-- Header Section -->
         <div class="dashboard-header">
-          <h1>Welcome, {{ authStore.user?.fullName }}</h1>
+          <h1>Selamat datang, {{ authStore.user?.fullName }}</h1>
           <p class="subtitle">{{ currentDate }}</p>
         </div>
 
@@ -181,7 +181,7 @@
             </div>
             <div class="kpi-content">
               <h3>{{ dashboard?.summary.totalOperators || 0 }}</h3>
-              <p>Total Operators</p>
+              <p>Total Operator</p>
             </div>
           </div>
 
@@ -191,7 +191,7 @@
             </div>
             <div class="kpi-content">
               <h3>{{ dashboard?.summary.totalMerits || 0 }}</h3>
-              <p>Total Merits</p>
+              <p>Total Merit</p>
             </div>
           </div>
 
@@ -201,7 +201,7 @@
             </div>
             <div class="kpi-content">
               <h3>{{ dashboard?.summary.totalMisconducts || 0 }}</h3>
-              <p>Total Misconducts</p>
+              <p>Total Misconduct</p>
             </div>
           </div>
 
@@ -211,7 +211,7 @@
             </div>
             <div class="kpi-content">
               <h3>{{ dashboard?.summary.totalBlocks || 0 }}</h3>
-              <p>Blockchain Blocks</p>
+              <p>Blok Blockchain</p>
             </div>
           </div>
         </div>
@@ -220,11 +220,11 @@
         <div class="charts-grid">
           <div class="chart-card">
             <div class="chart-header">
-              <h2>Performance Trend</h2>
+              <h2>Tren Kinerja</h2>
               <ion-select v-model="chartPeriod" @ionChange="loadChartData">
-                <ion-select-option value="daily">Daily</ion-select-option>
-                <ion-select-option value="weekly">Weekly</ion-select-option>
-                <ion-select-option value="monthly">Monthly</ion-select-option>
+                <ion-select-option value="daily">Harian</ion-select-option>
+                <ion-select-option value="weekly">Mingguan</ion-select-option>
+                <ion-select-option value="monthly">Bulanan</ion-select-option>
               </ion-select>
             </div>
             <canvas ref="performanceChart"></canvas>
@@ -241,9 +241,9 @@
         <!-- Top Performers Section -->
         <div class="section-card">
           <div class="section-header">
-            <h2>🏆 Top 5 Performers</h2>
+            <h2><ion-icon :icon="trophyOutline" class="head-icon rank"></ion-icon>5 Operator Terbaik</h2>
             <ion-button fill="clear" size="small" @click="viewAllOperators">
-              View All
+              Lihat Semua
             </ion-button>
           </div>
           <div class="performers-list">
@@ -277,7 +277,7 @@
         <div class="activities-grid">
           <div class="activity-card">
             <div class="activity-header">
-              <h2>✅ Recent Merits</h2>
+              <h2><ion-icon :icon="trophyOutline" class="head-icon merit"></ion-icon>Merit Terbaru</h2>
               <ion-badge color="success">
                 {{ dashboard?.recentMerits?.length || 0 }}
               </ion-badge>
@@ -306,7 +306,7 @@
 
           <div class="activity-card">
             <div class="activity-header">
-              <h2>⚠️ Recent Misconducts</h2>
+              <h2><ion-icon :icon="alertCircleOutline" class="head-icon misconduct"></ion-icon>Misconduct Terbaru</h2>
               <ion-badge color="danger">
                 {{ dashboard?.recentMisconducts?.length || 0 }}
               </ion-badge>
@@ -337,20 +337,20 @@
         <!-- Pending Approvals -->
         <div class="section-card" v-if="hasPendingApprovals">
           <div class="section-header">
-            <h2>⏳ Pending Approvals</h2>
+            <h2><ion-icon :icon="timeOutline" class="head-icon neutral"></ion-icon>Menunggu Persetujuan</h2>
           </div>
           <div class="pending-grid">
             <div class="pending-card" v-if="dashboard?.summary.pendingMerits > 0">
               <ion-icon :icon="timeOutline" color="warning"></ion-icon>
               <h3>{{ dashboard.summary.pendingMerits }}</h3>
-              <p>Merit Approvals</p>
-              <ion-button size="small" fill="outline">Review</ion-button>
+              <p>Persetujuan Merit</p>
+              <ion-button size="small" fill="outline">Tinjau</ion-button>
             </div>
             <div class="pending-card" v-if="dashboard?.summary.pendingMisconducts > 0">
               <ion-icon :icon="timeOutline" color="danger"></ion-icon>
               <h3>{{ dashboard.summary.pendingMisconducts }}</h3>
-              <p>Misconduct Approvals</p>
-              <ion-button size="small" fill="outline">Review</ion-button>
+              <p>Persetujuan Misconduct</p>
+              <ion-button size="small" fill="outline">Tinjau</ion-button>
             </div>
           </div>
         </div>
@@ -360,7 +360,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, nextTick } from 'vue';
+import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import {
   IonPage,
@@ -479,17 +479,17 @@ const createPerformanceChart = () => {
   performanceChartInstance = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
       datasets: [
         {
-          label: 'Merits',
+          label: 'Merit',
           data: [12, 19, 15, 25, 22, 30, 28],
           borderColor: '#10b981',
           backgroundColor: 'rgba(16, 185, 129, 0.1)',
           tension: 0.4
         },
         {
-          label: 'Misconducts',
+          label: 'Misconduct',
           data: [5, 8, 6, 10, 7, 12, 9],
           borderColor: '#ef4444',
           backgroundColor: 'rgba(239, 68, 68, 0.1)',
@@ -524,7 +524,7 @@ const createPieChart = () => {
   pieChartInstance = new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels: ['Merits', 'Misconducts'],
+      labels: ['Merit', 'Misconduct'],
       datasets: [
         {
           data: [totalMerits, totalMisconducts],
@@ -543,9 +543,17 @@ const createPieChart = () => {
 };
 
 const updatePerformanceChart = (data: any) => {
-  if (performanceChartInstance && data) {
-    performanceChartInstance.update();
+  if (!performanceChartInstance || !data) return;
+  if (Array.isArray(data.labels)) {
+    performanceChartInstance.data.labels = data.labels;
   }
+  if (Array.isArray(data.merits)) {
+    performanceChartInstance.data.datasets[0].data = data.merits;
+  }
+  if (Array.isArray(data.misconducts)) {
+    performanceChartInstance.data.datasets[1].data = data.misconducts;
+  }
+  performanceChartInstance.update();
 };
 
 const getRankClass = (index: number) => {
@@ -575,6 +583,11 @@ const refresh = () => {
 
 onMounted(() => {
   loadDashboard();
+});
+
+onUnmounted(() => {
+  performanceChartInstance?.destroy();
+  pieChartInstance?.destroy();
 });
 </script>
 
@@ -727,7 +740,7 @@ onMounted(() => {
   align-items: center;
   gap: 1rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
 }
 
 .kpi-card:hover {
@@ -745,23 +758,24 @@ onMounted(() => {
   font-size: 28px;
 }
 
+/* Flat semantic fills — one color per role (DESIGN.md §5: no multi-step gradients). */
 .kpi-card.blue .kpi-icon {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #3b82f6;
   color: white;
 }
 
 .kpi-card.green .kpi-icon {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: #10b981;
   color: white;
 }
 
 .kpi-card.red .kpi-icon {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: #ef4444;
   color: white;
 }
 
 .kpi-card.purple .kpi-icon {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  background: #8b5cf6;
   color: white;
 }
 
@@ -836,7 +850,18 @@ onMounted(() => {
   font-weight: 600;
   color: #1f2937;
   margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
+
+/* Leading section icons — Ionicons replace the former emoji indicators
+   (DESIGN.md: emoji → Ionicons + semantic color). */
+.head-icon { font-size: 1.2rem; flex-shrink: 0; }
+.head-icon.merit       { color: #10b981; }
+.head-icon.misconduct  { color: #ef4444; }
+.head-icon.rank        { color: #374151; }
+.head-icon.neutral     { color: #6b7280; }
 
 /* ======================================== */
 /* Performers List                          */
@@ -854,7 +879,7 @@ onMounted(() => {
   padding: 1rem;
   background: #f9fafb;
   border-radius: 8px;
-  transition: background 0.2s;
+  transition: background 0.2s ease-out;
 }
 
 .performer-item:hover {
@@ -874,16 +899,17 @@ onMounted(() => {
   color: #6b7280;
 }
 
-.rank.gold   { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; }
-.rank.silver { background: linear-gradient(135deg, #d1d5db, #9ca3af); color: white; }
-.rank.bronze { background: linear-gradient(135deg, #fb923c, #f97316); color: white; }
+/* Flat medal fills; dark/white text chosen per fill for ≥3:1 on the rank numeral. */
+.rank.gold   { background: #fbbf24; color: #1f2937; }
+.rank.silver { background: #cbd5e1; color: #1f2937; }
+.rank.bronze { background: #d97706; color: #ffffff; }
 
 .performer-info { flex: 1; }
 .performer-info h3 { font-size: 1rem; font-weight: 600; color: #1f2937; margin: 0 0 0.25rem 0; }
 .performer-info p  { font-size: 0.875rem; color: #6b7280; margin: 0; }
 
 .performer-score { text-align: right; }
-.performer-score .score { font-size: 1.5rem; font-weight: 700; color: #3b82f6; margin-bottom: 0.5rem; }
+.performer-score .score { font-size: 1.5rem; font-weight: 700; color: #1f2937; margin-bottom: 0.5rem; }
 .performer-score .badges { display: flex; gap: 0.5rem; }
 
 .badge { padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
@@ -914,7 +940,7 @@ onMounted(() => {
   margin-bottom: 1rem;
 }
 
-.activity-header h2 { font-size: 1.125rem; font-weight: 600; color: #1f2937; margin: 0; }
+.activity-header h2 { font-size: 1.125rem; font-weight: 600; color: #1f2937; margin: 0; display: inline-flex; align-items: center; gap: 0.5rem; }
 
 .activity-list { display: flex; flex-direction: column; gap: 0.75rem; }
 
@@ -945,7 +971,7 @@ onMounted(() => {
 .activity-info { flex: 1; }
 .activity-info h4 { font-size: 0.875rem; font-weight: 600; color: #1f2937; margin: 0 0 0.25rem 0; }
 .activity-info p  { font-size: 0.75rem; color: #6b7280; margin: 0 0 0.25rem 0; }
-.activity-info .timestamp { font-size: 0.625rem; color: #9ca3af; }
+.activity-info .timestamp { font-size: 0.75rem; color: #6b7280; }
 
 .activity-points { font-size: 1rem; font-weight: 700; }
 .activity-item.merit     .activity-points { color: #10b981; }
@@ -955,7 +981,7 @@ onMounted(() => {
 .empty-state {
   text-align: center;
   padding: 2rem;
-  color: #9ca3af;
+  color: #6b7280;
   font-size: 0.875rem;
 }
 
@@ -982,5 +1008,18 @@ onMounted(() => {
   .dashboard-container { padding: 1rem; }
   .kpi-grid, .charts-grid, .activities-grid { grid-template-columns: 1fr; }
   .operator-info-card { flex-direction: column; text-align: center; }
+}
+
+/* ======================================== */
+/* Reduced Motion                            */
+/* ======================================== */
+@media (prefers-reduced-motion: reduce) {
+  .kpi-card,
+  .performer-item {
+    transition: none;
+  }
+  .kpi-card:hover {
+    transform: none;
+  }
 }
 </style>
