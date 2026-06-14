@@ -1,359 +1,311 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar color="primary">
-        <ion-buttons slot="start">
-          <ion-menu-button></ion-menu-button>
-        </ion-buttons>
-        <ion-title>
-          {{ isOperatorView ? 'Dashboard Kinerja Saya' : 'Dashboard KPI' }}
-        </ion-title>
-        <ion-buttons slot="end">
-          <ion-button @click="refresh" aria-label="Muat ulang dashboard">
-            <ion-icon :icon="refreshOutline"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-
     <ion-content class="dashboard-content">
-      <!-- Loading State -->
-      <div v-if="loading" class="loading-container">
-        <ion-spinner color="primary" name="crescent"></ion-spinner>
-        <p>Memuat dashboard…</p>
-      </div>
-
-      <!-- ======================================================= -->
-      <!-- OPERATOR PERSONAL DASHBOARD VIEW                         -->
-      <!-- ======================================================= -->
-      <div v-else-if="isOperatorView" class="dashboard-container">
-        <!-- Welcome Header -->
-        <div class="dashboard-header">
-          <h1>Selamat datang, {{ authStore.user?.fullName }}</h1>
-          <p class="subtitle">{{ currentDate }}</p>
-        </div>
-
-        <!-- No Operator Record Warning -->
-        <div v-if="!dashboard?.operator" class="no-operator-card">
-          <ion-icon :icon="personOutline" style="font-size: 3rem; color: #9ca3af;"></ion-icon>
-          <h3>Profil Operator Belum Terdaftar</h3>
-          <p>Hubungi administrator untuk mendaftarkan data operator Anda.</p>
-        </div>
-
-        <!-- Operator Info Card -->
-        <div v-else>
-          <div class="operator-info-card">
-            <div class="operator-avatar">
-              {{ authStore.user?.fullName?.charAt(0).toUpperCase() }}
-            </div>
-            <div class="operator-details">
-              <h2>{{ authStore.user?.fullName }}</h2>
-              <p>{{ dashboard.operator.department?.name }} · {{ dashboard.operator.shift?.name }}</p>
-              <p class="employee-id">ID: {{ dashboard.operator.employeeId }} · {{ dashboard.operator.position }}</p>
-            </div>
-            <div class="operator-ranking">
-              <div class="rank-number">
-                #{{ dashboard.summary.ranking }}
-              </div>
-              <div class="rank-label">Peringkat</div>
-            </div>
-          </div>
-
-          <!-- Personal KPI Cards -->
-          <div class="kpi-grid">
-            <div class="kpi-card green">
-              <div class="kpi-icon">
-                <ion-icon :icon="trophyOutline"></ion-icon>
-              </div>
-              <div class="kpi-content">
-                <h3>{{ dashboard.summary.totalMerit }}</h3>
-                <p>Total Poin Merit</p>
-              </div>
-            </div>
-
-            <div class="kpi-card red">
-              <div class="kpi-icon">
-                <ion-icon :icon="alertCircleOutline"></ion-icon>
-              </div>
-              <div class="kpi-content">
-                <h3>{{ dashboard.summary.totalMisconduct }}</h3>
-                <p>Total Poin Misconduct</p>
-              </div>
-            </div>
-
-            <div class="kpi-card blue">
-              <div class="kpi-icon">
-                <ion-icon :icon="starOutline"></ion-icon>
-              </div>
-              <div class="kpi-content">
-                <h3>{{ dashboard.summary.performanceScore.toFixed(1) }}</h3>
-                <p>Skor Kinerja</p>
-              </div>
-            </div>
-
-            <div class="kpi-card purple">
-              <div class="kpi-icon">
-                <ion-icon :icon="ribbonOutline"></ion-icon>
-              </div>
-              <div class="kpi-content">
-                <h3>#{{ dashboard.summary.ranking }}</h3>
-                <p>Peringkat Anda</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Personal Activities -->
-          <div class="activities-grid">
-            <!-- Personal Merits -->
-            <div class="activity-card">
-              <div class="activity-header">
-                <h2><ion-icon :icon="trophyOutline" class="head-icon merit"></ion-icon>Merit Saya</h2>
-                <ion-badge color="success">{{ dashboard.recentMerits?.length || 0 }}</ion-badge>
-              </div>
-              <div class="activity-list">
-                <div v-if="!dashboard.recentMerits?.length" class="empty-state">
-                  <p>Belum ada merit tercatat</p>
-                </div>
-                <div
-                  v-for="merit in dashboard.recentMerits"
-                  :key="merit.id"
-                  class="activity-item merit"
-                >
-                  <div class="activity-avatar">
-                    <ion-icon :icon="trophyOutline"></ion-icon>
-                  </div>
-                  <div class="activity-info">
-                    <h4>{{ merit.meritType }}</h4>
-                    <p>{{ merit.description }}</p>
-                    <span class="timestamp">{{ formatDate(merit.createdAt) }}</span>
-                  </div>
-                  <div class="activity-points">+{{ merit.points }}</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Personal Misconducts -->
-            <div class="activity-card">
-              <div class="activity-header">
-                <h2><ion-icon :icon="alertCircleOutline" class="head-icon misconduct"></ion-icon>Misconduct Saya</h2>
-                <ion-badge color="danger">{{ dashboard.recentMisconducts?.length || 0 }}</ion-badge>
-              </div>
-              <div class="activity-list">
-                <div v-if="!dashboard.recentMisconducts?.length" class="empty-state">
-                  <p>Belum ada misconduct tercatat</p>
-                </div>
-                <div
-                  v-for="misc in dashboard.recentMisconducts"
-                  :key="misc.id"
-                  class="activity-item misconduct"
-                >
-                  <div class="activity-avatar">
-                    <ion-icon :icon="alertCircleOutline"></ion-icon>
-                  </div>
-                  <div class="activity-info">
-                    <h4>{{ misc.misconductType }}</h4>
-                    <p>{{ misc.description }}</p>
-                    <span class="timestamp">{{ formatDate(misc.createdAt) }}</span>
-                  </div>
-                  <div class="activity-points">-{{ misc.points }}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ======================================================= -->
-      <!-- MANAGEMENT KPI DASHBOARD VIEW                            -->
-      <!-- ======================================================= -->
-      <div v-else class="dashboard-container">
-        <!-- Header Section -->
-        <div class="dashboard-header">
-          <h1>Selamat datang, {{ authStore.user?.fullName }}</h1>
-          <p class="subtitle">{{ currentDate }}</p>
-        </div>
-
-        <!-- KPI Cards -->
-        <div class="kpi-grid">
-          <div class="kpi-card blue">
-            <div class="kpi-icon">
-              <ion-icon :icon="peopleOutline"></ion-icon>
-            </div>
-            <div class="kpi-content">
-              <h3>{{ dashboard?.summary.totalOperators || 0 }}</h3>
-              <p>Total Operator</p>
-            </div>
-          </div>
-
-          <div class="kpi-card green">
-            <div class="kpi-icon">
-              <ion-icon :icon="trophyOutline"></ion-icon>
-            </div>
-            <div class="kpi-content">
-              <h3>{{ dashboard?.summary.totalMerits || 0 }}</h3>
-              <p>Total Merit</p>
-            </div>
-          </div>
-
-          <div class="kpi-card red">
-            <div class="kpi-icon">
-              <ion-icon :icon="alertCircleOutline"></ion-icon>
-            </div>
-            <div class="kpi-content">
-              <h3>{{ dashboard?.summary.totalMisconducts || 0 }}</h3>
-              <p>Total Misconduct</p>
-            </div>
-          </div>
-
-          <div class="kpi-card purple">
-            <div class="kpi-icon">
-              <ion-icon :icon="cubeOutline"></ion-icon>
-            </div>
-            <div class="kpi-content">
-              <h3>{{ dashboard?.summary.totalBlocks || 0 }}</h3>
-              <p>Blok Blockchain</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Charts Section -->
-        <div class="charts-grid">
-          <div class="chart-card">
-            <div class="chart-header">
-              <h2>Tren Kinerja</h2>
-              <ion-select v-model="chartPeriod" @ionChange="loadChartData">
-                <ion-select-option value="daily">Harian</ion-select-option>
-                <ion-select-option value="weekly">Mingguan</ion-select-option>
-                <ion-select-option value="monthly">Bulanan</ion-select-option>
-              </ion-select>
-            </div>
-            <canvas ref="performanceChart"></canvas>
-          </div>
-
-          <div class="chart-card">
-            <div class="chart-header">
-              <h2>Merit vs Misconduct</h2>
-            </div>
-            <canvas ref="pieChart"></canvas>
-          </div>
-        </div>
-
-        <!-- Top Performers Section -->
-        <div class="section-card">
-          <div class="section-header">
-            <h2><ion-icon :icon="trophyOutline" class="head-icon rank"></ion-icon>5 Operator Terbaik</h2>
-            <ion-button fill="clear" size="small" @click="viewAllOperators">
-              Lihat Semua
-            </ion-button>
-          </div>
-          <div class="performers-list">
-            <div
-              v-for="(op, index) in dashboard?.topPerformers"
-              :key="op.id"
-              class="performer-item"
+      <!-- ================= Glassmorphism Topbar ================= -->
+      <div class="topbar">
+        <div class="topbar-inner mx-auto flex max-w-[1400px] items-center justify-between gap-3">
+          <h1 class="text-lg font-semibold text-[#111827]">
+            {{ isOperatorView ? 'Dashboard Kinerja Saya' : 'Dashboard KPI' }}
+          </h1>
+          <div class="flex items-center gap-2">
+            <button
+              @click="refresh"
+              aria-label="Muat ulang dashboard"
+              class="flex h-9 w-9 items-center justify-center rounded-lg border border-[#e5e7eb] bg-white text-[#6b7280] shadow-sm transition-colors hover:text-[#111827]"
             >
-              <div class="rank" :class="getRankClass(index)">
-                {{ index + 1 }}
-              </div>
-              <div class="performer-info">
-                <h3>{{ op.user.fullName }}</h3>
-                <p>{{ op.department?.name }} - {{ op.productionLine?.name }}</p>
-              </div>
-              <div class="performer-score">
-                <div class="score">{{ op.performanceScore }}</div>
-                <div class="badges">
-                  <span class="badge green">+{{ op.totalMerit }}</span>
-                  <span class="badge red">-{{ op.totalMisconduct }}</span>
-                </div>
-              </div>
-            </div>
-            <div v-if="!dashboard?.topPerformers?.length" class="empty-state">
-              <p>Belum ada data operator</p>
+              <ion-icon :icon="refreshOutline" class="text-lg"></ion-icon>
+            </button>
+            <div class="inline-flex w-fit items-center gap-2 rounded-lg border border-[#e5e7eb] bg-white px-3 py-2 text-sm text-[#6b7280] shadow-sm">
+              <ion-icon :icon="calendarOutline" class="text-base text-[#6b7280]"></ion-icon>
+              {{ currentDate }}
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Recent Activities -->
-        <div class="activities-grid">
-          <div class="activity-card">
-            <div class="activity-header">
-              <h2><ion-icon :icon="trophyOutline" class="head-icon merit"></ion-icon>Merit Terbaru</h2>
-              <ion-badge color="success">
-                {{ dashboard?.recentMerits?.length || 0 }}
-              </ion-badge>
+      <!-- Loading State -->
+      <div v-if="loading" class="flex h-[60vh] flex-col items-center justify-center gap-4">
+        <div class="h-9 w-9 animate-spin rounded-full border-2 border-[#e5e7eb] border-t-[#ef4444]"></div>
+        <p class="text-sm text-[#6b7280]">Memuat dashboard…</p>
+      </div>
+
+      <div v-else class="mx-auto max-w-[1400px] space-y-6 p-4 sm:p-6">
+        <p class="text-sm text-[#6b7280]">Selamat datang, {{ authStore.user?.fullName }}</p>
+
+        <!-- ======================================================= -->
+        <!-- OPERATOR PERSONAL DASHBOARD VIEW                         -->
+        <!-- ======================================================= -->
+        <template v-if="isOperatorView">
+          <!-- No Operator Record Warning -->
+          <div v-if="!dashboard?.operator" class="rounded-xl border border-[#e5e7eb] bg-white p-12 text-center shadow-sm">
+            <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#f8fafc] text-[#6b7280]">
+              <ion-icon :icon="personOutline" class="text-2xl"></ion-icon>
             </div>
-            <div class="activity-list">
-              <div v-if="!dashboard?.recentMerits?.length" class="empty-state">
-                <p>Belum ada merit tercatat</p>
+            <h3 class="mt-4 text-lg font-semibold text-[#111827]">Profil Operator Belum Terdaftar</h3>
+            <p class="mt-1 text-sm text-[#6b7280]">Hubungi administrator untuk mendaftarkan data operator Anda.</p>
+          </div>
+
+          <template v-else>
+            <!-- Operator Identity Card -->
+            <div class="flex flex-col gap-4 rounded-xl border border-[#e5e7eb] bg-white p-5 shadow-sm sm:flex-row sm:items-center">
+              <div class="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-[#f8fafc] text-xl font-bold text-[#111827] ring-1 ring-[#e5e7eb]">
+                {{ getInitial(authStore.user?.fullName) }}
+              </div>
+              <div class="min-w-0 flex-1">
+                <h2 class="text-lg font-bold text-[#111827]">{{ authStore.user?.fullName }}</h2>
+                <p class="text-sm text-[#6b7280]">{{ dashboard.operator.department?.name }} · {{ dashboard.operator.shift?.name }}</p>
+                <p class="mt-0.5 text-xs text-[#6b7280]">ID: {{ dashboard.operator.employeeId }} · {{ dashboard.operator.position }}</p>
+              </div>
+              <div class="flex-shrink-0 rounded-lg bg-[#f8fafc] px-5 py-3 text-center">
+                <div class="text-2xl font-bold leading-none text-[#111827]">#{{ dashboard.summary.ranking }}</div>
+                <div class="mt-1 text-xs text-[#6b7280]">Peringkat</div>
+              </div>
+            </div>
+
+            <!-- Personal Stat Cards -->
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div
+                v-for="stat in operatorStats"
+                :key="stat.label"
+                class="rounded-xl border border-[#e5e7eb] bg-white p-5 shadow-sm"
+              >
+                <div class="flex items-center gap-3">
+                  <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#f8fafc] text-[#6b7280] ring-1 ring-[#e5e7eb]">
+                    <ion-icon :icon="stat.icon" class="text-[18px]"></ion-icon>
+                  </div>
+                  <span class="text-sm font-medium text-[#6b7280]">{{ stat.label }}</span>
+                </div>
+                <div class="mt-4 text-3xl font-bold text-[#111827]">{{ stat.value }}</div>
+                <p class="mt-1 text-xs text-[#6b7280]">{{ stat.hint }}</p>
+              </div>
+            </div>
+
+            <!-- Personal Activity Feed -->
+            <div class="rounded-xl border border-[#e5e7eb] bg-white p-5 shadow-sm">
+              <div class="mb-4 flex items-center justify-between">
+                <h2 class="text-base font-semibold text-[#111827]">Aktivitas Terbaru</h2>
+              </div>
+              <div v-if="!activityFeed.length" class="py-10 text-center text-sm text-[#6b7280]">
+                Belum ada aktivitas tercatat
+              </div>
+              <div v-else>
+                <!-- column header -->
+                <div class="-mx-5 hidden items-center gap-3 border-b border-[#e5e7eb] px-5 pb-2 text-xs font-medium text-[#6b7280] sm:flex">
+                  <span class="w-9"></span>
+                  <span class="flex-1">Aktivitas</span>
+                  <span class="w-28">Tanggal</span>
+                  <span class="w-24">Jenis</span>
+                  <span class="w-16 text-right">Poin</span>
+                </div>
+                <div
+                  v-for="item in activityFeed"
+                  :key="item.id"
+                  class="-mx-5 flex items-center gap-3 border-b border-[#e5e7eb] px-5 py-3 transition-colors last:border-0 hover:bg-[#f8fafc]"
+                >
+                  <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[#f8fafc] text-sm font-semibold text-[#6b7280] ring-1 ring-[#e5e7eb]">
+                    {{ getInitial(item.name) }}
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <div class="truncate text-sm font-medium text-[#111827]">{{ item.name }}</div>
+                    <div v-if="item.detail" class="truncate text-xs text-[#6b7280]">{{ item.detail }}</div>
+                  </div>
+                  <span class="hidden w-28 text-xs text-[#6b7280] sm:block">{{ formatDate(item.createdAt) }}</span>
+                  <span class="w-24">
+                    <span
+                      class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium"
+                      :class="item.kind === 'Merit' ? 'bg-[#ecfdf5] text-[#10b981]' : 'bg-[#fef2f2] text-[#ef4444]'"
+                    >{{ item.kind }}</span>
+                  </span>
+                  <span
+                    class="w-16 text-right text-sm font-semibold"
+                    :class="item.kind === 'Merit' ? 'text-[#10b981]' : 'text-[#ef4444]'"
+                  >{{ item.kind === 'Merit' ? '+' : '-' }}{{ item.points }}</span>
+                </div>
+              </div>
+            </div>
+          </template>
+        </template>
+
+        <!-- ======================================================= -->
+        <!-- MANAGEMENT KPI DASHBOARD VIEW                            -->
+        <!-- ======================================================= -->
+        <template v-else>
+          <!-- Stat Cards -->
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div
+              v-for="stat in managementStats"
+              :key="stat.label"
+              class="rounded-xl border border-[#e5e7eb] bg-white p-5 shadow-sm"
+            >
+              <div class="flex items-center gap-3">
+                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#f8fafc] text-[#6b7280] ring-1 ring-[#e5e7eb]">
+                  <ion-icon :icon="stat.icon" class="text-[18px]"></ion-icon>
+                </div>
+                <span class="text-sm font-medium text-[#6b7280]">{{ stat.label }}</span>
+              </div>
+              <div class="mt-4 text-3xl font-bold text-[#111827]">{{ stat.value }}</div>
+              <p class="mt-1 text-xs text-[#6b7280]">{{ stat.hint }}</p>
+            </div>
+          </div>
+
+          <!-- Charts Row -->
+          <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <!-- Performance Trend -->
+            <div class="rounded-xl border border-[#e5e7eb] bg-white p-5 shadow-sm lg:col-span-2">
+              <div class="mb-4 flex items-center justify-between">
+                <h2 class="text-base font-semibold text-[#111827]">Tren Kinerja</h2>
+                <select
+                  v-model="chartPeriod"
+                  @change="loadChartData"
+                  class="rounded-lg border border-[#e5e7eb] bg-white px-3 py-1.5 text-sm text-[#111827] outline-none focus:ring-2 focus:ring-[#ef4444]/30"
+                >
+                  <option value="daily">Harian</option>
+                  <option value="weekly">Mingguan</option>
+                  <option value="monthly">Bulanan</option>
+                </select>
+              </div>
+              <div class="relative h-[280px]">
+                <canvas ref="performanceChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Merit vs Misconduct Donut -->
+            <div class="rounded-xl border border-[#e5e7eb] bg-white p-5 shadow-sm lg:col-span-1">
+              <div class="mb-4 flex items-center justify-between">
+                <h2 class="text-base font-semibold text-[#111827]">Merit vs Misconduct</h2>
+              </div>
+              <div class="relative h-[280px]">
+                <canvas ref="pieChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Activity Feed + Top Performers -->
+          <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <!-- Activity Feed (Transactions style) -->
+            <div class="rounded-xl border border-[#e5e7eb] bg-white p-5 shadow-sm lg:col-span-2">
+              <div class="mb-4 flex items-center justify-between">
+                <h2 class="text-base font-semibold text-[#111827]">Aktivitas Terbaru</h2>
+                <button
+                  @click="viewAllOperators"
+                  class="text-sm font-medium text-[#6b7280] transition-colors hover:text-[#111827]"
+                >
+                  Lihat Semua
+                </button>
+              </div>
+              <div v-if="!activityFeed.length" class="py-10 text-center text-sm text-[#6b7280]">
+                Belum ada aktivitas tercatat
+              </div>
+              <div v-else>
+                <div class="-mx-5 hidden items-center gap-3 border-b border-[#e5e7eb] px-5 pb-2 text-xs font-medium text-[#6b7280] sm:flex">
+                  <span class="w-9"></span>
+                  <span class="flex-1">Operator</span>
+                  <span class="w-28">Tanggal</span>
+                  <span class="w-24">Jenis</span>
+                  <span class="w-16 text-right">Poin</span>
+                </div>
+                <div
+                  v-for="item in activityFeed"
+                  :key="item.id"
+                  class="-mx-5 flex items-center gap-3 border-b border-[#e5e7eb] px-5 py-3 transition-colors last:border-0 hover:bg-[#f8fafc]"
+                >
+                  <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[#f8fafc] text-sm font-semibold text-[#6b7280] ring-1 ring-[#e5e7eb]">
+                    {{ getInitial(item.name) }}
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <div class="truncate text-sm font-medium text-[#111827]">{{ item.name }}</div>
+                    <div v-if="item.detail" class="truncate text-xs text-[#6b7280]">{{ item.detail }}</div>
+                  </div>
+                  <span class="hidden w-28 text-xs text-[#6b7280] sm:block">{{ formatDate(item.createdAt) }}</span>
+                  <span class="w-24">
+                    <span
+                      class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium"
+                      :class="item.kind === 'Merit' ? 'bg-[#ecfdf5] text-[#10b981]' : 'bg-[#fef2f2] text-[#ef4444]'"
+                    >{{ item.kind }}</span>
+                  </span>
+                  <span
+                    class="w-16 text-right text-sm font-semibold"
+                    :class="item.kind === 'Merit' ? 'text-[#10b981]' : 'text-[#ef4444]'"
+                  >{{ item.kind === 'Merit' ? '+' : '-' }}{{ item.points }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Top Performers (Income Sources style list) -->
+            <div class="rounded-xl border border-[#e5e7eb] bg-white p-5 shadow-sm lg:col-span-1">
+              <div class="mb-4 flex items-center justify-between">
+                <h2 class="text-base font-semibold text-[#111827]">5 Operator Terbaik</h2>
+                <button
+                  @click="viewAllOperators"
+                  class="text-sm font-medium text-[#6b7280] transition-colors hover:text-[#111827]"
+                >
+                  Lihat Semua
+                </button>
+              </div>
+              <div v-if="!dashboard?.topPerformers?.length" class="py-10 text-center text-sm text-[#6b7280]">
+                Belum ada data operator
+              </div>
+              <div v-else class="space-y-4">
+                <div
+                  v-for="(op, index) in dashboard.topPerformers"
+                  :key="op.id"
+                  class="flex flex-col gap-2"
+                >
+                  <div class="flex items-center gap-3">
+                    <div class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#f8fafc] text-xs font-semibold text-[#6b7280] ring-1 ring-[#e5e7eb]">
+                      {{ index + 1 }}
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <div class="truncate text-sm font-medium text-[#111827]">{{ op.user.fullName }}</div>
+                      <div class="truncate text-xs text-[#6b7280]">{{ op.department?.name }} · {{ op.productionLine?.name }}</div>
+                    </div>
+                    <span class="text-sm font-semibold text-[#111827]">{{ op.performanceScore }}</span>
+                  </div>
+                  <div class="h-1.5 overflow-hidden rounded-full bg-[#f1f5f9]">
+                    <div
+                      class="h-full rounded-full bg-[#111827]"
+                      :style="{ width: Math.round((op.performanceScore / maxPerformerScore) * 100) + '%' }"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pending Approvals -->
+          <div v-if="hasPendingApprovals" class="rounded-xl border border-[#e5e7eb] bg-white p-5 shadow-sm">
+            <div class="mb-4 flex items-center gap-2">
+              <ion-icon :icon="timeOutline" class="text-base text-[#6b7280]"></ion-icon>
+              <h2 class="text-base font-semibold text-[#111827]">Menunggu Persetujuan</h2>
+            </div>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div
+                v-if="dashboard?.summary.pendingMerits > 0"
+                class="flex items-center justify-between rounded-lg border border-[#e5e7eb] bg-[#f8fafc] p-4"
+              >
+                <div>
+                  <div class="text-2xl font-bold text-[#111827]">{{ dashboard.summary.pendingMerits }}</div>
+                  <p class="mt-0.5 text-sm text-[#6b7280]">Persetujuan Merit</p>
+                </div>
+                <button class="rounded-lg bg-[#ef4444] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#dc2626]">
+                  Tinjau
+                </button>
               </div>
               <div
-                v-for="merit in dashboard?.recentMerits"
-                :key="merit.id"
-                class="activity-item merit"
+                v-if="dashboard?.summary.pendingMisconducts > 0"
+                class="flex items-center justify-between rounded-lg border border-[#e5e7eb] bg-[#f8fafc] p-4"
               >
-                <div class="activity-avatar">
-                  <ion-icon :icon="trophyOutline"></ion-icon>
+                <div>
+                  <div class="text-2xl font-bold text-[#111827]">{{ dashboard.summary.pendingMisconducts }}</div>
+                  <p class="mt-0.5 text-sm text-[#6b7280]">Persetujuan Misconduct</p>
                 </div>
-                <div class="activity-info">
-                  <h4>{{ merit.operator.user.fullName }}</h4>
-                  <p>{{ merit.meritType }}</p>
-                  <span class="timestamp">{{ formatDate(merit.createdAt) }}</span>
-                </div>
-                <div class="activity-points">+{{ merit.points }}</div>
+                <button class="rounded-lg bg-[#ef4444] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#dc2626]">
+                  Tinjau
+                </button>
               </div>
             </div>
           </div>
-
-          <div class="activity-card">
-            <div class="activity-header">
-              <h2><ion-icon :icon="alertCircleOutline" class="head-icon misconduct"></ion-icon>Misconduct Terbaru</h2>
-              <ion-badge color="danger">
-                {{ dashboard?.recentMisconducts?.length || 0 }}
-              </ion-badge>
-            </div>
-            <div class="activity-list">
-              <div v-if="!dashboard?.recentMisconducts?.length" class="empty-state">
-                <p>Belum ada misconduct tercatat</p>
-              </div>
-              <div
-                v-for="misc in dashboard?.recentMisconducts"
-                :key="misc.id"
-                class="activity-item misconduct"
-              >
-                <div class="activity-avatar">
-                  <ion-icon :icon="alertCircleOutline"></ion-icon>
-                </div>
-                <div class="activity-info">
-                  <h4>{{ misc.operator.user.fullName }}</h4>
-                  <p>{{ misc.misconductType }}</p>
-                  <span class="timestamp">{{ formatDate(misc.createdAt) }}</span>
-                </div>
-                <div class="activity-points">-{{ misc.points }}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Pending Approvals -->
-        <div class="section-card" v-if="hasPendingApprovals">
-          <div class="section-header">
-            <h2><ion-icon :icon="timeOutline" class="head-icon neutral"></ion-icon>Menunggu Persetujuan</h2>
-          </div>
-          <div class="pending-grid">
-            <div class="pending-card" v-if="dashboard?.summary.pendingMerits > 0">
-              <ion-icon :icon="timeOutline" color="warning"></ion-icon>
-              <h3>{{ dashboard.summary.pendingMerits }}</h3>
-              <p>Persetujuan Merit</p>
-              <ion-button size="small" fill="outline">Tinjau</ion-button>
-            </div>
-            <div class="pending-card" v-if="dashboard?.summary.pendingMisconducts > 0">
-              <ion-icon :icon="timeOutline" color="danger"></ion-icon>
-              <h3>{{ dashboard.summary.pendingMisconducts }}</h3>
-              <p>Persetujuan Misconduct</p>
-              <ion-button size="small" fill="outline">Tinjau</ion-button>
-            </div>
-          </div>
-        </div>
+        </template>
       </div>
     </ion-content>
   </ion-page>
@@ -364,18 +316,8 @@ import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import {
   IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
-  IonButtons,
-  IonButton,
-  IonIcon,
-  IonSpinner,
-  IonSelect,
-  IonSelectOption,
-  IonBadge,
-  IonMenuButton
+  IonIcon
 } from '@ionic/vue';
 import {
   refreshOutline,
@@ -386,7 +328,8 @@ import {
   timeOutline,
   personOutline,
   starOutline,
-  ribbonOutline
+  ribbonOutline,
+  calendarOutline
 } from 'ionicons/icons';
 import { Chart, registerables } from 'chart.js';
 import { dashboardService } from '@/services/dashboard.service';
@@ -427,6 +370,48 @@ const hasPendingApprovals = computed(() => {
     (dashboard.value?.summary.pendingMerits || 0) > 0 ||
     (dashboard.value?.summary.pendingMisconducts || 0) > 0
   );
+});
+
+const managementStats = computed(() => [
+  { label: 'Total Operator', value: dashboard.value?.summary.totalOperators || 0, hint: 'Operator terdaftar', icon: peopleOutline },
+  { label: 'Total Merit', value: dashboard.value?.summary.totalMerits || 0, hint: 'Penghargaan tercatat', icon: trophyOutline },
+  { label: 'Total Misconduct', value: dashboard.value?.summary.totalMisconducts || 0, hint: 'Pelanggaran tercatat', icon: alertCircleOutline },
+  { label: 'Blok Blockchain', value: dashboard.value?.summary.totalBlocks || 0, hint: 'Jejak audit terverifikasi', icon: cubeOutline }
+]);
+
+const operatorStats = computed(() => [
+  { label: 'Total Poin Merit', value: dashboard.value?.summary.totalMerit ?? 0, hint: 'Akumulasi penghargaan', icon: trophyOutline },
+  { label: 'Total Poin Misconduct', value: dashboard.value?.summary.totalMisconduct ?? 0, hint: 'Akumulasi pelanggaran', icon: alertCircleOutline },
+  { label: 'Skor Kinerja', value: (dashboard.value?.summary.performanceScore ?? 0).toFixed(1), hint: 'Skor periode berjalan', icon: starOutline },
+  { label: 'Peringkat Anda', value: '#' + (dashboard.value?.summary.ranking ?? 0), hint: 'Posisi di antara operator', icon: ribbonOutline }
+]);
+
+// Unified Merit + Misconduct activity feed (works for both operator and management payloads)
+const activityFeed = computed(() => {
+  const merits = (dashboard.value?.recentMerits || []).map((m: any) => ({
+    id: 'merit-' + m.id,
+    kind: 'Merit' as const,
+    name: m.operator?.user?.fullName || m.meritType,
+    detail: m.operator?.user?.fullName ? m.meritType : (m.description || ''),
+    points: m.points,
+    createdAt: m.createdAt
+  }));
+  const misconducts = (dashboard.value?.recentMisconducts || []).map((m: any) => ({
+    id: 'misc-' + m.id,
+    kind: 'Misconduct' as const,
+    name: m.operator?.user?.fullName || m.misconductType,
+    detail: m.operator?.user?.fullName ? m.misconductType : (m.description || ''),
+    points: m.points,
+    createdAt: m.createdAt
+  }));
+  return [...merits, ...misconducts].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+});
+
+const maxPerformerScore = computed(() => {
+  const scores = (dashboard.value?.topPerformers || []).map((o: any) => o.performanceScore || 0);
+  return Math.max(1, ...scores);
 });
 
 const loadDashboard = async () => {
@@ -537,6 +522,7 @@ const createPieChart = () => {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      cutout: '68%',
       plugins: { legend: { display: true, position: 'bottom' } }
     }
   });
@@ -556,12 +542,7 @@ const updatePerformanceChart = (data: any) => {
   performanceChartInstance.update();
 };
 
-const getRankClass = (index: number) => {
-  if (index === 0) return 'gold';
-  if (index === 1) return 'silver';
-  if (index === 2) return 'bronze';
-  return '';
-};
+const getInitial = (name?: string) => (name?.charAt(0)?.toUpperCase() || '?');
 
 const formatDate = (date: string) => {
   const d = new Date(date);
@@ -592,434 +573,33 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* Ionic owns the scroll-host background; this is the one thing Tailwind can't set
+   (the section canvas behind the white cards). Everything else is Tailwind. */
 .dashboard-content {
-  --background: #f5f7fa;
+  --background: #f8fafc;
 }
 
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  gap: 1rem;
+/* Glassmorphism topbar — sticky to the top of the ion-content scroll area. */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.75);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
-.dashboard-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 1.5rem;
+/* Mobile (<768px): clear the fixed sidebar launcher at top-left.
+   Desktop (>=768px): the launcher is gone, so the title reclaims the gutter. */
+.topbar-inner {
+  padding: 0.75rem 1rem 0.75rem 4rem;
 }
 
-.dashboard-header {
-  margin-bottom: 2rem;
-}
-
-.dashboard-header h1 {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 0.5rem;
-}
-
-.dashboard-header .subtitle {
-  color: #6b7280;
-  font-size: 0.875rem;
-}
-
-/* ======================================== */
-/* Operator Info Card                        */
-/* ======================================== */
-.operator-info-card {
-  background: linear-gradient(135deg, #1e3a5f 0%, #1a56a0 100%);
-  border-radius: 16px;
-  padding: 1.75rem;
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 8px 24px rgba(30, 58, 95, 0.25);
-}
-
-.operator-avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.2);
-  border: 3px solid rgba(255,255,255,0.4);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 1.75rem;
-  flex-shrink: 0;
-}
-
-.operator-details {
-  flex: 1;
-  color: white;
-}
-
-.operator-details h2 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin: 0 0 0.25rem 0;
-}
-
-.operator-details p {
-  font-size: 0.875rem;
-  margin: 0;
-  opacity: 0.85;
-}
-
-.employee-id {
-  font-size: 0.75rem !important;
-  opacity: 0.65 !important;
-  margin-top: 0.25rem !important;
-}
-
-.operator-ranking {
-  text-align: center;
-  background: rgba(255,255,255,0.15);
-  border-radius: 12px;
-  padding: 1rem 1.5rem;
-  color: white;
-  flex-shrink: 0;
-}
-
-.rank-number {
-  font-size: 2rem;
-  font-weight: 800;
-  line-height: 1;
-}
-
-.rank-label {
-  font-size: 0.75rem;
-  opacity: 0.8;
-  margin-top: 0.25rem;
-}
-
-/* No Operator Card */
-.no-operator-card {
-  background: white;
-  border-radius: 12px;
-  padding: 3rem;
-  text-align: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  margin-bottom: 2rem;
-}
-
-.no-operator-card h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #374151;
-  margin: 1rem 0 0.5rem;
-}
-
-.no-operator-card p {
-  color: #6b7280;
-  font-size: 0.875rem;
-}
-
-/* ======================================== */
-/* KPI Cards                                */
-/* ======================================== */
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.kpi-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-}
-
-.kpi-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.kpi-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-}
-
-/* Flat semantic fills — one color per role (DESIGN.md §5: no multi-step gradients). */
-.kpi-card.blue .kpi-icon {
-  background: #3b82f6;
-  color: white;
-}
-
-.kpi-card.green .kpi-icon {
-  background: #10b981;
-  color: white;
-}
-
-.kpi-card.red .kpi-icon {
-  background: #ef4444;
-  color: white;
-}
-
-.kpi-card.purple .kpi-icon {
-  background: #8b5cf6;
-  color: white;
-}
-
-.kpi-content h3 {
-  font-size: 2rem;
-  font-weight: 700;
-  margin: 0;
-  color: #1f2937;
-}
-
-.kpi-content p {
-  font-size: 0.875rem;
-  color: #6b7280;
-  margin: 0;
-}
-
-/* ======================================== */
-/* Charts                                   */
-/* ======================================== */
-.charts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.chart-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.chart-header h2 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1f2937;
-  margin: 0;
-}
-
-.chart-card canvas {
-  max-height: 300px;
-}
-
-/* ======================================== */
-/* Section Cards                            */
-/* ======================================== */
-.section-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.section-header h2 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #1f2937;
-  margin: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-/* Leading section icons — Ionicons replace the former emoji indicators
-   (DESIGN.md: emoji → Ionicons + semantic color). */
-.head-icon { font-size: 1.2rem; flex-shrink: 0; }
-.head-icon.merit       { color: #10b981; }
-.head-icon.misconduct  { color: #ef4444; }
-.head-icon.rank        { color: #374151; }
-.head-icon.neutral     { color: #6b7280; }
-
-/* ======================================== */
-/* Performers List                          */
-/* ======================================== */
-.performers-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.performer-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  background: #f9fafb;
-  border-radius: 8px;
-  transition: background 0.2s ease-out;
-}
-
-.performer-item:hover {
-  background: #f3f4f6;
-}
-
-.rank {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 1.25rem;
-  background: #e5e7eb;
-  color: #6b7280;
-}
-
-/* Flat medal fills; dark/white text chosen per fill for ≥3:1 on the rank numeral. */
-.rank.gold   { background: #fbbf24; color: #1f2937; }
-.rank.silver { background: #cbd5e1; color: #1f2937; }
-.rank.bronze { background: #d97706; color: #ffffff; }
-
-.performer-info { flex: 1; }
-.performer-info h3 { font-size: 1rem; font-weight: 600; color: #1f2937; margin: 0 0 0.25rem 0; }
-.performer-info p  { font-size: 0.875rem; color: #6b7280; margin: 0; }
-
-.performer-score { text-align: right; }
-.performer-score .score { font-size: 1.5rem; font-weight: 700; color: #1f2937; margin-bottom: 0.5rem; }
-.performer-score .badges { display: flex; gap: 0.5rem; }
-
-.badge { padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
-.badge.green { background: #d1fae5; color: #065f46; }
-.badge.red   { background: #fee2e2; color: #991b1b; }
-
-/* ======================================== */
-/* Activities                               */
-/* ======================================== */
-.activities-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.activity-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.activity-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.activity-header h2 { font-size: 1.125rem; font-weight: 600; color: #1f2937; margin: 0; display: inline-flex; align-items: center; gap: 0.5rem; }
-
-.activity-list { display: flex; flex-direction: column; gap: 0.75rem; }
-
-.activity-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  border-radius: 8px;
-}
-
-.activity-item.merit     { background: #ecfdf5; }
-.activity-item.misconduct{ background: #fef2f2; }
-
-.activity-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-}
-
-.activity-item.merit     .activity-avatar { background: #10b981; color: white; }
-.activity-item.misconduct .activity-avatar { background: #ef4444; color: white; }
-
-.activity-info { flex: 1; }
-.activity-info h4 { font-size: 0.875rem; font-weight: 600; color: #1f2937; margin: 0 0 0.25rem 0; }
-.activity-info p  { font-size: 0.75rem; color: #6b7280; margin: 0 0 0.25rem 0; }
-.activity-info .timestamp { font-size: 0.75rem; color: #6b7280; }
-
-.activity-points { font-size: 1rem; font-weight: 700; }
-.activity-item.merit     .activity-points { color: #10b981; }
-.activity-item.misconduct .activity-points { color: #ef4444; }
-
-/* Empty State */
-.empty-state {
-  text-align: center;
-  padding: 2rem;
-  color: #6b7280;
-  font-size: 0.875rem;
-}
-
-/* ======================================== */
-/* Pending                                  */
-/* ======================================== */
-.pending-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
-
-.pending-card {
-  padding: 1.5rem;
-  background: #fef3c7;
-  border-radius: 8px;
-  text-align: center;
-}
-
-.pending-card ion-icon { font-size: 2rem; margin-bottom: 0.5rem; }
-.pending-card h3 { font-size: 2rem; font-weight: 700; color: #1f2937; margin: 0.5rem 0; }
-.pending-card p  { font-size: 0.875rem; color: #6b7280; margin: 0 0 1rem 0; }
-
-/* ======================================== */
-/* Responsive                               */
-/* ======================================== */
-@media (max-width: 768px) {
-  .dashboard-container { padding: 1rem; }
-  .kpi-grid, .charts-grid, .activities-grid { grid-template-columns: 1fr; }
-  .operator-info-card { flex-direction: column; text-align: center; }
-}
-
-/* ======================================== */
-/* Reduced Motion                            */
-/* ======================================== */
-@media (prefers-reduced-motion: reduce) {
-  .kpi-card,
-  .performer-item {
-    transition: none;
-  }
-  .kpi-card:hover {
-    transform: none;
+@media (min-width: 768px) {
+  .topbar-inner {
+    padding: 0.75rem 1.5rem;
   }
 }
 </style>

@@ -1,113 +1,151 @@
 <template>
   <ion-app>
-    <!-- Sidemenu: always an overlay drawer, opened by the hamburger (ion-menu-button)
-         in each page's header. No ion-split-pane — the rail must never auto-reveal. -->
-    <ion-menu v-if="authStore.isAuthenticated" content-id="main-content" type="overlay">
-        <div class="sidebar-container">
-          <!-- Top Brand Header (PT Bridgestone style) -->
-          <div class="brand-header">
+    <div class="app-shell">
+      <!-- ============ Collapsible Sidebar (custom, replaces ion-menu) ============ -->
+      <aside
+        v-if="authStore.isAuthenticated"
+        class="sidebar"
+        :class="{ collapsed: collapsed && !isMobile, 'mobile-open': mobileOpen }"
+      >
+        <!-- Brand + Toggle -->
+        <div class="brand-header">
+          <div class="brand-row">
             <div class="logo-circle">B</div>
             <div class="brand-info">
               <h2>PT Bridgestone</h2>
               <p>Tire Indonesia</p>
             </div>
-            <div class="red-bar"></div>
+            <button
+              class="toggle-btn"
+              @click="toggleSidebar"
+              :aria-label="(collapsed && !isMobile) ? 'Perluas sidebar' : 'Ciutkan sidebar'"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <path d="M9 3v18" />
+                <path :d="(collapsed && !isMobile) ? 'M14 9l3 3-3 3' : 'M15 9l-3 3 3 3'" />
+              </svg>
+            </button>
           </div>
+        </div>
 
-          <!-- User Profile Section -->
-          <div class="user-profile-section" v-if="authStore.user">
-            <div class="user-avatar">
-              {{ authStore.user.fullName.charAt(0).toUpperCase() }}
-            </div>
-            <div class="user-details">
-              <h3>{{ authStore.user.fullName }}</h3>
-              <p class="user-email">{{ authStore.user.email }}</p>
-              <div class="badge-container">
-                <span 
-                  v-for="role in authStore.user.roles" 
-                  :key="role" 
-                  class="role-badge"
-                  :class="getRoleBadgeClass(role)"
-                >
-                  {{ role }}
-                </span>
-              </div>
-            </div>
+        <!-- User Profile -->
+        <div class="user-profile-section" v-if="authStore.user">
+          <div class="user-avatar">
+            {{ authStore.user.fullName.charAt(0).toUpperCase() }}
           </div>
-
-          <!-- Navigation Items List -->
-          <div class="nav-content">
-            <div class="menu-section-title">MAIN NAVIGATION</div>
-            <div class="nav-list">
-              <ion-menu-toggle :auto-hide="false" v-for="item in filteredMenuItems" :key="item.path">
-                <div
-                  class="nav-item"
-                  :class="{ active: router.currentRoute.value.path === item.path }"
-                  :aria-current="router.currentRoute.value.path === item.path ? 'page' : undefined"
-                  tabindex="0"
-                  role="link"
-                  @click="navigateTo(item.path)"
-                  @keydown.enter="navigateTo(item.path)"
-                  @keydown.space.prevent="navigateTo(item.path)"
-                >
-                  <ion-icon :icon="item.icon" class="nav-icon"></ion-icon>
-                  <span class="nav-label">{{ item.title }}</span>
-                  <div class="active-indicator"></div>
-                </div>
-              </ion-menu-toggle>
-            </div>
-          </div>
-
-          <!-- Sidebar Footer -->
-          <div class="sidebar-footer">
-            <ion-menu-toggle :auto-hide="false">
-              <div class="logout-btn" @click="handleLogout">
-                <ion-icon :icon="logOutOutline" class="logout-icon"></ion-icon>
-                <span>Sign Out</span>
-              </div>
-            </ion-menu-toggle>
-            <div class="system-status">
-              <div class="status-dot"></div>
-              <span>Blockchain: Connected</span>
+          <div class="user-details">
+            <h3>{{ authStore.user.fullName }}</h3>
+            <p class="user-email">{{ authStore.user.email }}</p>
+            <div class="badge-container">
+              <span
+                v-for="role in authStore.user.roles"
+                :key="role"
+                class="role-badge"
+                :class="getRoleBadgeClass(role)"
+              >
+                {{ role }}
+              </span>
             </div>
           </div>
         </div>
-      </ion-menu>
+
+        <!-- Navigation -->
+        <div class="nav-content">
+          <div class="menu-section-title">MAIN NAVIGATION</div>
+          <div class="nav-list">
+            <div
+              v-for="item in filteredMenuItems"
+              :key="item.path"
+              class="nav-item"
+              :class="{ active: router.currentRoute.value.path === item.path }"
+              :aria-current="router.currentRoute.value.path === item.path ? 'page' : undefined"
+              tabindex="0"
+              role="link"
+              @click="navigateTo(item.path)"
+              @keydown.enter="navigateTo(item.path)"
+              @keydown.space.prevent="navigateTo(item.path)"
+              @mouseenter="showTip($event, item.title)"
+              @mouseleave="hideTip"
+            >
+              <ion-icon :icon="item.icon" class="nav-icon"></ion-icon>
+              <span class="nav-label">{{ item.title }}</span>
+              <div class="active-indicator"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="sidebar-footer">
+          <div
+            class="logout-btn"
+            @click="handleLogout"
+            @mouseenter="showTip($event, 'Sign Out')"
+            @mouseleave="hideTip"
+          >
+            <ion-icon :icon="logOutOutline" class="logout-icon"></ion-icon>
+            <span class="logout-label">Sign Out</span>
+          </div>
+          <div class="system-status">
+            <div class="status-dot"></div>
+            <span class="status-label">Blockchain: Connected</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Collapsed-rail hover tooltip (rendered outside the clipping scroll area) -->
+      <div v-if="tip" class="nav-tooltip" :style="{ top: tip.y + 'px' }">{{ tip.label }}</div>
+
+      <!-- Mobile backdrop -->
+      <div
+        v-if="authStore.isAuthenticated && isMobile && mobileOpen"
+        class="sidebar-backdrop"
+        @click="mobileOpen = false"
+      ></div>
+
+      <!-- Mobile launcher (the panel toggle, surfaced when the drawer is closed) -->
+      <button
+        v-if="authStore.isAuthenticated && isMobile && !mobileOpen"
+        class="mobile-launcher"
+        aria-label="Buka sidebar"
+        @click="mobileOpen = true"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <path d="M9 3v18" />
+          <path d="M14 9l3 3-3 3" />
+        </svg>
+      </button>
 
       <!-- Main Content Outlet -->
-      <div id="main-content" class="main-content">
+      <main class="main-area">
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">
             <component :is="Component" />
           </transition>
         </router-view>
-      </div>
+      </main>
+    </div>
   </ion-app>
 </template>
 
 <script setup lang="ts">
-import {
-  IonApp,
-  IonMenu,
-  IonIcon,
-  IonMenuToggle
-} from '@ionic/vue';
-import { onMounted, computed } from 'vue';
+import { IonApp, IonIcon } from '@ionic/vue';
+import { onMounted, onUnmounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { useSocketStore } from '@/stores/socket';
-import { 
-  gridOutline, 
-  peopleOutline, 
-  shieldCheckmarkOutline, 
-  cubeOutline, 
-  barChartOutline, 
-  checkmarkCircleOutline, 
-  alertCircleOutline, 
-  documentTextOutline, 
-  addCircleOutline, 
-  listOutline, 
-  personOutline, 
+import {
+  gridOutline,
+  peopleOutline,
+  shieldCheckmarkOutline,
+  cubeOutline,
+  barChartOutline,
+  alertCircleOutline,
+  documentTextOutline,
+  addCircleOutline,
+  listOutline,
+  personOutline,
   ribbonOutline,
   logOutOutline
 } from 'ionicons/icons';
@@ -116,92 +154,50 @@ const authStore = useAuthStore();
 const socketStore = useSocketStore();
 const router = useRouter();
 
+// ---- Sidebar collapse / responsive state ----
+const collapsed = ref(false);
+const mobileOpen = ref(false);
+const isMobile = ref(false);
+const tip = ref<{ label: string; y: number } | null>(null);
+
+let mql: MediaQueryList | null = null;
+const handleViewportChange = (e: MediaQueryListEvent | MediaQueryList) => {
+  isMobile.value = e.matches;
+  if (!e.matches) mobileOpen.value = false; // leaving mobile closes the drawer
+};
+
+const toggleSidebar = () => {
+  if (isMobile.value) {
+    mobileOpen.value = !mobileOpen.value;
+  } else {
+    collapsed.value = !collapsed.value;
+    localStorage.setItem('sidebar-collapsed', String(collapsed.value));
+  }
+};
+
+const showTip = (e: MouseEvent, label: string) => {
+  if (!collapsed.value || isMobile.value) return;
+  const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+  tip.value = { label, y: rect.top + rect.height / 2 };
+};
+const hideTip = () => { tip.value = null; };
+
 // Seeding all possible menu items
 const allMenuItems = [
-  {
-    title: 'Dashboard KPI',
-    path: '/dashboard',
-    icon: gridOutline,
-    roles: ['Super Admin', 'Manager', 'Staff Produksi', 'Operator']
-  },
-  {
-    title: 'Kelola User',
-    path: '/users',
-    icon: peopleOutline,
-    roles: ['Super Admin']
-  },
-  {
-    title: 'Kelola Role',
-    path: '/roles',
-    icon: shieldCheckmarkOutline,
-    roles: ['Super Admin']
-  },
-  {
-    title: 'Kelola Permission',
-    path: '/permissions',
-    icon: shieldCheckmarkOutline,
-    roles: ['Super Admin']
-  },
-  {
-    title: 'Monitoring Kinerja',
-    path: '/operators',
-    icon: barChartOutline,
-    roles: ['Staff Produksi']
-  },
-  {
-    title: 'Kinerja Saya',
-    path: '/my-performance',
-    icon: barChartOutline,
-    roles: ['Operator']
-  },
-  {
-    title: 'Merit List',
-    path: '/merit',
-    icon: listOutline,
-    roles: ['Staff Produksi', 'Foreman', 'Operator']
-  },
-  {
-    title: 'Input Merit',
-    path: '/merit/create',
-    icon: addCircleOutline,
-    roles: ['Foreman']
-  },
-  {
-    title: 'Misconduct List',
-    path: '/misconduct',
-    icon: listOutline,
-    roles: ['Staff Produksi', 'Foreman', 'Operator']
-  },
-  {
-    title: 'Input Misconduct',
-    path: '/misconduct/create',
-    icon: alertCircleOutline,
-    roles: ['Foreman']
-  },
-  {
-    title: 'Blockchain Integrity',
-    path: '/blockchain',
-    icon: cubeOutline,
-    roles: ['Super Admin', 'Manager']
-  },
-  {
-    title: 'Export Laporan',
-    path: '/reports',
-    icon: documentTextOutline,
-    roles: ['Staff Produksi', 'Super Admin']
-  },
-  {
-    title: 'Ranking Kinerja',
-    path: '/ranking',
-    icon: ribbonOutline,
-    roles: ['Operator', 'Super Admin', 'Staff Produksi']
-  },
-  {
-    title: 'My Profile',
-    path: '/profile',
-    icon: personOutline,
-    roles: ['Super Admin', 'Manager', 'Staff Produksi', 'Foreman', 'Operator']
-  }
+  { title: 'Dashboard KPI', path: '/dashboard', icon: gridOutline, roles: ['Super Admin', 'Manager', 'Staff Produksi', 'Operator'] },
+  { title: 'Kelola User', path: '/users', icon: peopleOutline, roles: ['Super Admin'] },
+  { title: 'Kelola Role', path: '/roles', icon: shieldCheckmarkOutline, roles: ['Super Admin'] },
+  { title: 'Kelola Permission', path: '/permissions', icon: shieldCheckmarkOutline, roles: ['Super Admin'] },
+  { title: 'Monitoring Kinerja', path: '/operators', icon: barChartOutline, roles: ['Staff Produksi'] },
+  { title: 'Kinerja Saya', path: '/my-performance', icon: barChartOutline, roles: ['Operator'] },
+  { title: 'Merit List', path: '/merit', icon: listOutline, roles: ['Staff Produksi', 'Foreman', 'Operator'] },
+  { title: 'Input Merit', path: '/merit/create', icon: addCircleOutline, roles: ['Foreman'] },
+  { title: 'Misconduct List', path: '/misconduct', icon: listOutline, roles: ['Staff Produksi', 'Foreman', 'Operator'] },
+  { title: 'Input Misconduct', path: '/misconduct/create', icon: alertCircleOutline, roles: ['Foreman'] },
+  { title: 'Blockchain Integrity', path: '/blockchain', icon: cubeOutline, roles: ['Super Admin', 'Manager'] },
+  { title: 'Export Laporan', path: '/reports', icon: documentTextOutline, roles: ['Staff Produksi', 'Super Admin'] },
+  { title: 'Ranking Kinerja', path: '/ranking', icon: ribbonOutline, roles: ['Operator', 'Super Admin', 'Staff Produksi'] },
+  { title: 'My Profile', path: '/profile', icon: personOutline, roles: ['Super Admin', 'Manager', 'Staff Produksi', 'Foreman', 'Operator'] }
 ];
 
 // Computed list filtered by authenticated user's roles
@@ -218,19 +214,32 @@ const getRoleBadgeClass = (role: string) => {
 
 const navigateTo = (path: string) => {
   router.push(path);
+  if (isMobile.value) mobileOpen.value = false;
 };
 
 const handleLogout = () => {
   authStore.logout();
   router.push('/login');
+  if (isMobile.value) mobileOpen.value = false;
 };
 
 onMounted(() => {
+  // Restore persisted collapse preference (desktop)
+  collapsed.value = localStorage.getItem('sidebar-collapsed') === 'true';
+
+  // Responsive watch
+  mql = window.matchMedia('(max-width: 767px)');
+  isMobile.value = mql.matches;
+  mql.addEventListener('change', handleViewportChange);
+
   // Auth is already initialized in main.ts before router resolves
-  // Just connect socket if already authenticated
   if (authStore.isAuthenticated) {
     socketStore.connect();
   }
+});
+
+onUnmounted(() => {
+  mql?.removeEventListener('change', handleViewportChange);
 });
 </script>
 
@@ -238,39 +247,83 @@ onMounted(() => {
 /* Import global style variables if any */
 @import './assets/styles/global.css';
 
-/* Custom Sidemenu Styling */
-.sidebar-container {
+/* ============ App Shell ============ */
+.app-shell {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+
+/* Main content area is the positioned containing block for the routed
+   .ion-page (which is position:absolute inset:0). */
+.main-area {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* ============ Sidebar ============ */
+.sidebar {
+  flex-shrink: 0;
+  width: 240px;
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #111827; /* Dark charcoal */
+  background: #111827; /* Dark rail */
   color: #f3f4f6;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   border-right: 1px solid #1f2937;
+  transition: width 200ms ease, transform 200ms ease;
+  z-index: 60;
+}
+
+.sidebar.collapsed {
+  width: 64px;
 }
 
 /* Brand Header */
 .brand-header {
   position: relative;
+  padding: 1rem;
+  background: #1f2937;
+}
+
+.brand-header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  background: #ef4444; /* Bridgestone red strip */
+}
+
+.brand-row {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 1.5rem;
-  background: #1f2937;
 }
 
 .logo-circle {
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  background: #ef4444; /* Bridgestone Red */
+  background: #ef4444;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
   font-size: 1.25rem;
   color: white;
+  flex-shrink: 0;
   box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
+  transition: width 200ms ease, height 200ms ease, font-size 200ms ease;
+}
+
+.brand-info {
+  flex: 1;
+  overflow: hidden;
 }
 
 .brand-info h2 {
@@ -279,6 +332,7 @@ onMounted(() => {
   margin: 0;
   color: white;
   line-height: 1.2;
+  white-space: nowrap;
 }
 
 .brand-info p {
@@ -287,15 +341,40 @@ onMounted(() => {
   margin: 0;
   letter-spacing: 0.05em;
   font-weight: 500;
+  white-space: nowrap;
 }
 
-.red-bar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: #ef4444; /* Bridgestone red strip */
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #9ca3af;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+/* Collapsed brand: stack toggle above the centered logo, hide text */
+.sidebar.collapsed .brand-row {
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.sidebar.collapsed .toggle-btn { order: -1; }
+.sidebar.collapsed .brand-info { display: none; }
+.sidebar.collapsed .logo-circle {
+  width: 32px;
+  height: 32px;
+  font-size: 1.1rem;
 }
 
 /* User Profile Section */
@@ -319,6 +398,7 @@ onMounted(() => {
   justify-content: center;
   font-weight: 700;
   font-size: 1.25rem;
+  flex-shrink: 0;
   box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
 }
 
@@ -361,41 +441,25 @@ onMounted(() => {
   letter-spacing: 0.025em;
 }
 
-.role-badge.superadmin {
-  background: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.3);
-}
+.role-badge.superadmin { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+.role-badge.hrd        { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+.role-badge.manager    { background: rgba(139, 92, 246, 0.15); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3); }
+.role-badge.supervisor { background: rgba(249, 115, 22, 0.15); color: #ff9736; border: 1px solid rgba(249, 115, 22, 0.3); }
+.role-badge.operator   { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
 
-.role-badge.hrd {
-  background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+/* Collapsed profile: avatar only */
+.sidebar.collapsed .user-profile-section {
+  justify-content: center;
+  padding: 1rem 0;
 }
-
-.role-badge.manager {
-  background: rgba(139, 92, 246, 0.15);
-  color: #a78bfa;
-  border: 1px solid rgba(139, 92, 246, 0.3);
-}
-
-.role-badge.supervisor {
-  background: rgba(249, 115, 22, 0.15);
-  color: #ff9736;
-  border: 1px solid rgba(249, 115, 22, 0.3);
-}
-
-.role-badge.operator {
-  background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
-  border: 1px solid rgba(59, 130, 246, 0.3);
-}
+.sidebar.collapsed .user-details { display: none; }
 
 /* Navigation Content */
 .nav-content {
   flex: 1;
   padding: 1.5rem 0;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .menu-section-title {
@@ -406,6 +470,7 @@ onMounted(() => {
   letter-spacing: 0.1em;
   margin-bottom: 0.75rem;
 }
+.sidebar.collapsed .menu-section-title { display: none; }
 
 .nav-list {
   display: flex;
@@ -421,7 +486,7 @@ onMounted(() => {
   padding: 0.85rem 1.5rem;
   color: #9ca3af;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: background 0.25s ease, color 0.25s ease, padding 0.25s ease;
   font-size: 0.9rem;
   font-weight: 500;
   outline: none;
@@ -436,7 +501,7 @@ onMounted(() => {
 .nav-item:hover {
   background: rgba(31, 41, 55, 0.5);
   color: #ffffff;
-  padding-left: 1.75rem; /* Micro slide */
+  padding-left: 1.75rem;
 }
 
 .nav-item.active {
@@ -447,15 +512,20 @@ onMounted(() => {
 
 .nav-icon {
   font-size: 1.25rem;
+  flex-shrink: 0;
   transition: transform 0.25s ease;
 }
 
-.nav-item:hover .nav-icon {
-  transform: scale(1.1);
-}
+.nav-item:hover .nav-icon { transform: scale(1.1); }
+.nav-item.active .nav-icon { color: #ef4444; }
 
-.nav-item.active .nav-icon {
-  color: #ef4444; /* active indicator icon */
+.nav-label {
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 180px;
+  opacity: 1;
+  /* fade in on expand, after the width has opened up */
+  transition: opacity 150ms ease 150ms, max-width 200ms ease;
 }
 
 .active-indicator {
@@ -468,9 +538,36 @@ onMounted(() => {
   opacity: 0;
   transition: opacity 0.25s ease;
 }
+.nav-item.active .active-indicator { opacity: 1; }
 
-.nav-item.active .active-indicator {
-  opacity: 1;
+/* Collapsed nav: center icons, clip labels */
+.sidebar.collapsed .nav-item {
+  justify-content: center;
+  gap: 0;
+  padding: 0.85rem 0;
+}
+.sidebar.collapsed .nav-item:hover { padding-left: 0; }
+.sidebar.collapsed .nav-label {
+  max-width: 0;
+  opacity: 0;
+  transition: opacity 80ms ease, max-width 200ms ease;
+}
+
+/* Collapsed-rail hover tooltip */
+.nav-tooltip {
+  position: fixed;
+  left: 72px;
+  transform: translateY(-50%);
+  background: #1f2937;
+  color: #ffffff;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  z-index: 70;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
 }
 
 /* Sidebar Footer */
@@ -493,7 +590,7 @@ onMounted(() => {
   cursor: pointer;
   font-weight: 600;
   font-size: 0.9rem;
-  transition: all 0.25s ease;
+  transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .logout-btn:hover {
@@ -502,8 +599,14 @@ onMounted(() => {
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
 }
 
-.logout-icon {
-  font-size: 1.2rem;
+.logout-icon { font-size: 1.2rem; flex-shrink: 0; }
+
+.logout-label {
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 120px;
+  opacity: 1;
+  transition: opacity 150ms ease 150ms, max-width 200ms ease;
 }
 
 .system-status {
@@ -522,19 +625,60 @@ onMounted(() => {
   border-radius: 50%;
   background: #10b981;
   box-shadow: 0 0 8px #10b981;
+  flex-shrink: 0;
 }
 
-/* Main Content Area — with no split-pane, this element takes over filling
-   ion-app. The routed `.ion-page` is position:absolute inset:0, so #main-content
-   must be a sized, positioned containing block of its own. */
-.main-content {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow-y: auto;
-  background: #f5f7fa;
+.status-label { white-space: nowrap; }
+
+/* Collapsed footer */
+.sidebar.collapsed .sidebar-footer { padding: 1rem 0.5rem; }
+.sidebar.collapsed .logout-btn { padding: 0.75rem 0; }
+.sidebar.collapsed .logout-label {
+  max-width: 0;
+  opacity: 0;
+  transition: opacity 80ms ease, max-width 200ms ease;
+}
+.sidebar.collapsed .status-label { display: none; }
+
+/* ============ Mobile drawer ============ */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 55;
+}
+
+.mobile-launcher {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 50;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #111827;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 767px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 240px;
+    transform: translateX(-100%);
+  }
+  .sidebar.mobile-open {
+    transform: translateX(0);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.35);
+  }
 }
 
 /* Page Transition */
