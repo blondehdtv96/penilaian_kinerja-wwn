@@ -7,7 +7,7 @@
         class="sidebar"
         :class="{ collapsed: collapsed && !isMobile, 'mobile-open': mobileOpen }"
       >
-        <!-- Brand + Toggle -->
+        <!-- Brand (toggle now lives in the topbar) -->
         <div class="brand-header">
           <div class="brand-row">
             <div class="logo-circle">B</div>
@@ -15,17 +15,6 @@
               <h2>PT Bridgestone</h2>
               <p>Tire Indonesia</p>
             </div>
-            <button
-              class="toggle-btn"
-              @click="toggleSidebar"
-              :aria-label="(collapsed && !isMobile) ? 'Perluas sidebar' : 'Ciutkan sidebar'"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-                <path d="M9 3v18" />
-                <path :d="(collapsed && !isMobile) ? 'M14 9l3 3-3 3' : 'M15 9l-3 3 3 3'" />
-              </svg>
-            </button>
           </div>
         </div>
 
@@ -100,22 +89,8 @@
       <div
         v-if="authStore.isAuthenticated && isMobile && mobileOpen"
         class="sidebar-backdrop"
-        @click="mobileOpen = false"
+        @click="closeMobile"
       ></div>
-
-      <!-- Mobile launcher (the panel toggle, surfaced when the drawer is closed) -->
-      <button
-        v-if="authStore.isAuthenticated && isMobile && !mobileOpen"
-        class="mobile-launcher"
-        aria-label="Buka sidebar"
-        @click="mobileOpen = true"
-      >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="2" />
-          <path d="M9 3v18" />
-          <path d="M14 9l3 3-3 3" />
-        </svg>
-      </button>
 
       <!-- Main Content Outlet -->
       <main class="main-area">
@@ -135,6 +110,7 @@ import { onMounted, onUnmounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { useSocketStore } from '@/stores/socket';
+import { useSidebar } from '@/composables/useSidebar';
 import {
   gridOutline,
   peopleOutline,
@@ -154,26 +130,9 @@ const authStore = useAuthStore();
 const socketStore = useSocketStore();
 const router = useRouter();
 
-// ---- Sidebar collapse / responsive state ----
-const collapsed = ref(false);
-const mobileOpen = ref(false);
-const isMobile = ref(false);
+// ---- Sidebar collapse / responsive state (shared with the topbar toggle) ----
+const { collapsed, mobileOpen, isMobile, init: initSidebar, teardown: teardownSidebar, closeMobile } = useSidebar();
 const tip = ref<{ label: string; y: number } | null>(null);
-
-let mql: MediaQueryList | null = null;
-const handleViewportChange = (e: MediaQueryListEvent | MediaQueryList) => {
-  isMobile.value = e.matches;
-  if (!e.matches) mobileOpen.value = false; // leaving mobile closes the drawer
-};
-
-const toggleSidebar = () => {
-  if (isMobile.value) {
-    mobileOpen.value = !mobileOpen.value;
-  } else {
-    collapsed.value = !collapsed.value;
-    localStorage.setItem('sidebar-collapsed', String(collapsed.value));
-  }
-};
 
 const showTip = (e: MouseEvent, label: string) => {
   if (!collapsed.value || isMobile.value) return;
@@ -214,23 +173,17 @@ const getRoleBadgeClass = (role: string) => {
 
 const navigateTo = (path: string) => {
   router.push(path);
-  if (isMobile.value) mobileOpen.value = false;
+  closeMobile();
 };
 
 const handleLogout = () => {
   authStore.logout();
   router.push('/login');
-  if (isMobile.value) mobileOpen.value = false;
+  closeMobile();
 };
 
 onMounted(() => {
-  // Restore persisted collapse preference (desktop)
-  collapsed.value = localStorage.getItem('sidebar-collapsed') === 'true';
-
-  // Responsive watch
-  mql = window.matchMedia('(max-width: 767px)');
-  isMobile.value = mql.matches;
-  mql.addEventListener('change', handleViewportChange);
+  initSidebar();
 
   // Auth is already initialized in main.ts before router resolves
   if (authStore.isAuthenticated) {
@@ -239,7 +192,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  mql?.removeEventListener('change', handleViewportChange);
+  teardownSidebar();
 });
 </script>
 
@@ -252,15 +205,22 @@ onUnmounted(() => {
   position: absolute;
   inset: 0;
   display: flex;
+  /* Dark rail color fills the gap around the floating content panel. */
+  background: #111827;
 }
 
-/* Main content area is the positioned containing block for the routed
-   .ion-page (which is position:absolute inset:0). */
+/* Main content area floats above the dark rail as a rounded panel, and is the
+   positioned containing block for the routed .ion-page (position:absolute inset:0). */
 .main-area {
   position: relative;
   flex: 1;
   min-width: 0;
   overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.10);
+  background: #f8fafc;
+  margin: 8px;
+  z-index: 1;
 }
 
 /* ============ Sidebar ============ */
@@ -275,7 +235,8 @@ onUnmounted(() => {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   border-right: 1px solid #1f2937;
   transition: width 200ms ease, transform 200ms ease;
-  z-index: 60;
+  /* Desktop: behind the floating content panel. Mobile overrides to overlay. */
+  z-index: 0;
 }
 
 .sidebar.collapsed {
@@ -344,32 +305,10 @@ onUnmounted(() => {
   white-space: nowrap;
 }
 
-.toggle-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.06);
-  color: #9ca3af;
-  border: none;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
-}
-
-/* Collapsed brand: stack toggle above the centered logo, hide text */
+/* Collapsed brand: center the logo, hide text (toggle lives in the topbar now) */
 .sidebar.collapsed .brand-row {
-  flex-direction: column;
-  gap: 0.6rem;
+  justify-content: center;
 }
-.sidebar.collapsed .toggle-btn { order: -1; }
 .sidebar.collapsed .brand-info { display: none; }
 .sidebar.collapsed .logo-circle {
   width: 32px;
@@ -648,24 +587,6 @@ onUnmounted(() => {
   z-index: 55;
 }
 
-.mobile-launcher {
-  position: fixed;
-  top: 0.75rem;
-  left: 0.75rem;
-  z-index: 50;
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #111827;
-  color: #ffffff;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
 @media (max-width: 767px) {
   .sidebar {
     position: fixed;
@@ -674,6 +595,7 @@ onUnmounted(() => {
     bottom: 0;
     width: 240px;
     transform: translateX(-100%);
+    z-index: 60; /* overlay above the backdrop + content on mobile */
   }
   .sidebar.mobile-open {
     transform: translateX(0);

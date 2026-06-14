@@ -4,21 +4,67 @@
       <!-- ================= Glassmorphism Topbar ================= -->
       <div class="topbar">
         <div class="topbar-inner mx-auto flex max-w-[1400px] items-center justify-between gap-3">
-          <h1 class="text-lg font-semibold text-[#111827]">
-            {{ isOperatorView ? 'Dashboard Kinerja Saya' : 'Dashboard KPI' }}
-          </h1>
-          <div class="flex items-center gap-2">
+          <!-- Left: panel toggle + page title -->
+          <div class="flex items-center gap-3">
             <button
-              @click="refresh"
-              aria-label="Muat ulang dashboard"
-              class="flex h-9 w-9 items-center justify-center rounded-lg border border-[#e5e7eb] bg-white text-[#6b7280] shadow-sm transition-colors hover:text-[#111827]"
+              @click="toggle"
+              :aria-label="(isMobile ? !mobileOpen : collapsed) ? 'Perluas sidebar' : 'Ciutkan sidebar'"
+              class="flex h-9 w-9 items-center justify-center rounded-lg text-[#6b7280] transition-colors hover:bg-[#f1f5f9] hover:text-[#111827]"
             >
-              <ion-icon :icon="refreshOutline" class="text-lg"></ion-icon>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <path d="M9 3v18" />
+                <path :d="(isMobile ? !mobileOpen : collapsed) ? 'M14 9l3 3-3 3' : 'M15 9l-3 3 3 3'" />
+              </svg>
             </button>
-            <div class="inline-flex w-fit items-center gap-2 rounded-lg border border-[#e5e7eb] bg-white px-3 py-2 text-sm text-[#6b7280] shadow-sm">
+            <h1 class="text-lg font-semibold text-[#111827]">
+              {{ isOperatorView ? 'Dashboard Kinerja Saya' : 'Dashboard KPI' }}
+            </h1>
+          </div>
+
+          <!-- Right: date pill + utilities -->
+          <div class="flex items-center gap-1">
+            <div class="mr-1 inline-flex w-fit items-center gap-2 rounded-lg border border-[#e5e7eb] bg-white px-3 py-2 text-sm text-[#6b7280] shadow-sm">
               <ion-icon :icon="calendarOutline" class="text-base text-[#6b7280]"></ion-icon>
               {{ currentDate }}
             </div>
+
+            <!-- Notifications (no route yet — static placeholder with unread dot) -->
+            <button
+              aria-label="Notifikasi"
+              class="relative flex items-center justify-center rounded-lg p-2 text-[#6b7280] transition-colors hover:text-[#111827]"
+            >
+              <ion-icon :icon="notificationsOutline" class="text-xl"></ion-icon>
+              <span class="absolute right-1 top-1 h-2 w-2 rounded-full bg-[#ef4444]"></span>
+            </button>
+
+            <!-- Dark mode (static placeholder) -->
+            <button
+              aria-label="Mode gelap"
+              class="flex items-center justify-center rounded-lg p-2 text-[#6b7280] transition-colors hover:text-[#111827]"
+            >
+              <ion-icon :icon="moonOutline" class="text-xl"></ion-icon>
+            </button>
+
+            <!-- Theme (static placeholder) -->
+            <button
+              aria-label="Tema warna"
+              class="flex items-center justify-center rounded-lg p-2 text-[#6b7280] transition-colors hover:text-[#111827]"
+            >
+              <ion-icon :icon="colorPaletteOutline" class="text-xl"></ion-icon>
+            </button>
+
+            <!-- Divider -->
+            <span class="mx-1 h-5 w-px bg-[#e5e7eb]"></span>
+
+            <!-- User avatar -->
+            <button
+              @click="goToProfile"
+              aria-label="Profil saya"
+              class="flex h-8 w-8 items-center justify-center rounded-full bg-[#ef4444] text-sm font-semibold text-white"
+            >
+              {{ userInitial }}
+            </button>
           </div>
         </div>
       </div>
@@ -320,7 +366,6 @@ import {
   IonIcon
 } from '@ionic/vue';
 import {
-  refreshOutline,
   peopleOutline,
   trophyOutline,
   alertCircleOutline,
@@ -329,16 +374,29 @@ import {
   personOutline,
   starOutline,
   ribbonOutline,
-  calendarOutline
+  calendarOutline,
+  notificationsOutline,
+  moonOutline,
+  colorPaletteOutline
 } from 'ionicons/icons';
 import { Chart, registerables } from 'chart.js';
 import { dashboardService } from '@/services/dashboard.service';
 import { useAuthStore } from '@/stores/auth';
+import { useSidebar } from '@/composables/useSidebar';
 
 Chart.register(...registerables);
 
 const router = useRouter();
 const authStore = useAuthStore();
+
+// Sidebar toggle lives in this topbar now (shared state with App.vue's rail).
+const { collapsed, mobileOpen, isMobile, toggle } = useSidebar();
+
+const userInitial = computed(() =>
+  authStore.user?.fullName?.charAt(0)?.toUpperCase() || '?'
+);
+
+const goToProfile = () => router.push('/profile');
 
 const dashboard = ref<any>(null);
 const loading = ref(false);
@@ -558,10 +616,6 @@ const viewAllOperators = () => {
   router.push('/operators');
 };
 
-const refresh = () => {
-  loadDashboard();
-};
-
 onMounted(() => {
   loadDashboard();
 });
@@ -591,10 +645,8 @@ onUnmounted(() => {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
-/* Mobile (<768px): clear the fixed sidebar launcher at top-left.
-   Desktop (>=768px): the launcher is gone, so the title reclaims the gutter. */
 .topbar-inner {
-  padding: 0.75rem 1rem 0.75rem 4rem;
+  padding: 0.75rem 1rem;
 }
 
 @media (min-width: 768px) {
