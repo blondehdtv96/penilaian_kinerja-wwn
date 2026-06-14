@@ -93,7 +93,7 @@
       ></div>
 
       <!-- Main Content Outlet -->
-      <main class="main-area">
+      <main class="main-area" :class="{ 'main-area--flush': isDashboard }">
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">
             <component :is="Component" />
@@ -129,6 +129,10 @@ import {
 const authStore = useAuthStore();
 const socketStore = useSocketStore();
 const router = useRouter();
+
+// DashboardPage renders its own paper-scroll panel (single rounded surface on a light
+// canvas). Flatten the shell frame for that route only so corners/backgrounds don't stack.
+const isDashboard = computed(() => router.currentRoute.value.name === 'Dashboard');
 
 // ---- Sidebar collapse / responsive state (shared with the topbar toggle) ----
 const { collapsed, mobileOpen, isMobile, init: initSidebar, teardown: teardownSidebar, closeMobile } = useSidebar();
@@ -221,6 +225,16 @@ onUnmounted(() => {
   background: #f8fafc;
   margin: 8px;
   z-index: 1;
+}
+
+/* Dashboard route only: neutralize the shell's frame so the page's own .db-panel is the
+   single rounded surface, floating on a LIGHT canvas (not the dark rail showing through a
+   margin). Keeps overflow:hidden from the base rule, so .db-main remains the sole scroller. */
+.app-shell .main-area--flush {
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: #ffffff;
 }
 
 /* ============ Sidebar ============ */
