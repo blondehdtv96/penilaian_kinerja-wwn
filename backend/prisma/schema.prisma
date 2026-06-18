@@ -9,231 +9,245 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id          Int        @id @default(autoincrement())
-  username    String     @unique
-  email       String     @unique
-  password    String
-  fullName    String
-  isActive    Boolean    @default(true)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  userRoles   UserRole[]
-  auditLogs   AuditLog[]
-  operator    Operator?
-}
+// ================================================================
+// AUTH & RBAC
+// ================================================================
 
 model Role {
-  id              Int              @id @default(autoincrement())
-  name            String           @unique
-  description     String?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  userRoles       UserRole[]
-  rolePermissions RolePermission[]
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  permissions String   @default("[]") // JSON array of permission strings
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  users       User[]
 }
 
-model Permission {
-  id              Int              @id @default(autoincrement())
-  name            String           @unique
-  description     String?
-  module          String
-  createdAt       DateTime         @default(now())
-  rolePermissions RolePermission[]
-}
-
-model UserRole {
+model User {
   id        Int      @id @default(autoincrement())
-  userId    Int
+  username  String   @unique
+  email     String   @unique
+  password  String
+  fullName  String
+  nip       String?  @unique // Nomor Induk Pegawai
+  isActive  Boolean  @default(true)
   roleId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  role      Role     @relation(fields: [roleId], references: [id])
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  operator  Operator?
 
-  @@unique([userId, roleId])
+  // Relations
+  vooSubmissions      VooSubmission[]
+  misconducts         Misconduct[]
+  counselingsGiven    Counseling[]      @relation("CounselingForeman")
+  kartuKuningIssued     KartuKuning[]         @relation("KartuKuningIssuer")
+  suratPeringatanIssued SuratPeringatan[]     @relation("SuratPeringatanIssuer")
+  approvals           Approval[]
+  eventLogs           EventLog[]
+  blockchainHashes    BlockchainHash[]
+  qrScans             QrScanLog[]
 }
 
-model RolePermission {
-  id           Int        @id @default(autoincrement())
-  roleId       Int
-  permissionId Int
-  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
-  createdAt    DateTime   @default(now())
-
-  @@unique([roleId, permissionId])
-}
-
-model Division {
-  id          Int          @id @default(autoincrement())
-  name        String       @unique
-  code        String       @unique
-  description String?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  departments Department[]
-}
-
-model Department {
-  id         Int        @id @default(autoincrement())
-  name       String
-  code       String     @unique
-  divisionId Int
-  division   Division   @relation(fields: [divisionId], references: [id], onDelete: Cascade)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  operators  Operator[]
-}
-
-model Shift {
-  id        Int        @id @default(autoincrement())
-  name      String     @unique
-  startTime String
-  endTime   String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  operators Operator[]
-}
-
-model ProductionLine {
-  id              Int              @id @default(autoincrement())
-  name            String           @unique
-  code            String           @unique
-  description     String?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  operators       Operator[]
-  meritEvents     MeritEvent[]
-  misconductEvents MisconductEvent[]
-}
-
-model Group {
-  id          Int        @id @default(autoincrement())
-  name        String     @unique
-  code        String     @unique
-  description String?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  operators   Operator[]
-}
+// ================================================================
+// OPERATOR
+// ================================================================
 
 model Operator {
-  id                Int                @id @default(autoincrement())
-  employeeId        String             @unique
-  userId            Int                @unique
-  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  departmentId      Int
-  department        Department         @relation(fields: [departmentId], references: [id])
-  shiftId           Int
-  shift             Shift              @relation(fields: [shiftId], references: [id])
-  productionLineId  Int
-  productionLine    ProductionLine     @relation(fields: [productionLineId], references: [id])
-  groupId           Int?
-  group             Group?             @relation(fields: [groupId], references: [id])
-  job               String             @default("operator")
-  qrCode            String             @unique
-  position          String
-  totalMerit        Int                @default(0)
-  totalMisconduct   Int                @default(0)
-  performanceScore  Float              @default(0)
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  meritEvents       MeritEvent[]
-  misconductEvents  MisconductEvent[]
-  performanceLogs   PerformanceLog[]
-  notifications     Notification[]
+  id              Int      @id @default(autoincrement())
+  userId          Int      @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employeeId      String   @unique
+  section         String   @default("")
+  line            String   @default("")
+  group           String   @default("")
+  position        String   @default("Operator")
+  photo           String?  // base64 or file path
+  qrCode          String   @unique // base64 QR image
+  performanceScore Float   @default(0)
+  totalMerit      Int      @default(0)
+  totalMisconduct Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  vooSubmissions  VooSubmission[]
+  misconducts     Misconduct[]
+  counselings     Counseling[]
+  kartuKunings    KartuKuning[]
+  suratPeringatan SuratPeringatan[]
 }
 
-model MeritEvent {
-  id               Int             @id @default(autoincrement())
-  operatorId       Int
-  operator         Operator        @relation(fields: [operatorId], references: [id], onDelete: Cascade)
-  productionLineId Int
-  productionLine   ProductionLine  @relation(fields: [productionLineId], references: [id])
-  meritType        String
-  points           Int
-  description      String
-  approvedBy       String?
-  approvalStatus   String          @default("pending") // pending, approved, rejected
-  eventDate        DateTime        @default(now())
-  createdAt        DateTime        @default(now())
-  blockchainLogs   BlockchainLog[]
+// ================================================================
+// QR LOCATION AREAS
+// ================================================================
+
+model QrLocation {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  code        String   @unique
+  area        String
+  description String?
+  qrImage     String   @unique // base64 QR image
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  scanLogs    QrScanLog[]
 }
 
-model MisconductEvent {
-  id               Int             @id @default(autoincrement())
-  operatorId       Int
-  operator         Operator        @relation(fields: [operatorId], references: [id], onDelete: Cascade)
-  productionLineId Int
-  productionLine   ProductionLine  @relation(fields: [productionLineId], references: [id])
-  misconductType   String
-  severity         String // low, medium, high, critical
-  points           Int
-  description      String
-  approvedBy       String?
-  approvalStatus   String          @default("pending")
-  eventDate        DateTime        @default(now())
-  createdAt        DateTime        @default(now())
-  blockchainLogs   BlockchainLog[]
+model QrScanLog {
+  id           Int        @id @default(autoincrement())
+  userId       Int
+  user         User       @relation(fields: [userId], references: [id])
+  qrLocationId Int
+  qrLocation   QrLocation @relation(fields: [qrLocationId], references: [id])
+  scannedAt    DateTime   @default(now())
 }
 
-model PerformanceLog {
-  id         Int      @id @default(autoincrement())
-  operatorId Int
-  operator   Operator @relation(fields: [operatorId], references: [id], onDelete: Cascade)
-  date       DateTime @default(now())
-  meritScore Int      @default(0)
-  misconductScore Int @default(0)
-  totalScore Float    @default(0)
-  ranking    Int?
-  notes      String?
-  createdAt  DateTime @default(now())
+// ================================================================
+// VOO / IDE KAIZEN SUBMISSION
+// ================================================================
+
+model VooSubmission {
+  id                Int      @id @default(autoincrement())
+  operatorId        Int
+  operator          Operator @relation(fields: [operatorId], references: [id], onDelete: Cascade)
+  submittedById     Int
+  submittedBy       User     @relation(fields: [submittedById], references: [id])
+  title             String
+  description       String
+  type              String   @default("VoO") // VoO or IdeKaizen
+  photos            String   @default("[]") // JSON array of base64 images
+  status            String   @default("pending") // pending, approved_foreman, approved_final, rejected
+  points            Int      @default(0)
+  rejectionReason   String?
+  foremanApprovedBy Int?     // userId of foreman
+  managerApprovedBy Int?     // userId of section manager
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  approvals         Approval[]
+  blockchainHashes  BlockchainHash[]
 }
 
-model BlockchainLog {
-  id                Int              @id @default(autoincrement())
-  blockIndex        Int              @unique
-  previousHash      String
-  currentHash       String           @unique
-  timestamp         DateTime         @default(now())
-  eventType         String // merit, misconduct
-  eventId           Int
-  meritEvent        MeritEvent?      @relation(fields: [meritEventId], references: [id])
-  meritEventId      Int?
-  misconductEvent   MisconductEvent? @relation(fields: [misconductEventId], references: [id])
-  misconductEventId Int?
-  data              String // JSON stringified data
-  nonce             Int              @default(0)
-  isValid           Boolean          @default(true)
-  createdAt         DateTime         @default(now())
+// ================================================================
+// MISCONDUCT
+// ================================================================
 
-  @@index([blockIndex])
-  @@index([currentHash])
+model Misconduct {
+  id              Int      @id @default(autoincrement())
+  operatorId      Int
+  operator        Operator @relation(fields: [operatorId], references: [id], onDelete: Cascade)
+  createdById     Int
+  createdBy       User     @relation(fields: [createdById], references: [id])
+  type            String   // Late Arrival, Safety Violation, etc.
+  severity        String   @default("low") // low, medium, high, critical
+  description     String
+  evidencePhotos  String   @default("[]") // JSON array
+  points          Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  blockchainHashes BlockchainHash[]
 }
 
-model Notification {
-  id         Int      @id @default(autoincrement())
-  operatorId Int
-  operator   Operator @relation(fields: [operatorId], references: [id], onDelete: Cascade)
-  title      String
-  message    String
-  type       String // info, success, warning, error
-  isRead     Boolean  @default(false)
-  createdAt  DateTime @default(now())
+// ================================================================
+// COUNSELING
+// ================================================================
+
+model Counseling {
+  id          Int      @id @default(autoincrement())
+  operatorId  Int
+  operator    Operator @relation(fields: [operatorId], references: [id], onDelete: Cascade)
+  foremanId   Int
+  foreman     User     @relation("CounselingForeman", fields: [foremanId], references: [id])
+  topic       String
+  notes       String   @default("")
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
 }
 
-model AuditLog {
+// ================================================================
+// KARTU KUNING (Yellow Card)
+// ================================================================
+
+model KartuKuning {
+  id          Int      @id @default(autoincrement())
+  operatorId  Int
+  operator    Operator @relation(fields: [operatorId], references: [id], onDelete: Cascade)
+  issuedById  Int
+  issuedBy    User     @relation("KartuKuningIssuer", fields: [issuedById], references: [id])
+  reason      String
+  issuedAt    DateTime @default(now())
+  createdAt   DateTime @default(now())
+}
+
+// ================================================================
+// SURAT PERINGATAN (Warning Letter)
+// ================================================================
+
+model SuratPeringatan {
+  id          Int      @id @default(autoincrement())
+  operatorId  Int
+  operator    Operator @relation(fields: [operatorId], references: [id], onDelete: Cascade)
+  issuedById  Int
+  issuedBy    User     @relation("SuratPeringatanIssuer", fields: [issuedById], references: [id])
+  level       Int      // 1, 2, or 3
+  reason      String
+  issuedAt    DateTime @default(now())
+  createdAt   DateTime @default(now())
+}
+
+// ================================================================
+// APPROVAL (Append Only)
+// ================================================================
+
+model Approval {
+  id            Int      @id @default(autoincrement())
+  entityType    String   // VooSubmission, Misconduct, etc.
+  entityId      Int
+  approverId    Int
+  approver      User     @relation(fields: [approverId], references: [id])
+  action        String   // approve, reject
+  notes         String?
+  vooSubmissionId Int?
+  vooSubmission  VooSubmission? @relation(fields: [vooSubmissionId], references: [id])
+  createdAt     DateTime @default(now())
+}
+
+// ================================================================
+// EVENT LOG (Append Only)
+// ================================================================
+
+model EventLog {
   id        Int      @id @default(autoincrement())
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
-  action    String
-  module    String
+  action    String   // CREATE, UPDATE, DELETE, LOGIN, etc.
+  module    String   // voo, misconduct, auth, etc.
   details   String?
   ipAddress String?
-  userAgent String?
   createdAt DateTime @default(now())
 
   @@index([userId])
   @@index([module])
   @@index([createdAt])
+}
+
+// ================================================================
+// BLOCKCHAIN HASH
+// ================================================================
+
+model BlockchainHash {
+  id              Int      @id @default(autoincrement())
+  entityType      String   // VooSubmission, Misconduct
+  entityId        Int
+  txHash          String?  // Ethereum transaction hash
+  blockNumber     Int?     // Ethereum block number
+  contractAddress String?  // deployed contract address
+  data            String   // SHA-256 hash of the data
+  vooSubmissionId Int?
+  vooSubmission   VooSubmission? @relation(fields: [vooSubmissionId], references: [id])
+  misconductId    Int?
+  misconduct      Misconduct? @relation(fields: [misconductId], references: [id])
+  createdById     Int
+  createdBy       User     @relation(fields: [createdById], references: [id])
+  createdAt       DateTime @default(now())
 }

@@ -1,107 +1,85 @@
 import { Request, Response } from 'express';
 import { MisconductService } from './misconduct.service';
-import { z } from 'zod';
+import { BlockchainService } from '../blockchain/blockchain.service';
 
-const createMisconductSchema = z.object({
-  operatorId: z.number(),
-  productionLineId: z.number(),
-  misconductType: z.string(),
-  severity: z.enum(['low', 'medium', 'high', 'critical']),
-  points: z.number().positive(),
-  description: z.string()
-});
+const service = new MisconductService();
+const blockchain = new BlockchainService();
 
 export class MisconductController {
-  private misconductService = new MisconductService();
-
-  createMisconduct = async (req: Request, res: Response) => {
+  // MISCONDUCT
+  createMisconduct = async (req: any, res: Response) => {
     try {
-      const data = createMisconductSchema.parse(req.body);
-      const misconduct = await this.misconductService.createMisconduct(data);
-
-      res.status(201).json({
-        success: true,
-        data: misconduct
-      });
+      const result = await service.createMisconduct({ ...req.body, createdById: req.user.userId });
+      await blockchain.storeHash('Misconduct', result.id, result, req.user.userId, undefined, result.id);
+      res.status(201).json({ success: true, data: result });
     } catch (error: any) {
-      res.status(400).json({
-        success: false,
-        message: error.message
-      });
-    }
-  };
-
-  approveMisconduct = async (req: Request, res: Response) => {
-    try {
-      const misconductId = parseInt(req.params.id);
-      const approvedBy = (req as any).user.username;
-
-      const misconduct = await this.misconductService.approveMisconduct(misconductId, approvedBy);
-
-      res.json({
-        success: true,
-        data: misconduct
-      });
-    } catch (error: any) {
-      res.status(400).json({
-        success: false,
-        message: error.message
-      });
-    }
-  };
-
-  rejectMisconduct = async (req: Request, res: Response) => {
-    try {
-      const misconductId = parseInt(req.params.id);
-      const approvedBy = (req as any).user.username;
-
-      const misconduct = await this.misconductService.rejectMisconduct(misconductId, approvedBy);
-
-      res.json({
-        success: true,
-        data: misconduct
-      });
-    } catch (error: any) {
-      res.status(400).json({
-        success: false,
-        message: error.message
-      });
-    }
-  };
-
-  getMisconductsByOperator = async (req: Request, res: Response) => {
-    try {
-      const operatorId = parseInt(req.params.operatorId);
-      const status = req.query.status as string;
-
-      const misconducts = await this.misconductService.getMisconductsByOperator(operatorId, status);
-
-      res.json({
-        success: true,
-        data: misconducts
-      });
-    } catch (error: any) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      res.status(500).json({ success: false, message: error.message });
     }
   };
 
   getAllMisconducts = async (req: Request, res: Response) => {
     try {
-      const filters = req.query;
-      const misconducts = await this.misconductService.getAllMisconducts(filters);
-
-      res.json({
-        success: true,
-        data: misconducts
-      });
+      const result = await service.getAllMisconducts(req.query as any);
+      res.json({ success: true, data: result });
     } catch (error: any) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      res.status(500).json({ success: false, message: error.message });
+    }
+  };
+
+  // COUNSELING
+  createCounseling = async (req: any, res: Response) => {
+    try {
+      const result = await service.createCounseling({ ...req.body, foremanId: req.user.userId });
+      res.status(201).json({ success: true, data: result });
+    } catch (error: any) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  };
+
+  getAllCounselings = async (req: Request, res: Response) => {
+    try {
+      const result = await service.getAllCounselings(req.query.operatorId as string);
+      res.json({ success: true, data: result });
+    } catch (error: any) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  };
+
+  // KARTU KUNING
+  createKartuKuning = async (req: any, res: Response) => {
+    try {
+      const result = await service.createKartuKuning({ ...req.body, issuedById: req.user.userId });
+      res.status(201).json({ success: true, data: result });
+    } catch (error: any) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  };
+
+  getAllKartuKuning = async (req: Request, res: Response) => {
+    try {
+      const result = await service.getAllKartuKuning(req.query.operatorId as string);
+      res.json({ success: true, data: result });
+    } catch (error: any) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  };
+
+  // SURAT PERINGATAN
+  createSuratPeringatan = async (req: any, res: Response) => {
+    try {
+      const result = await service.createSuratPeringatan({ ...req.body, issuedById: req.user.userId });
+      res.status(201).json({ success: true, data: result });
+    } catch (error: any) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  };
+
+  getAllSuratPeringatan = async (req: Request, res: Response) => {
+    try {
+      const result = await service.getAllSuratPeringatan(req.query.operatorId as string);
+      res.json({ success: true, data: result });
+    } catch (error: any) {
+      res.status(500).json({ success: false, message: error.message });
     }
   };
 }

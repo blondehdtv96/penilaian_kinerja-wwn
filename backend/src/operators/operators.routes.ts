@@ -3,16 +3,14 @@ import { OperatorController } from './operators.controller';
 import { authMiddleware, checkRole } from '../middleware/auth.middleware';
 
 const router = Router();
-const operatorController = new OperatorController();
+const controller = new OperatorController();
 
 router.use(authMiddleware);
 
-router.post('/', checkRole(['Super Admin', 'Staff Produksi']), operatorController.createOperator);
-router.get('/', operatorController.getAllOperators);
-router.get('/ranking', operatorController.getOperatorRanking);
-router.get('/:id', operatorController.getOperator);
-router.get('/employee/:employeeId', operatorController.getOperatorByEmployeeId);
-router.put('/:id', checkRole(['Super Admin', 'Staff Produksi']), operatorController.updateOperator);
-router.delete('/:id', checkRole(['Super Admin']), operatorController.deleteOperator);
+router.get('/ranking', checkRole(['Section Manager', 'Foreman']), controller.getRanking);
+router.get('/my-profile', checkRole(['Operator']), controller.getMyProfile);
+router.post('/scan-qr', controller.scanQR);
+router.get('/:id', checkRole(['Section Manager', 'Foreman']), controller.getById);
+router.get('/', checkRole(['Section Manager', 'Foreman']), controller.getAll);
 
 export default router;

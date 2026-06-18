@@ -1,342 +1,253 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import QRCode from 'qrcode';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Starting database seeding...');
+  console.log('Seeding database...');
 
   // ================================================================
-  // 1. PERMISSIONS
+  // 1. ROLES (4 roles: Super Admin + 3 operational)
   // ================================================================
-  console.log('Creating permissions...');
-
-  const permissionData = [
-    // User Management
-    { name: 'user.view', description: 'View users', module: 'User Management' },
-    { name: 'user.create', description: 'Create users', module: 'User Management' },
-    { name: 'user.update', description: 'Update users', module: 'User Management' },
-    { name: 'user.delete', description: 'Delete users', module: 'User Management' },
-
-    // Role Management
-    { name: 'role.view', description: 'View roles', module: 'Role Management' },
-    { name: 'role.create', description: 'Create roles', module: 'Role Management' },
-    { name: 'role.update', description: 'Update roles', module: 'Role Management' },
-    { name: 'role.delete', description: 'Delete roles', module: 'Role Management' },
-
-    // Permission Management
-    { name: 'permission.view', description: 'View permissions', module: 'Permission Management' },
-    { name: 'permission.assign', description: 'Assign permissions to roles', module: 'Permission Management' },
-
-    // Operator Management
-    { name: 'operator.view', description: 'View operators', module: 'Operator' },
-    { name: 'operator.create', description: 'Create operators', module: 'Operator' },
-    { name: 'operator.update', description: 'Update operators', module: 'Operator' },
-    { name: 'operator.delete', description: 'Delete operators', module: 'Operator' },
-    { name: 'operator.scan', description: 'Scan QR operator', module: 'Operator' },
-
-    // Merit Management
-    { name: 'merit.view', description: 'View merits', module: 'Merit' },
-    { name: 'merit.create', description: 'Create merits', module: 'Merit' },
-    { name: 'merit.approve', description: 'Approve merits', module: 'Merit' },
-
-    // Misconduct Management
-    { name: 'misconduct.view', description: 'View misconducts', module: 'Misconduct' },
-    { name: 'misconduct.create', description: 'Create misconducts', module: 'Misconduct' },
-    { name: 'misconduct.approve', description: 'Approve misconducts', module: 'Misconduct' },
-
-    // Blockchain
-    { name: 'blockchain.view', description: 'View blockchain', module: 'Blockchain' },
-    { name: 'blockchain.verify', description: 'Verify blockchain integrity', module: 'Blockchain' },
-
-    // Reports
-    { name: 'report.view', description: 'View reports', module: 'Reports' },
-    { name: 'report.export', description: 'Export reports', module: 'Reports' },
-
-    // Dashboard
-    { name: 'dashboard.view', description: 'View dashboard KPI', module: 'Dashboard' },
-    { name: 'dashboard.personal', description: 'View personal dashboard', module: 'Dashboard' },
-
-    // Performance
-    { name: 'performance.self', description: 'View own performance score', module: 'Performance' },
-    { name: 'ranking.view', description: 'View ranking', module: 'Performance' },
-  ];
-
-  const permissions = await Promise.all(
-    permissionData.map(p => prisma.permission.create({ data: p }))
-  );
-
-  console.log(`Created ${permissions.length} permissions`);
-
-  // Helper to find permission by name
-  const perm = (name: string) => permissions.find(p => p.name === name)!;
-
-  // ================================================================
-  // 2. ROLES with exact permission assignments
-  // ================================================================
-  console.log('Creating roles...');
-
-  // Super Admin - Full system access
   const superAdminRole = await prisma.role.create({
     data: {
       name: 'Super Admin',
-      description: 'Full system access - User, Role, Permission management, Blockchain monitoring',
-      rolePermissions: {
-        create: permissions.map(p => ({ permissionId: p.id }))
-      }
+      description: 'Full system access: manage all roles, users, data, settings, audit logs, and blockchain',
+      permissions: JSON.stringify([
+        'super_admin.*', 'admin.*',
+        'voo.create', 'voo.view_own', 'voo.upload',
+        'voo.approve_foreman', 'voo.approve_manager', 'voo.view',
+        'qr.scan', 'qr.view',
+        'merit.view_own', 'merit.create',
+        'misconduct.create', 'misconduct.view', 'misconduct.view_own',
+        'counseling.create', 'counseling.view',
+        'kartu_kuning.create', 'kartu_kuning.view',
+        'surat_peringatan.create', 'surat_peringatan.view',
+        'operator.view', 'operator.monitor',
+        'dashboard.kpi', 'ranking.view',
+        'trend.merit', 'trend.misconduct',
+        'export.pdf', 'export.excel',
+        'evidence.upload',
+        'users.manage', 'roles.manage', 'settings.manage',
+        'audit.view', 'blockchain.view',
+        'profile.view'
+      ])
     }
   });
 
-  // Manager - Dashboard KPI + Audit Blockchain
-  const managerRole = await prisma.role.create({
-    data: {
-      name: 'Manager',
-      description: 'Dashboard KPI and Blockchain audit access',
-      rolePermissions: {
-        create: [
-          { permissionId: perm('dashboard.view').id },
-          { permissionId: perm('blockchain.view').id },
-          { permissionId: perm('blockchain.verify').id },
-        ]
-      }
-    }
-  });
-
-  // Staff Produksi - Monitoring, Dashboard, Approval, Reports
-  const staffProduksiRole = await prisma.role.create({
-    data: {
-      name: 'Staff Produksi',
-      description: 'Monitoring kinerja, approval events, dashboard KPI, export laporan',
-      rolePermissions: {
-        create: [
-          { permissionId: perm('dashboard.view').id },
-          { permissionId: perm('operator.view').id },
-          { permissionId: perm('operator.create').id },
-          { permissionId: perm('operator.update').id },
-          { permissionId: perm('operator.delete').id },
-          { permissionId: perm('merit.view').id },
-          { permissionId: perm('merit.approve').id },
-          { permissionId: perm('misconduct.view').id },
-          { permissionId: perm('misconduct.approve').id },
-          { permissionId: perm('report.view').id },
-          { permissionId: perm('report.export').id },
-          { permissionId: perm('ranking.view').id },
-        ]
-      }
-    }
-  });
-
-  // Foreman - Scan QR, Input Merit/Misconduct
-  const foremanRole = await prisma.role.create({
-    data: {
-      name: 'Foreman',
-      description: 'Scan QR operator, input merit and misconduct events',
-      rolePermissions: {
-        create: [
-          { permissionId: perm('operator.scan').id },
-          { permissionId: perm('operator.view').id },
-          { permissionId: perm('merit.view').id },
-          { permissionId: perm('merit.create').id },
-          { permissionId: perm('misconduct.view').id },
-          { permissionId: perm('misconduct.create').id },
-        ]
-      }
-    }
-  });
-
-  // Operator - View personal score, ranking, QR identity
   const operatorRole = await prisma.role.create({
     data: {
       name: 'Operator',
-      description: 'View personal performance score, ranking, and QR identity',
-      rolePermissions: {
-        create: [
-          { permissionId: perm('dashboard.personal').id },
-          { permissionId: perm('performance.self').id },
-          { permissionId: perm('ranking.view').id },
-          { permissionId: perm('merit.view').id },
-          { permissionId: perm('misconduct.view').id },
-        ]
-      }
+      description: 'Scan QR area, submit VoO/Ide Kaizen, upload photos, view status, merit history',
+      permissions: JSON.stringify([
+        'voo.create', 'voo.view_own', 'voo.upload',
+        'qr.scan', 'merit.view_own', 'misconduct.view_own',
+        'profile.view'
+      ])
     }
   });
 
-  console.log('Created 5 roles');
+  const foremanRole = await prisma.role.create({
+    data: {
+      name: 'Foreman',
+      description: 'Approve VoO, input misconduct/konseling/kartu kuning/SP, upload evidence, monitor operators',
+      permissions: JSON.stringify([
+        'voo.approve_foreman', 'voo.view',
+        'misconduct.create', 'misconduct.view',
+        'counseling.create', 'counseling.view',
+        'kartu_kuning.create', 'kartu_kuning.view',
+        'surat_peringatan.create', 'surat_peringatan.view',
+        'operator.view', 'operator.monitor',
+        'qr.view', 'evidence.upload'
+      ])
+    }
+  });
+
+  const sectionManagerRole = await prisma.role.create({
+    data: {
+      name: 'Section Manager',
+      description: 'Final approval, KPI dashboard, operator ranking, trend analysis, export PDF/Excel',
+      permissions: JSON.stringify([
+        'voo.approve_manager', 'voo.view',
+        'dashboard.kpi', 'ranking.view',
+        'trend.merit', 'trend.misconduct',
+        'export.pdf', 'export.excel',
+        'operator.view', 'misconduct.view',
+        'counseling.view', 'kartu_kuning.view', 'surat_peringatan.view'
+      ])
+    }
+  });
+
+  console.log('Created 4 roles (Super Admin + 3 operational)');
 
   // ================================================================
-  // 3. MASTER DATA (Divisions, Departments, Shifts, Groups, Lines)
+  // 2. USERS
   // ================================================================
-  console.log('Creating master data...');
-
-  // Divisions
-  const productionDiv = await prisma.division.create({
-    data: { name: 'Production Division', code: 'PROD', description: 'Manufacturing & Production' }
-  });
-
-  // Departments
-  const tireManufacturing = await prisma.department.create({
-    data: { name: 'Tire Manufacturing', code: 'TM01', divisionId: productionDiv.id }
-  });
-
-  const qualityControl = await prisma.department.create({
-    data: { name: 'Quality Control', code: 'QC01', divisionId: productionDiv.id }
-  });
-
-  // Shifts
-  const shift1 = await prisma.shift.create({
-    data: { name: 'Shift 1', startTime: '07:00', endTime: '15:00' }
-  });
-
-  const shift2 = await prisma.shift.create({
-    data: { name: 'Shift 2', startTime: '15:00', endTime: '23:00' }
-  });
-
-  const shift3 = await prisma.shift.create({
-    data: { name: 'Shift 3', startTime: '23:00', endTime: '07:00' }
-  });
-
-  // Groups
-  const group43A = await prisma.group.create({
-    data: { name: '4-3A', code: 'GRP-43A', description: 'Group 4-3A' }
-  });
-
-  const group43B = await prisma.group.create({
-    data: { name: '4-3B', code: 'GRP-43B', description: 'Group 4-3B' }
-  });
-
-  const group43C = await prisma.group.create({
-    data: { name: '4-3C', code: 'GRP-43C', description: 'Group 4-3C' }
-  });
-
-  const group43D = await prisma.group.create({
-    data: { name: '4-3D', code: 'GRP-43D', description: 'Group 4-3D' }
-  });
-
-  const groupNonShift = await prisma.group.create({
-    data: { name: 'Non-Shift', code: 'GRP-NS', description: 'Non-shift workers' }
-  });
-
-  const allGroups = [group43A, group43B, group43C, group43D, groupNonShift];
-
-  // Production Lines
-  const line1 = await prisma.productionLine.create({
-    data: { name: 'Production Line 1', code: 'LINE-01', description: 'Tire Assembly Line 1' }
-  });
-
-  const line2 = await prisma.productionLine.create({
-    data: { name: 'Production Line 2', code: 'LINE-02', description: 'Tire Assembly Line 2' }
-  });
-
-  console.log('Created master data');
-
-  // ================================================================
-  // 4. USERS
-  // ================================================================
-  console.log('Creating users...');
+  const hash = (pw: string) => bcrypt.hash(pw, 10);
 
   // Super Admin
   await prisma.user.create({
     data: {
       username: 'superadmin',
-      email: 'admin@bridgestone.com',
-      password: await bcrypt.hash('admin123', 10),
+      email: 'superadmin@bridgestone.com',
+      password: await hash('superadmin123'),
       fullName: 'Super Administrator',
-      userRoles: { create: { roleId: superAdminRole.id } }
+      nip: 'NIP-SA-001',
+      roleId: superAdminRole.id
     }
   });
 
-  // Manager
-  await prisma.user.create({
+  // Section Manager
+  const smUser = await prisma.user.create({
     data: {
-      username: 'manager_production',
-      email: 'manager@bridgestone.com',
-      password: await bcrypt.hash('manager123', 10),
-      fullName: 'Production Manager',
-      userRoles: { create: { roleId: managerRole.id } }
+      username: 'section_manager',
+      email: 'sectionmanager@bridgestone.com',
+      password: await hash('manager123'),
+      fullName: 'Section Manager',
+      nip: 'NIP-SM-001',
+      roleId: sectionManagerRole.id
     }
   });
 
-  // Staff Produksi (replaces HRD)
-  await prisma.user.create({
-    data: {
-      username: 'staff_produksi',
-      email: 'staffproduksi@bridgestone.com',
-      password: await bcrypt.hash('staff123', 10),
-      fullName: 'Staff Produksi',
-      userRoles: { create: { roleId: staffProduksiRole.id } }
-    }
-  });
-
-  // Foreman (replaces Supervisor)
-  await prisma.user.create({
+  // Foremen
+  const foreman1 = await prisma.user.create({
     data: {
       username: 'foreman01',
       email: 'foreman01@bridgestone.com',
-      password: await bcrypt.hash('foreman123', 10),
+      password: await hash('foreman123'),
       fullName: 'Foreman Line 1',
-      userRoles: { create: { roleId: foremanRole.id } }
+      nip: 'NIP-FM-001',
+      roleId: foremanRole.id
     }
   });
 
-  // ================================================================
-  // 5. OPERATORS
-  // ================================================================
-  console.log('Creating operators...');
+  const foreman2 = await prisma.user.create({
+    data: {
+      username: 'foreman02',
+      email: 'foreman02@bridgestone.com',
+      password: await hash('foreman123'),
+      fullName: 'Foreman Line 2',
+      nip: 'NIP-FM-002',
+      roleId: foremanRole.id
+    }
+  });
 
-  const jobTypes = ['operator', 'checker', 'inspector'];
-  const positions = ['Assembly Operator', 'Quality Checker', 'Quality Inspector'];
+  // Operators
+  const sections = ['Bantrac', 'TBR', 'PCR', 'LTR', 'Curing'];
+  const lines = ['Line A', 'Line B', 'Line C', 'Line D', 'Line E'];
+  const groups = ['4-3A', '4-3B', '4-3C', '4-3D', 'Non-Shift'];
+  const positions = ['Assembly Operator', 'Quality Checker', 'Inspector', 'Curing Operator', 'Mixing Operator'];
 
-  for (let i = 1; i <= 5; i++) {
-    const jobIndex = (i - 1) % jobTypes.length;
-
-    const operatorUser = await prisma.user.create({
+  const operators = [];
+  for (let i = 0; i < 5; i++) {
+    const empId = `EMP${(1001 + i).toString()}`;
+    const opUser = await prisma.user.create({
       data: {
-        username: `operator${i.toString().padStart(2, '0')}`,
-        email: `operator${i}@bridgestone.com`,
-        password: await bcrypt.hash('operator123', 10),
-        fullName: `Operator ${i}`,
-        userRoles: { create: { roleId: operatorRole.id } }
+        username: `operator${(i + 1).toString().padStart(2, '0')}`,
+        email: `operator${i + 1}@bridgestone.com`,
+        password: await hash('operator123'),
+        fullName: `Operator ${i + 1}`,
+        nip: `NIP-OP-${(i + 1).toString().padStart(3, '0')}`,
+        roleId: operatorRole.id
       }
     });
 
-    await prisma.operator.create({
+    const qrData = JSON.stringify({ employeeId: empId, name: `Operator ${i + 1}` });
+    const qrImage = await QRCode.toDataURL(qrData);
+
+    const op = await prisma.operator.create({
       data: {
-        employeeId: `EMP${(1000 + i).toString()}`,
-        userId: operatorUser.id,
-        departmentId: i % 2 === 0 ? tireManufacturing.id : qualityControl.id,
-        shiftId: i % 3 === 0 ? shift3.id : i % 2 === 0 ? shift2.id : shift1.id,
-        productionLineId: i % 2 === 0 ? line2.id : line1.id,
-        groupId: allGroups[(i - 1) % allGroups.length].id,
-        job: jobTypes[jobIndex],
-        qrCode: `QR-EMP${(1000 + i).toString()}`,
-        position: positions[jobIndex]
+        userId: opUser.id,
+        employeeId: empId,
+        section: sections[i],
+        line: lines[i],
+        group: groups[i],
+        position: positions[i],
+        qrCode: qrImage,
+        performanceScore: Math.round((50 + Math.random() * 50) * 10) / 10,
+        totalMerit: Math.floor(Math.random() * 20),
+        totalMisconduct: Math.floor(Math.random() * 5)
+      }
+    });
+    operators.push(op);
+  }
+
+  console.log('Created 8 users (1 Super Admin, 1 SM, 2 Foremen, 5 Operators)');
+
+  // ================================================================
+  // 3. QR LOCATION AREAS
+  // ================================================================
+  const qrAreas = [
+    { name: 'Area Bantrac', code: 'QR-BAN', area: 'Bantrac', description: 'Area kerja Bantrac' },
+    { name: 'Area TBR', code: 'QR-TBR', area: 'TBR', description: 'Area kerja TBR (Truck Bus Radial)' },
+    { name: 'Area PCR', code: 'QR-PCR', area: 'PCR', description: 'Area kerja PCR (Passenger Car Radial)' },
+    { name: 'Area Curing', code: 'QR-CUR', area: 'Curing', description: 'Area kerja Curing' },
+    { name: 'Area Mixing', code: 'QR-MIX', area: 'Mixing', description: 'Area kerja Mixing' },
+  ];
+
+  for (const area of qrAreas) {
+    const qrData = JSON.stringify({ locationCode: area.code, name: area.name });
+    const qrImage = await QRCode.toDataURL(qrData);
+    await prisma.qrLocation.create({
+      data: { ...area, qrImage }
+    });
+  }
+
+  console.log('Created 5 QR location areas');
+
+  // ================================================================
+  // 4. SAMPLE VOO SUBMISSIONS
+  // ================================================================
+  const sampleVoos = [
+    { title: 'Perbaikan Alur Material', desc: 'Mengurangi waste pada proses搬运 material', type: 'VoO' },
+    { title: 'Ide Kaizen Safety Guard', desc: 'Penambahan safety guard pada mesin pressing', type: 'IdeKaizen' },
+    { title: 'Efisiensi Waktu Setup', desc: 'Mengurangi waktu setup mesin dari 30 menit ke 15 menit', type: 'VoO' },
+  ];
+
+  for (let i = 0; i < sampleVoos.length; i++) {
+    await prisma.vooSubmission.create({
+      data: {
+        operatorId: operators[i % operators.length].id,
+        submittedById: operators[i % operators.length].userId,
+        title: sampleVoos[i].title,
+        description: sampleVoos[i].desc,
+        type: sampleVoos[i].type,
+        status: i === 0 ? 'approved_foreman' : i === 1 ? 'approved_final' : 'pending',
+        points: i === 1 ? 15 : 0,
+        foremanApprovedBy: i >= 0 ? foreman1.id : null,
+        managerApprovedBy: i === 1 ? smUser.id : null,
       }
     });
   }
 
-  console.log('✅ Seeding completed successfully!');
-  console.log('\n📊 Summary:');
-  console.log(`- Permissions: ${permissions.length}`);
-  console.log(`- Roles: 5 (Super Admin, Manager, Staff Produksi, Foreman, Operator)`);
-  console.log(`- Users: 9 (4 staff + 5 operators)`);
-  console.log(`- Groups: 5 (4-3A, 4-3B, 4-3C, 4-3D, Non-Shift)`);
-  console.log(`- Departments: 2`);
-  console.log(`- Shifts: 3`);
-  console.log(`- Production Lines: 2`);
+  console.log('Created 3 sample VoO submissions');
 
-  console.log('\n🔑 Default Credentials:');
-  console.log('Super Admin     - username: superadmin,           password: admin123');
-  console.log('Manager         - username: manager_production,   password: manager123');
-  console.log('Staff Produksi  - username: staff_produksi,       password: staff123');
-  console.log('Foreman         - username: foreman01,            password: foreman123');
-  console.log('Operators       - username: operator01-05,        password: operator123');
+  // ================================================================
+  // 5. SAMPLE MISCONDUCT
+  // ================================================================
+  await prisma.misconduct.create({
+    data: {
+      operatorId: operators[0].id,
+      createdById: foreman1.id,
+      type: 'Late Arrival',
+      severity: 'low',
+      description: 'Terlambat 15 menit tanpa pemberitahuan',
+      points: 5
+    }
+  });
+
+  console.log('Created 1 sample misconduct');
+
+  console.log('\n=== Seeding Complete ===');
+  console.log('Credentials:');
+  console.log('  Super Admin:     superadmin / superadmin123');
+  console.log('  Section Manager: section_manager / manager123');
+  console.log('  Foreman:         foreman01 / foreman123');
+  console.log('                 foreman02 / foreman123');
+  console.log('  Operators:       operator01-05 / operator123');
 }
 
 main()
-  .catch((e) => {
-    console.error('❌ Seeding failed:', e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+  .catch((e) => { console.error('Seed failed:', e); process.exit(1); })
+  .finally(async () => { await prisma.$disconnect(); });

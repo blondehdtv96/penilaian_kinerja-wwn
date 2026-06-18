@@ -1,89 +1,57 @@
 import { Request, Response } from 'express';
 import { BlockchainService } from './blockchain.service';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+const blockchain = new BlockchainService();
 
 export class BlockchainController {
-  private blockchainService = new BlockchainService();
-
-  getBlockchain = async (req: Request, res: Response) => {
+  storeHash = async (req: any, res: Response) => {
     try {
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 50;
-
-      const result = await this.blockchainService.getBlockchain(page, limit);
-
-      res.json({
-        success: true,
-        data: result
-      });
+      const { entityType, entityId, data } = req.body;
+      const result = await blockchain.storeHash(entityType, entityId, data, req.user.userId);
+      res.json({ success: true, data: result });
     } catch (error: any) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      res.status(500).json({ success: false, message: error.message });
     }
   };
 
-  getBlock = async (req: Request, res: Response) => {
+  verify = async (req: Request, res: Response) => {
     try {
-      const blockIndex = parseInt(req.params.blockIndex);
-      const block = await this.blockchainService.getBlockByIndex(blockIndex);
+      const { id } = req.params;
+      const result = await blockchain.verifyHash(parseInt(id));
+      res.json({ success: true, data: result });
+    } catch (error: any) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  };
 
-      if (!block) {
-        return res.status(404).json({
-          success: false,
-          message: 'Block not found'
-        });
+  getHashes = async (req: Request, res: Response) => {
+    try {
+      const { entityType, entityId } = req.query;
+      const where: any = {};
+      if (entityType) where.entityType = entityType;
+      if (entityId) where.entityId = parseInt(entityId as string);
+
+      const hashes = await prisma.blockchainHash.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        include: { createdBy: { select: { id: true, fullName: true, username: true } } }
+      });
+      res.json({ success: true, data: hashes });
+    } catch (error: any) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  };
+
+  status = async (req: Request, res: Response) => {
+    res.json({
+      success: true,
+      data: {
+        available: blockchain.isAvailable(),
+        ganacheUrl: process.env.GANACHE_URL,
+        contractAddress: process.env.CONTRACT_ADDRESS
       }
-
-      res.json({
-        success: true,
-        data: block
-      });
-    } catch (error: any) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
-    }
-  };
-
-  verifyChain = async (req: Request, res: Response) => {
-    try {
-      const result = await this.blockchainService.verifyChain();
-
-      res.json({
-        success: true,
-        data: result
-      });
-    } catch (error: any) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
-    }
-  };
-
-  initializeGenesis = async (req: Request, res: Response) => {
-    try {
-      const genesis = await this.blockchainService.createGenesisBlock();
-
-      if (!genesis) {
-        return res.json({
-          success: true,
-          message: 'Genesis block already exists'
-        });
-      }
-
-      res.status(201).json({
-        success: true,
-        data: genesis,
-        message: 'Genesis block created successfully'
-      });
-    } catch (error: any) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
-    }
+    });
   };
 }

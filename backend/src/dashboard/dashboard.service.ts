@@ -1,169 +1,138 @@
 import { PrismaClient } from '@prisma/client';
+import ExcelJS from 'exceljs';
 
 const prisma = new PrismaClient();
 
 export class DashboardService {
+  async getKPI() {
+    const totalOperators = await prisma.operator.count();
+    const totalVoo = await prisma.vooSubmission.count();
+    const pendingVoo = await prisma.vooSubmission.count({ where: { status: 'pending' } });
+    const approvedVoo = await prisma.vooSubmission.count({ where: { status: 'approved_final' } });
+    const totalMisconduct = await prisma.misconduct.count();
+    const totalCounseling = await prisma.counseling.count();
+    const totalKartuKuning = await prisma.kartuKuning.count();
+    const totalSuratPeringatan = await prisma.suratPeringatan.count();
 
-  // Full company-wide KPI for Manager, HRD, Super Admin
-  async getKPIDashboard() {
-    const [
-      totalOperators,
-      totalMerits,
-      totalMisconducts,
-      pendingApprovals,
-      topPerformers,
-      recentEvents,
-      blockchainStatus
-    ] = await Promise.all([
-      prisma.operator.count(),
+    // Average performance score
+    const operators = await prisma.operator.findMany({ select: { performanceScore: true } });
+    const avgPerformance = operators.length > 0
+      ? Math.round((operators.reduce((sum, o) => sum + o.performanceScore, 0) / operators.length) * 10) / 10
+      : 0;
 
-      prisma.meritEvent.count({
-        where: { approvalStatus: 'approved' }
-      }),
+    // Monthly trends (last 12 months)
+    const months: string[] = [];
+    const vooTrend: number[] = [];
+    const misconductTrend: number[] = [];
 
-      prisma.misconductEvent.count({
-        where: { approvalStatus: 'approved' }
-      }),
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      const year = d.getFullYear();
+      const month = d.getMonth();
+      const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
+      months.push(monthStr);
 
-      Promise.all([
-        prisma.meritEvent.count({ where: { approvalStatus: 'pending' } }),
-        prisma.misconductEvent.count({ where: { approvalStatus: 'pending' } })
-      ]),
+      const startDate = new Date(year, month, 1);
+      const endDate = new Date(year, month + 1, 0);
 
-      prisma.operator.findMany({
-        take: 5,
-        orderBy: { performanceScore: 'desc' },
-        include: {
-          user: { select: { fullName: true } },
-          department: true,
-          productionLine: true
-        }
-      }),
+      vooTrend.push(await prisma.vooSubmission.count({
+        where: { createdAt: { gte: startDate, lte: endDate } }
+      }));
 
-      Promise.all([
-        prisma.meritEvent.findMany({
-          take: 5,
-          orderBy: { createdAt: 'desc' },
-          include: {
-            operator: {
-              include: { user: { select: { fullName: true } } }
-            }
-          }
-        }),
-        prisma.misconductEvent.findMany({
-          take: 5,
-          orderBy: { createdAt: 'desc' },
-          include: {
-            operator: {
-              include: { user: { select: { fullName: true } } }
-            }
-          }
-        })
-      ]),
-
-      prisma.blockchainLog.count()
-    ]);
+      misconductTrend.push(await prisma.misconduct.count({
+        where: { createdAt: { gte: startDate, lte: endDate } }
+      }));
+    }
 
     return {
-      dashboardType: 'kpi',
       summary: {
-        totalOperators,
-        totalMerits,
-        totalMisconducts,
-        pendingMerits: pendingApprovals[0],
-        pendingMisconducts: pendingApprovals[1],
-        totalBlocks: blockchainStatus
+        totalOperators, totalVoo, pendingVoo, approvedVoo,
+        totalMisconduct, totalCounseling, totalKartuKuning, totalSuratPeringatan,
+        avgPerformance
       },
-      topPerformers,
-      recentMerits: recentEvents[0],
-      recentMisconducts: recentEvents[1]
+      trends: { months, vooTrend, misconductTrend }
     };
   }
 
-  // Operator's personal dashboard — their own merit/misconduct/score data
-  async getOperatorPersonalDashboard(userId: number) {
-    // Find the operator record linked to this user
-    const operator = await prisma.operator.findUnique({
-      where: { userId },
-      include: {
-        user: { select: { fullName: true, email: true } },
-        department: true,
-        shift: true,
-        productionLine: true
-      }
+  async exportPDF() {
+    // PDF export placeholder - using basic text structure
+    const kpi = await this.getKPI();
+    const operators = await prisma.operator.findMany({
+      include: { user: { select: { fullName: true } } },
+      orderBy: { performanceScore: 'desc' }
     });
 
-    if (!operator) {
-      return {
-        dashboardType: 'operator',
-        operator: null,
-        summary: { totalMerit: 0, totalMisconduct: 0, performanceScore: 0, ranking: null },
-        recentMerits: [],
-        recentMisconducts: []
-      };
-    }
-
-    // Get personal merit and misconduct history
-    const [recentMerits, recentMisconducts, ranking] = await Promise.all([
-      prisma.meritEvent.findMany({
-        where: { operatorId: operator.id, approvalStatus: 'approved' },
-        take: 5,
-        orderBy: { createdAt: 'desc' },
-        include: { operator: { include: { user: { select: { fullName: true } } } } }
-      }),
-      prisma.misconductEvent.findMany({
-        where: { operatorId: operator.id, approvalStatus: 'approved' },
-        take: 5,
-        orderBy: { createdAt: 'desc' },
-        include: { operator: { include: { user: { select: { fullName: true } } } } }
-      }),
-      // Get ranking position among all operators
-      prisma.operator.count({
-        where: { performanceScore: { gt: operator.performanceScore } }
-      })
-    ]);
-
     return {
-      dashboardType: 'operator',
-      operator,
-      summary: {
-        totalMerit: operator.totalMerit,
-        totalMisconduct: operator.totalMisconduct,
-        performanceScore: operator.performanceScore,
-        ranking: ranking + 1 // +1 because ranking = number of people above + 1
-      },
-      recentMerits,
-      recentMisconducts
+      title: 'Performance Report',
+      generatedAt: new Date().toISOString(),
+      kpi: kpi.summary,
+      operators: operators.map(o => ({
+        name: o.user.fullName,
+        employeeId: o.employeeId,
+        section: o.section,
+        performanceScore: o.performanceScore,
+        totalMerit: o.totalMerit,
+        totalMisconduct: o.totalMisconduct
+      }))
     };
   }
 
-  async getPerformanceChart(period: 'daily' | 'weekly' | 'monthly' = 'daily') {
-    const now = new Date();
-    let startDate: Date;
+  async exportExcel() {
+    const workbook = new ExcelJS.Workbook();
 
-    switch (period) {
-      case 'daily':
-        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        break;
-      case 'weekly':
-        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-        break;
-      case 'monthly':
-        startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
-        break;
-    }
+    // Operators sheet
+    const ws1 = workbook.addWorksheet('Operators');
+    ws1.columns = [
+      { header: 'Employee ID', key: 'employeeId', width: 15 },
+      { header: 'Name', key: 'name', width: 25 },
+      { header: 'Section', key: 'section', width: 15 },
+      { header: 'Line', key: 'line', width: 15 },
+      { header: 'Performance Score', key: 'score', width: 18 },
+      { header: 'Total Merit', key: 'merit', width: 12 },
+      { header: 'Total Misconduct', key: 'misconduct', width: 18 },
+    ];
 
-    const [merits, misconducts] = await Promise.all([
-      prisma.meritEvent.findMany({
-        where: { createdAt: { gte: startDate }, approvalStatus: 'approved' },
-        select: { createdAt: true, points: true }
-      }),
-      prisma.misconductEvent.findMany({
-        where: { createdAt: { gte: startDate }, approvalStatus: 'approved' },
-        select: { createdAt: true, points: true }
-      })
-    ]);
+    const operators = await prisma.operator.findMany({
+      include: { user: { select: { fullName: true } } },
+      orderBy: { performanceScore: 'desc' }
+    });
 
-    return { merits, misconducts };
+    operators.forEach(o => {
+      ws1.addRow({
+        employeeId: o.employeeId,
+        name: o.user.fullName,
+        section: o.section,
+        line: o.line,
+        score: o.performanceScore,
+        merit: o.totalMerit,
+        misconduct: o.totalMisconduct
+      });
+    });
+
+    // VoO Submissions sheet
+    const ws2 = workbook.addWorksheet('VoO Submissions');
+    ws2.columns = [
+      { header: 'ID', key: 'id', width: 8 },
+      { header: 'Title', key: 'title', width: 30 },
+      { header: 'Type', key: 'type', width: 12 },
+      { header: 'Status', key: 'status', width: 18 },
+      { header: 'Points', key: 'points', width: 10 },
+      { header: 'Created', key: 'created', width: 20 },
+    ];
+
+    const voos = await prisma.vooSubmission.findMany({ orderBy: { createdAt: 'desc' } });
+    voos.forEach(v => {
+      ws2.addRow({
+        id: v.id,
+        title: v.title,
+        type: v.type,
+        status: v.status,
+        points: v.points,
+        created: v.createdAt.toISOString()
+      });
+    });
+
+    return workbook;
   }
 }
