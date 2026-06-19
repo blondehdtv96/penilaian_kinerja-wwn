@@ -1,0 +1,109 @@
+/* ============================================================================
+   TOKEN DESAIN — diangkat dari docs/DashboardKPIPage.vue & bridgestone-dashboard-mockup-v3
+   Light = :root, Dark = [data-theme="dark"] (di-toggle via composables/useTheme.ts).
+   ========================================================================== */
+:root {
+  /* Kanvas abu terang agar "kertas" putih mengambang (sesuai mockup v3). */
+  --db-canvas: #e8e9ed;
+  --db-card: #ffffff;
+  --db-ink: #111827;
+  --db-ink-2: #6b7280;
+  --db-ink-3: #9ca3af;
+  --db-line: #ececee;
+  --db-line-2: #e5e7eb;
+  --db-track: #eceef1;
+  --db-icon-bg: #f4f5f7;
+
+  /* Sinyal semantik — hijau = positif (VoO/merit), merah = negatif/brand. */
+  --db-green: #10b981;
+  --db-green-bg: #ecfdf5;
+  --db-green-ink: #047857;
+  --db-red: #ef4444;
+  --db-red-bg: #fef2f2;
+  --db-red-ink: #b91c1c;
+  --db-brand: #ef4444;
+
+  /* Aksen tambahan untuk badge/status. */
+  --db-amber-bg: #fef3c7;
+  --db-amber-ink: #b45309;
+  --db-blue: #3b82f6;
+  --db-violet: #8b5cf6;
+
+  --db-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 4px 16px rgba(16, 24, 40, 0.04);
+  --db-shadow-panel: 0 1px 3px rgba(0, 0, 0, 0.05), 0 14px 44px rgba(16, 24, 40, 0.10);
+
+  --radius: 22px;
+  --radius-card: 16px;
+
+  /* Skala abu untuk seri chart (bar/segment/donut). */
+  --db-grey-1: #111827;
+  --db-grey-2: #4b5563;
+  --db-grey-3: #9ca3af;
+  --db-grey-4: #d1d5db;
+
+  /* Tint info/biru (status "diproses foreman"). */
+  --db-blue-bg: rgba(59, 130, 246, 0.12);
+  --db-blue-ink: #1d4ed8;
+
+  /* Tint badge peran (sidebar). */
+  --db-role-admin-bg: #fef3c7;     --db-role-admin-ink: #b45309;
+  --db-role-manager-bg: rgba(139, 92, 246, 0.15);  --db-role-manager-ink: #6d28d9;
+  --db-role-foreman-bg: rgba(249, 115, 22, 0.15);  --db-role-foreman-ink: #c2410c;
+  --db-role-operator-bg: rgba(59, 130, 246, 0.15); --db-role-operator-ink: #1d4ed8;
+
+  /* Warna teks & background Ionic mengikuti tema — TANPA ini ion-content memakai
+     --ion-text-color default (#000) sehingga teks tak terlihat di dark mode. */
+  --ion-text-color: #111827;
+  --ion-text-color-rgb: 17, 24, 39;
+  --ion-background-color: #e8e9ed;
+  --ion-background-color-rgb: 232, 233, 237;
+
+  /* Remap warna 'primary' Ionic ke Bridgestone Red (default Ionic = biru = anti-referensi). */
+  --ion-color-primary: #ef4444;
+  --ion-color-primary-rgb: 239, 68, 68;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #b91c1c;
+  --ion-color-primary-tint: #f87171;
+}
+
+[data-theme="dark"] {
+  --db-canvas: #0b0f17;
+  --db-card: #111827;
+  --db-ink: #f9fafb;
+  --db-ink-2: #9ca3af;
+  --db-ink-3: #6b7280;
+  --db-line: #1f2937;
+  --db-line-2: #243041;
+  --db-track: #1f2937;
+  --db-icon-bg: #1f2937;
+
+  --db-green-bg: rgba(16, 185, 129, 0.12);
+  --db-green-ink: #34d399;
+  --db-red-bg: rgba(239, 68, 68, 0.12);
+  --db-red-ink: #fca5a5;
+
+  --db-amber-bg: rgba(245, 158, 11, 0.15);
+  --db-amber-ink: #fbbf24;
+
+  --db-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --db-shadow-panel: 0 1px 3px rgba(0, 0, 0, 0.4), 0 14px 44px rgba(0, 0, 0, 0.45);
+
+  --db-grey-1: #f9fafb;
+  --db-grey-2: #cbd5e1;
+  --db-grey-3: #94a3b8;
+  --db-grey-4: #64748b;
+
+  --db-blue-bg: rgba(59, 130, 246, 0.18);
+  --db-blue-ink: #93c5fd;
+
+  --db-role-admin-bg: rgba(245, 158, 11, 0.15);  --db-role-admin-ink: #fcd34d;
+  --db-role-manager-bg: rgba(139, 92, 246, 0.18); --db-role-manager-ink: #c4b5fd;
+  --db-role-foreman-bg: rgba(249, 115, 22, 0.18); --db-role-foreman-ink: #fdba74;
+  --db-role-operator-bg: rgba(59, 130, 246, 0.18); --db-role-operator-ink: #93c5fd;
+
+  --ion-text-color: #f9fafb;
+  --ion-text-color-rgb: 249, 250, 251;
+  --ion-background-color: #0b0f17;
+  --ion-background-color-rgb: 11, 15, 23;
+}
