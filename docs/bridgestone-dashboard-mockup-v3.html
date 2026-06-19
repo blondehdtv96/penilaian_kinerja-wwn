@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard KPI — Bridgestone (v3)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.7.0/dist/tabler-icons.min.css">
+<style>
+  :root{
+    --canvas:#e8e9ed; --card:#fff; --ink:#111827; --ink-2:#6b7280; --ink-3:#9ca3af;
+    --line:#edeef1; --line-2:#e5e7eb; --green:#10b981; --green-bg:#ecfdf5;
+    --red:#ef4444; --red-bg:#fef2f2; --brand:#ef4444;
+    --shadow-card:0 1px 2px rgba(16,24,40,.04), 0 4px 16px rgba(16,24,40,.04);
+    --gutter:12px; --rail:252px; --radius:22px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--canvas);color:var(--ink);
+    font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+
+  /* ---------- SIDEBAR: FIXED (diam, tidak ikut scroll) ---------- */
+  .side{position:fixed;top:0;left:0;bottom:0;width:var(--rail);overflow-y:auto;
+    padding:16px 14px;display:flex;flex-direction:column;gap:3px;z-index:30}
+  .side::-webkit-scrollbar{width:0}
+  .brand{display:flex;align-items:center;gap:11px;padding:6px 8px 12px}
+  .brand .logo{width:38px;height:38px;border-radius:10px;background:var(--brand);color:#fff;
+    display:grid;place-items:center;font-weight:800;font-size:19px;box-shadow:0 6px 14px rgba(239,68,68,.32)}
+  .brand b{font-size:14.5px;font-weight:700;line-height:1.15}
+  .brand small{font-size:11px;color:var(--ink-3)}
+  .me{display:flex;align-items:center;gap:11px;padding:11px 8px;border-radius:12px;background:#fff;
+    box-shadow:var(--shadow-card);margin-bottom:6px}
+  .me .ava{width:38px;height:38px;border-radius:50%;background:var(--brand);color:#fff;
+    display:grid;place-items:center;font-weight:700;font-size:14px;box-shadow:0 4px 10px rgba(239,68,68,.3)}
+  .me .nm{font-size:13px;font-weight:700;line-height:1.2}
+  .me .em{font-size:10.5px;color:var(--ink-3)}
+  .me .role{display:inline-block;margin-top:3px;font-size:9px;font-weight:700;letter-spacing:.05em;
+    color:#b45309;background:#fef3c7;padding:2px 7px;border-radius:5px}
+  .nav-label{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--ink-3);
+    text-transform:uppercase;padding:14px 10px 6px}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:11px;
+    color:var(--ink-2);font-weight:500;font-size:13.5px;cursor:pointer;transition:.15s;text-decoration:none}
+  .nav-item i{font-size:19px;opacity:.85}
+  .nav-item:hover{background:rgba(255,255,255,.7);color:var(--ink)}
+  .nav-item.active{background:#fff;color:var(--ink);font-weight:600;box-shadow:var(--shadow-card)}
+  .nav-item.active i{color:var(--brand);opacity:1}
+  .spacer{flex:1;min-height:8px}
+  .chain{display:flex;align-items:center;gap:8px;padding:10px 12px;font-size:12px;color:var(--ink-2)}
+  .chain .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+  .signout{display:flex;align-items:center;gap:10px;justify-content:center;padding:11px;border-radius:11px;
+    background:var(--red-bg);color:#b91c1c;font-weight:600;font-size:13px;border:1px solid rgba(239,68,68,.18);cursor:pointer}
+  .signout i{font-size:18px}
+
+  /* ---------- MAIN: kertas yang digulir (BODY yang scroll) ---------- */
+  .main{margin-left:var(--rail);padding:var(--gutter) 14px var(--gutter) 6px}
+  .panel{background:var(--card);border-radius:var(--radius);
+    box-shadow:0 1px 3px rgba(0,0,0,.05), 0 14px 44px rgba(16,24,40,.10);position:relative}
+
+  /* glass header — sticky top:0, sudut atas rounded (ikut kertas) */
+  .topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:14px;padding:13px 24px;
+    background:rgba(255,255,255,.72);backdrop-filter:blur(16px) saturate(180%);
+    -webkit-backdrop-filter:blur(16px) saturate(180%);border-bottom:1px solid rgba(16,24,40,.06);
+    border-radius:var(--radius) var(--radius) 0 0}
+  .toggle{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;color:var(--ink-2);cursor:pointer;font-size:20px}
+  .toggle:hover{background:#f4f5f7;color:var(--ink)}
+  .search{flex:1;max-width:440px;display:flex;align-items:center;gap:9px;background:rgba(246,247,249,.85);
+    border:1px solid var(--line);border-radius:11px;padding:9px 13px;color:var(--ink-3);font-size:13px}
+  .search .kbd{margin-left:auto;font-size:11px;background:#fff;border:1px solid var(--line-2);border-radius:6px;padding:1px 6px}
+  .top-actions{margin-left:auto;display:flex;align-items:center;gap:14px;color:var(--ink-2);font-size:20px}
+  .top-actions .bell{position:relative}
+  .top-actions .bell::after{content:"";position:absolute;top:1px;right:1px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid #fff}
+  .top-actions .ava{width:32px;height:32px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:700}
+
+  .content{padding:22px 24px 36px;display:flex;flex-direction:column;gap:18px}
+  .page-head{display:flex;align-items:flex-start;justify-content:space-between}
+  .page-head h1{font-size:25px;font-weight:700;letter-spacing:-.01em}
+  .page-head p{font-size:13.5px;color:var(--ink-2);margin-top:3px}
+  .head-right{display:flex;align-items:center;gap:10px}
+  .daterange{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line-2);border-radius:11px;padding:9px 14px;font-size:13px;font-weight:500}
+  .icon-btn{width:40px;height:40px;border-radius:11px;background:var(--ink);color:#fff;display:grid;place-items:center;border:none;cursor:pointer;font-size:18px}
+
+  .grid{display:grid;gap:16px}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .g3{grid-template-columns:1.05fr 1.2fr 1.1fr}
+  .g-bottom{grid-template-columns:1.55fr 1fr}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow-card)}
+  .kpi-top{display:flex;align-items:center;gap:10px;color:var(--ink-2);font-size:13px;font-weight:500;margin-bottom:14px}
+  .kpi-ico{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:18px;color:#fff}
+  .kpi-ico.blue{background:#3b82f6} .kpi-ico.green{background:var(--green)} .kpi-ico.red{background:var(--red)} .kpi-ico.violet{background:#8b5cf6}
+  .val{font-size:30px;font-weight:700;letter-spacing:-.02em}
+  .delta{font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:3px;margin-left:4px}
+  .up{color:var(--green)} .down{color:var(--red)}
+  .sub-note{font-size:12px;color:var(--ink-2);margin-top:6px}
+  .btn-row{display:flex;gap:9px;margin-top:15px}
+  .btn{border-radius:10px;padding:9px 15px;font-size:12.5px;font-weight:600;cursor:pointer;border:1px solid var(--line-2);display:inline-flex;align-items:center;gap:7px;background:#fff;color:var(--ink)}
+  .btn.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .badge-red{background:var(--red);color:#fff;font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:7px}
+  .spark{display:flex;align-items:flex-end;gap:2px;height:48px;margin-top:10px}
+  .spark span{flex:1;background:var(--ink);border-radius:2px;opacity:.85}
+  .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+  .card-head h3{font-size:16.5px;font-weight:600}
+  .muted{color:var(--ink-2);font-size:12.5px}
+  .pill{display:flex;align-items:center;gap:6px;border:1px solid var(--line-2);border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:600;cursor:pointer}
+  .seg{display:flex;height:9px;border-radius:6px;overflow:hidden;margin:14px 0 16px;gap:2px}
+  .src-list{display:flex;flex-direction:column;gap:13px}
+  .src-row{display:flex;align-items:center;gap:10px;font-size:13.5px}
+  .src-row .d{width:9px;height:9px;border-radius:50%}
+  .src-row b{margin-left:auto;font-weight:600}
+  .footnote{display:flex;gap:9px;align-items:center;background:#f6f7f9;border-radius:12px;padding:11px 13px;margin-top:16px;font-size:12px;color:var(--ink-2)}
+  .footnote i{color:var(--ink-3);font-size:16px}
+  .bars{display:flex;align-items:flex-end;justify-content:space-between;gap:13px;height:190px;margin:18px 4px 8px}
+  .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end}
+  .bar{width:100%;max-width:34px;background:var(--ink);border-radius:7px}
+  .bar-col .lbl{font-size:11.5px;color:var(--ink-2)}
+  .trend{font-size:13px;font-weight:600;margin-top:4px;display:flex;align-items:center;gap:6px}
+  .donut-wrap{display:flex;justify-content:center;margin:6px 0 18px;position:relative}
+  .donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+  .donut-center .n{font-size:23px;font-weight:700}
+  .cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .cat{display:flex;align-items:center;gap:8px;background:#f6f7f9;border-radius:10px;padding:10px 12px;font-size:12.5px}
+  .cat .d{width:9px;height:9px;border-radius:50%}
+  .cat b{margin-left:auto;font-weight:600}
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;font-size:11.5px;color:var(--ink-3);font-weight:600;padding:14px 8px 12px}
+  td{padding:10px 8px;border-top:1px solid var(--line);font-size:13.5px;vertical-align:middle}
+  .who{display:flex;align-items:center;gap:11px}
+  .who .ava{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:600;font-size:12px}
+  .tag{font-size:11.5px;font-weight:600;padding:3px 11px;border-radius:20px}
+  .tag.merit{background:var(--green-bg);color:#047857} .tag.mis{background:var(--red-bg);color:#b91c1c}
+  .amt{text-align:right;font-weight:600}
+  .amt.pos{color:var(--green)} .amt.neg{color:var(--red)}
+  .progress{height:12px;background:#eceef1;border-radius:20px;overflow:hidden;margin-top:14px}
+  .progress span{display:block;height:100%;background:var(--ink);border-radius:20px}
+  .goal-val{font-size:29px;font-weight:700;letter-spacing:-.02em}
+  .goal-val small{font-size:13.5px;color:var(--ink-3);font-weight:500}
+  .gcard{border-radius:16px;padding:16px;color:#fff;min-height:128px;display:flex;flex-direction:column;justify-content:space-between}
+  .gcard.green{background:linear-gradient(140deg,#10b981,#059669)}
+  .gcard.brand{background:linear-gradient(140deg,#ef4444,#b91c1c)}
+  .gcard .t{font-size:12.5px;opacity:.92}
+  .gcard .num{letter-spacing:.1em;font-size:12.5px;opacity:.9;margin-top:5px}
+  .gcard .big{font-size:21px;font-weight:700;margin-top:auto}
+  .stack{display:flex;flex-direction:column;gap:16px}
+  @media(max-width:1180px){.g4{grid-template-columns:repeat(2,1fr)}.g3,.g-bottom{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+  <!-- SIDEBAR (fixed) -->
+  <aside class="side">
+    <div class="brand">
+      <div class="logo">B</div>
+      <div><b>PT Bridgestone</b><br><small>Tire Indonesia</small></div>
+    </div>
+    <div class="me">
+      <div class="ava">S</div>
+      <div>
+        <div class="nm">Super Administrator</div>
+        <div class="em">admin@bridgestone.co.id</div>
+        <span class="role">SUPER ADMIN</span>
+      </div>
+    </div>
+    <div class="nav-label">Main navigation</div>
+    <a class="nav-item active"><i class="ti ti-layout-dashboard"></i> Dashboard KPI</a>
+    <a class="nav-item"><i class="ti ti-users"></i> Kelola User</a>
+    <a class="nav-item"><i class="ti ti-shield-check"></i> Kelola Role</a>
+    <a class="nav-item"><i class="ti ti-shield-lock"></i> Kelola Permission</a>
+    <a class="nav-item"><i class="ti ti-cube"></i> Blockchain Integrity</a>
+    <a class="nav-item"><i class="ti ti-file-text"></i> Export Laporan</a>
+    <a class="nav-item"><i class="ti ti-award"></i> Ranking Kinerja</a>
+    <a class="nav-item"><i class="ti ti-user"></i> My Profile</a>
+    <div class="spacer"></div>
+    <div class="chain"><span class="dot"></span> Blockchain: Connected</div>
+    <button class="signout"><i class="ti ti-logout"></i> Sign Out</button>
+  </aside>
+
+  <!-- MAIN: kertas yang digulir -->
+  <div class="main">
+    <div class="panel">
+      <div class="topbar">
+        <div class="toggle"><i class="ti ti-layout-sidebar-left-collapse"></i></div>
+        <div class="search"><i class="ti ti-search"></i> Cari operator, event, block… <span class="kbd">⌘K</span></div>
+        <div class="top-actions">
+          <i class="ti ti-bell bell"></i><i class="ti ti-moon"></i><i class="ti ti-palette"></i>
+          <div class="ava">S</div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="page-head">
+          <div><h1>Dashboard KPI</h1><p>Selamat datang, Super Administrator</p></div>
+          <div class="head-right">
+            <div class="daterange"><i class="ti ti-calendar"></i> 18 Mei 2026 – 14 Jun 2026</div>
+            <button class="icon-btn"><i class="ti ti-download"></i></button>
+          </div>
+        </div>
+
+        <div class="grid g4">
+          <div class="card">
+            <div class="kpi-top"><span class="kpi-ico blue"><i class="ti ti-users"></i></span> Total Operator</div>
+            <div class="val">248 <span class="delta up"><i class="ti ti-trending-up"></i> 4.2%</span></div>
+            <div class="sub-note">operator terdaftar</div>
+            <div class="btn-row">
+              <button class="btn dark"><i class="ti ti-plus"></i> Catat Event</button>
+              <button class="btn"><i class="ti ti-qrcode"></i> Scan QR</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="kpi-top"><span class="kpi-ico green"><i class="ti ti-trophy"></i></span> Total Merit</div>
+            <div class="val">387</div>
+            <div class="sub-note"><span class="delta up"><i class="ti ti-trending-up"></i> 8.5%</span> penghargaan tercatat</div>
+          </div>
+          <div class="card">
+            <div class="kpi-top"><span class="kpi-ico red"><i class="ti ti-alert-circle"></i></span> Total Misconduct</div>
+            <div class="val">142</div>
+            <div class="sub-note"><span class="delta up"><i class="ti ti-trending-down"></i> 5.5%</span> turun, pelanggaran tercatat</div>
+          </div>
+          <div class="card">
+            <div class="kpi-top" style="justify-content:space-between">
+              <span style="display:flex;align-items:center;gap:10px"><span class="kpi-ico violet"><i class="ti ti-cube"></i></span> Blok Blockchain</span>
+              <span class="badge-red">live</span>
+            </div>
+            <div class="val">1,482</div>
+            <div class="spark">
+              <span style="height:40%"></span><span style="height:55%"></span><span style="height:48%"></span>
+              <span style="height:70%"></span><span style="height:60%"></span><span style="height:82%"></span>
+              <span style="height:74%"></span><span style="height:90%"></span><span style="height:85%"></span>
+              <span style="height:95%"></span><span style="height:88%"></span><span style="height:100%"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid g3">
+          <div class="card">
+            <div class="card-head"><h3>Merit per Departemen</h3><i class="ti ti-arrow-up-right"></i></div>
+            <div class="muted">Total event tercatat</div>
+            <div class="val" style="font-size:29px;margin-top:4px">1,284 <span class="delta up" style="font-size:13px"><i class="ti ti-trending-up"></i> 15.5%</span></div>
+            <div class="seg">
+              <span style="width:34%;background:#111827"></span><span style="width:27%;background:#4b5563"></span>
+              <span style="width:22%;background:#9ca3af"></span><span style="width:17%;background:#d1d5db"></span>
+            </div>
+            <div class="src-list">
+              <div class="src-row"><span class="d" style="background:#111827"></span> Curing <b>437</b></div>
+              <div class="src-row"><span class="d" style="background:#4b5563"></span> Building <b>351</b></div>
+              <div class="src-row"><span class="d" style="background:#9ca3af"></span> Mixing <b>283</b></div>
+              <div class="src-row"><span class="d" style="background:#d1d5db"></span> Inspection <b>213</b></div>
+            </div>
+            <div class="footnote"><i class="ti ti-lock"></i> Semua event ter-hash on-chain — audit trail tidak bisa diubah.</div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Tren Kinerja</h3><button class="pill">Harian <i class="ti ti-chevron-down"></i></button></div>
+            <div class="muted">6 bulan terakhir</div>
+            <div class="bars">
+              <div class="bar-col"><div class="bar" style="height:55%"></div><span class="lbl">Jan</span></div>
+              <div class="bar-col"><div class="bar" style="height:88%"></div><span class="lbl">Feb</span></div>
+              <div class="bar-col"><div class="bar" style="height:48%"></div><span class="lbl">Mar</span></div>
+              <div class="bar-col"><div class="bar" style="height:95%"></div><span class="lbl">Apr</span></div>
+              <div class="bar-col"><div class="bar" style="height:62%"></div><span class="lbl">Mei</span></div>
+              <div class="bar-col"><div class="bar" style="height:70%"></div><span class="lbl">Jun</span></div>
+            </div>
+            <div class="trend">Naik 5.2% bulan ini <span class="up"><i class="ti ti-trending-up"></i></span></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Merit vs Misconduct</h3><i class="ti ti-chevron-right"></i></div>
+            <div class="muted">Data 1–14 Jun 2026</div>
+            <div class="donut-wrap">
+              <svg width="172" height="172" viewBox="0 0 42 42">
+                <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#eceef1" stroke-width="6"></circle>
+                <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#111827" stroke-width="6" stroke-dasharray="44 56" stroke-dashoffset="25"></circle>
+                <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#4b5563" stroke-width="6" stroke-dasharray="29 71" stroke-dashoffset="81"></circle>
+                <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#9ca3af" stroke-width="6" stroke-dasharray="15 85" stroke-dashoffset="52"></circle>
+                <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#d1d5db" stroke-width="6" stroke-dasharray="12 88" stroke-dashoffset="37"></circle>
+              </svg>
+              <div class="donut-center"><div class="n">142</div><div class="muted" style="font-size:11px">events</div></div>
+            </div>
+            <div class="cat-grid">
+              <div class="cat"><span class="d" style="background:#111827"></span> Safety <b>44%</b></div>
+              <div class="cat"><span class="d" style="background:#4b5563"></span> Quality <b>29%</b></div>
+              <div class="cat"><span class="d" style="background:#9ca3af"></span> Attendance <b>15%</b></div>
+              <div class="cat"><span class="d" style="background:#d1d5db"></span> Procedure <b>12%</b></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid g-bottom">
+          <div class="card">
+            <div class="card-head"><h3>Aktivitas Terbaru</h3><button class="pill">Lihat Semua</button></div>
+            <table>
+              <thead><tr><th>Operator</th><th>Tanggal</th><th>Tipe</th><th class="amt">Poin</th></tr></thead>
+              <tbody>
+                <tr><td><div class="who"><div class="ava" style="background:#ec4899">SW</div> Siti Wulandari</div></td><td class="muted">14 Jun 2026, 10:15</td><td><span class="tag merit">Merit</span></td><td class="amt pos">+15</td></tr>
+                <tr><td><div class="who"><div class="ava" style="background:#10b981">AP</div> Agus Pratama</div></td><td class="muted">14 Jun 2026, 09:40</td><td><span class="tag mis">Misconduct</span></td><td class="amt neg">−10</td></tr>
+                <tr><td><div class="who"><div class="ava" style="background:#f59e0b">RH</div> Rudi Hartono</div></td><td class="muted">13 Jun 2026, 16:22</td><td><span class="tag merit">Merit</span></td><td class="amt pos">+8</td></tr>
+                <tr><td><div class="who"><div class="ava" style="background:#8b5cf6">KS</div> Karina Sari</div></td><td class="muted">13 Jun 2026, 14:05</td><td><span class="tag merit">Merit</span></td><td class="amt pos">+20</td></tr>
+                <tr><td><div class="who"><div class="ava" style="background:#ef4444">BT</div> Bambang Teguh</div></td><td class="muted">12 Jun 2026, 11:30</td><td><span class="tag mis">Misconduct</span></td><td class="amt neg">−5</td></tr>
+                <tr><td><div class="who"><div class="ava" style="background:#3b82f6">DN</div> Dewi Novita</div></td><td class="muted">12 Jun 2026, 08:50</td><td><span class="tag merit">Merit</span></td><td class="amt pos">+12</td></tr>
+                <tr><td><div class="who"><div class="ava" style="background:#059669">FH</div> Fajar Hidayat</div></td><td class="muted">11 Jun 2026, 15:10</td><td><span class="tag mis">Misconduct</span></td><td class="amt neg">−8</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="stack">
+            <div class="card">
+              <div class="card-head"><h3>Target KPI Bulanan</h3><button class="pill">Report</button></div>
+              <div class="muted">75% tercapai</div>
+              <div class="goal-val" style="margin-top:10px">387 <small>dari 515 target merit</small></div>
+              <div class="progress"><span style="width:75%"></span></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>5 Operator Terbaik</h3><button class="pill">Lihat Semua</button></div>
+              <div class="muted" style="margin-bottom:13px">Periode berjalan</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <div class="gcard green"><div><div class="t">Rank #1</div><div class="num">+312 PTS</div></div><div class="big">Karina S.</div></div>
+                <div class="gcard brand"><div><div class="t">Rank #2</div><div class="num">+287 PTS</div></div><div class="big">Dewi N.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
