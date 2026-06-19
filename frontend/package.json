@@ -1,0 +1,36 @@
+{
+  "name": "penilaian-kinerja-frontend",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Sistem Penilaian Kinerja (VoO / Ide Kaizen) — Frontend Ionic Vue",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "type-check": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@capacitor/camera": "^5.0.7",
+    "@capacitor/core": "^5.5.0",
+    "@fontsource/inter": "^5.2.8",
+    "@ionic/vue": "^7.6.0",
+    "@ionic/vue-router": "^7.6.0",
+    "axios": "^1.6.2",
+    "date-fns": "^2.30.0",
+    "html5-qrcode": "^2.3.8",
+    "ionicons": "^7.2.2",
+    "pinia": "^2.1.7",
+    "socket.io-client": "^4.6.1",
+    "vue": "^3.4.0",
+    "vue-router": "^4.2.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.0",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "typescript": "^5.4.0",
+    "vite": "^5.0.10",
+    "vue-tsc": "^2.2.0"
+  }
+}
