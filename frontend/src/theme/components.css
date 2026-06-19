@@ -469,6 +469,11 @@ td {
   background: var(--db-red-bg);
   color: var(--db-red-ink);
 }
+/* Tingkat keparahan pelanggaran */
+.status.low { background: var(--db-green-bg); color: var(--db-green-ink); }
+.status.medium { background: var(--db-amber-bg); color: var(--db-amber-ink); }
+.status.high { background: var(--db-role-foreman-bg); color: var(--db-role-foreman-ink); }
+.status.critical { background: var(--db-red-bg); color: var(--db-red-ink); }
 
 /* ---------- Progress & goal ---------- */
 .progress {
@@ -664,18 +669,37 @@ td {
   font-size: 14px;
   font-weight: 600;
 }
-.btn-success {
-  background: var(--db-green);
-  color: #fff;
-  border: none;
-}
+.btn-success,
 .btn-danger {
-  background: var(--db-red);
-  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   border: none;
+  border-radius: 10px;
+  padding: 11px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
 }
+.btn-success { background: var(--db-green); }
+.btn-success:hover:not(:disabled) { background: #059669; }
+.btn-danger { background: var(--db-red); }
+.btn-danger:hover:not(:disabled) { background: var(--db-red-ink); }
+.btn-success:disabled,
+.btn-danger:disabled { opacity: 0.55; cursor: not-allowed; }
 .btn-block {
   width: 100%;
+}
+.btn-sm {
+  padding: 8px 14px;
+  font-size: 13px;
+}
+
+/* Layout entry: form (kiri) + daftar (kanan), kolaps di layar kecil */
+.g-entry { grid-template-columns: minmax(320px, 0.9fr) 1.3fr; }
+@media (max-width: 980px) {
+  .g-entry { grid-template-columns: 1fr; }
 }
 .btn-lg {
   padding: 13px 24px;
@@ -698,6 +722,21 @@ td {
   color: var(--db-ink-2);
   font-size: 13.5px;
 }
+
+/* Alert/banner pesan (sukses/galat/info) — dipakai di form & halaman aksi */
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 10px;
+  padding: 10px 13px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.alert ion-icon { font-size: 18px; flex-shrink: 0; }
+.alert.err { background: var(--db-red-bg); color: var(--db-red-ink); border: 1px solid rgba(239, 68, 68, 0.2); }
+.alert.ok { background: var(--db-green-bg); color: var(--db-green-ink); border: 1px solid rgba(16, 185, 129, 0.2); }
+.alert.info { background: var(--db-blue-bg); color: var(--db-blue-ink); }
 .section-title {
   font-size: 10px;
   font-weight: 700;
@@ -706,6 +745,100 @@ td {
   text-transform: uppercase;
   margin: 4px 0;
 }
+
+/* Baris info label↔nilai (profil, detail operator) */
+.info-list { display: flex; flex-direction: column; }
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 0;
+  border-top: 1px solid var(--db-line);
+  font-size: 13.5px;
+}
+.info-row:first-child { border-top: none; }
+.info-row > span { color: var(--db-ink-2); }
+.info-row > b { font-weight: 600; text-align: right; }
+
+/* Toolbar filter di atas tabel/daftar */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 2px;
+}
+.toolbar .grow { flex: 1; min-width: 0; }
+
+/* Segmented control (pilih tipe / filter) */
+.seg-tabs {
+  display: inline-flex;
+  background: var(--db-icon-bg);
+  border: 1px solid var(--db-line-2);
+  border-radius: 11px;
+  padding: 3px;
+  gap: 3px;
+}
+.seg-tabs button {
+  border: none;
+  background: transparent;
+  color: var(--db-ink-2);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 8px;
+}
+.seg-tabs button.on {
+  background: var(--db-card);
+  color: var(--db-ink);
+  box-shadow: var(--db-shadow);
+}
+
+/* Aksi baris tabel (admin) */
+.ta-r { text-align: right; }
+.row-actions { display: inline-flex; gap: 4px; justify-content: flex-end; }
+.ico-btn {
+  width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center;
+  color: var(--db-ink-2); font-size: 17px; background: transparent; border: none;
+}
+.ico-btn:hover { background: var(--db-icon-bg); color: var(--db-ink); }
+.ico-btn.danger:hover { background: var(--db-red-bg); color: var(--db-red); }
+.ico-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.t-x {
+  width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center;
+  color: var(--db-ink-3); font-size: 18px; background: transparent; border: none;
+}
+.t-x:hover { background: var(--db-icon-bg); color: var(--db-ink); }
+
+/* Tile statistik kecil */
+.stat-mini {
+  background: var(--db-icon-bg);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.stat-mini .s-val { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+.stat-mini .s-lbl { font-size: 12px; color: var(--db-ink-2); margin-top: 2px; }
+
+/* Select filter di header halaman */
+.filter-sel {
+  background: var(--db-card);
+  border: 1px solid var(--db-line-2);
+  border-radius: 11px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--db-ink);
+}
+.filter-sel:focus { outline: none; border-color: var(--db-brand); }
+
+/* Legenda chart + pasangan bar (VoO vs Pelanggaran) */
+.legend { display: flex; gap: 14px; font-size: 12px; color: var(--db-ink-2); font-weight: 500; flex-wrap: wrap; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.legend .dot.green { background: var(--db-green); }
+.legend .dot.red { background: var(--db-red); }
+.pair { display: flex; align-items: flex-end; justify-content: center; gap: 3px; width: 100%; height: 100%; }
+.pair .bar { max-width: 12px; }
 
 /* ---------- Responsif ---------- */
 @media (max-width: 1180px) {

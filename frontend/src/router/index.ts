@@ -2,10 +2,6 @@ import { createRouter, createWebHistory } from '@ionic/vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
-// Halaman yang belum dibangun di fase ini diarahkan ke placeholder agar IA lengkap
-// & build tetap hijau. Di fase berikutnya, import-nya diganti komponen asli.
-const ComingSoon = () => import('@/pages/ComingSoonPage.vue');
-
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
@@ -25,35 +21,35 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/pages/DashboardKPIPage.vue'),
     meta: { roles: ['Section Manager'] },
   },
-  { path: '/voo/final', name: 'VooFinal', component: ComingSoon, meta: { roles: ['Section Manager'] } },
-  { path: '/ranking', name: 'Ranking', component: ComingSoon, meta: { roles: ['Section Manager'] } },
-  { path: '/trends', name: 'Trends', component: ComingSoon, meta: { roles: ['Section Manager'] } },
-  { path: '/reports', name: 'Reports', component: ComingSoon, meta: { roles: ['Section Manager'] } },
-  { path: '/blockchain', name: 'Blockchain', component: ComingSoon, meta: { roles: ['Section Manager'] } },
-  { path: '/audit', name: 'Audit', component: ComingSoon, meta: { roles: ['Section Manager'] } },
+  { path: '/voo/final', name: 'VooFinal', component: () => import('@/pages/manager/VooFinalPage.vue'), meta: { roles: ['Section Manager'] } },
+  { path: '/ranking', name: 'Ranking', component: () => import('@/pages/manager/RankingPage.vue'), meta: { roles: ['Section Manager'] } },
+  { path: '/trends', name: 'Trends', component: () => import('@/pages/manager/TrendsPage.vue'), meta: { roles: ['Section Manager'] } },
+  { path: '/reports', name: 'Reports', component: () => import('@/pages/manager/ReportsPage.vue'), meta: { roles: ['Section Manager'] } },
+  { path: '/blockchain', name: 'Blockchain', component: () => import('@/pages/manager/BlockchainPage.vue'), meta: { roles: ['Section Manager'] } },
+  { path: '/audit', name: 'Audit', component: () => import('@/pages/manager/AuditPage.vue'), meta: { roles: ['Section Manager'] } },
 
   // ---- Foreman ----
-  { path: '/voo/approve', name: 'VooApprove', component: ComingSoon, meta: { roles: ['Foreman'] } },
-  { path: '/records/misconduct', name: 'Misconduct', component: ComingSoon, meta: { roles: ['Foreman'] } },
-  { path: '/records/counseling', name: 'Counseling', component: ComingSoon, meta: { roles: ['Foreman'] } },
-  { path: '/records/kartu-kuning', name: 'KartuKuning', component: ComingSoon, meta: { roles: ['Foreman'] } },
-  { path: '/records/surat-peringatan', name: 'SuratPeringatan', component: ComingSoon, meta: { roles: ['Foreman'] } },
-  { path: '/operators', name: 'Operators', component: ComingSoon, meta: { roles: ['Foreman', 'Section Manager'] } },
-  { path: '/operators/:id', name: 'OperatorDetail', component: ComingSoon, meta: { roles: ['Foreman', 'Section Manager'] } },
+  { path: '/voo/approve', name: 'VooApprove', component: () => import('@/pages/foreman/VooApprovePage.vue'), meta: { roles: ['Foreman'] } },
+  { path: '/records/misconduct', name: 'Misconduct', component: () => import('@/pages/foreman/MisconductPage.vue'), meta: { roles: ['Foreman'] } },
+  { path: '/records/counseling', name: 'Counseling', component: () => import('@/pages/foreman/CounselingPage.vue'), meta: { roles: ['Foreman'] } },
+  { path: '/records/kartu-kuning', name: 'KartuKuning', component: () => import('@/pages/foreman/KartuKuningPage.vue'), meta: { roles: ['Foreman'] } },
+  { path: '/records/surat-peringatan', name: 'SuratPeringatan', component: () => import('@/pages/foreman/SuratPeringatanPage.vue'), meta: { roles: ['Foreman'] } },
+  { path: '/operators', name: 'Operators', component: () => import('@/pages/operators/OperatorListPage.vue'), meta: { roles: ['Foreman', 'Section Manager'] } },
+  { path: '/operators/:id', name: 'OperatorDetail', component: () => import('@/pages/operators/OperatorDetailPage.vue'), meta: { roles: ['Foreman', 'Section Manager'] } },
 
   // ---- Operator ----
-  { path: '/scan', name: 'Scan', component: ComingSoon, meta: { roles: ['Operator'] } },
-  { path: '/voo/submit', name: 'VooSubmit', component: ComingSoon, meta: { roles: ['Operator'] } },
-  { path: '/voo/my', name: 'VooMy', component: ComingSoon, meta: { roles: ['Operator'] } },
-  { path: '/performance', name: 'Performance', component: ComingSoon, meta: { roles: ['Operator'] } },
+  { path: '/scan', name: 'Scan', component: () => import('@/pages/operator/ScanPage.vue'), meta: { roles: ['Operator'] } },
+  { path: '/voo/submit', name: 'VooSubmit', component: () => import('@/pages/operator/VooSubmitPage.vue'), meta: { roles: ['Operator'] } },
+  { path: '/voo/my', name: 'VooMy', component: () => import('@/pages/operator/VooMyPage.vue'), meta: { roles: ['Operator'] } },
+  { path: '/performance', name: 'Performance', component: () => import('@/pages/operator/PerformancePage.vue'), meta: { roles: ['Operator'] } },
 
   // ---- Super Admin ----
-  { path: '/admin/users', name: 'AdminUsers', component: ComingSoon, meta: { roles: ['Super Admin'] } },
-  { path: '/admin/roles', name: 'AdminRoles', component: ComingSoon, meta: { roles: ['Super Admin'] } },
-  { path: '/admin/qr-locations', name: 'AdminQrLocations', component: ComingSoon, meta: { roles: ['Super Admin'] } },
+  { path: '/admin/users', name: 'AdminUsers', component: () => import('@/pages/admin/UsersPage.vue'), meta: { roles: ['Super Admin'] } },
+  { path: '/admin/roles', name: 'AdminRoles', component: () => import('@/pages/admin/RolesPage.vue'), meta: { roles: ['Super Admin'] } },
+  { path: '/admin/qr-locations', name: 'AdminQrLocations', component: () => import('@/pages/admin/QrLocationsPage.vue'), meta: { roles: ['Super Admin'] } },
 
   // ---- Umum (semua role) ----
-  { path: '/profile', name: 'Profile', component: ComingSoon },
+  { path: '/profile', name: 'Profile', component: () => import('@/pages/ProfilePage.vue') },
 
   { path: '/:pathMatch(.*)*', redirect: () => landingFor(useAuthStore().role) },
 ];

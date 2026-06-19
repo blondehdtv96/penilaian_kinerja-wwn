@@ -63,6 +63,31 @@ ion-page {
   background: transparent;
 }
 
+/* Mode cetak: sembunyikan shell, tampilkan hanya konten (untuk halaman Laporan). */
+@media print {
+  .db-side,
+  .db-topbar,
+  .db-backdrop,
+  .nav-tip,
+  .no-print {
+    display: none !important;
+  }
+  .db-main {
+    padding: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+  .db-panel {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+  }
+  body,
+  ion-content {
+    background: #fff !important;
+  }
+}
+
 /* Hormati preferensi gerak pengguna secara global. */
 @media (prefers-reduced-motion: reduce) {
   *,
