@@ -79,7 +79,22 @@ async function main() {
     }
   });
 
-  console.log('Created 4 roles (Super Admin + 3 operational)');
+  const staffProduksiRole = await prisma.role.create({
+    data: {
+      name: 'Staff Produksi',
+      description: 'Monitor VoO/Kaizen submissions and misconduct records — read-only access',
+      permissions: JSON.stringify([
+        'voo.view',
+        'misconduct.view',
+        'counseling.view',
+        'kartu_kuning.view',
+        'surat_peringatan.view',
+        'profile.view'
+      ])
+    }
+  });
+
+  console.log('Created 5 roles (Super Admin + 4 operational)');
 
   // ================================================================
   // 2. USERS
@@ -133,11 +148,23 @@ async function main() {
     }
   });
 
+  // Staff Produksi
+  await prisma.user.create({
+    data: {
+      username: 'staff_produksi',
+      email: 'staffproduksi@bridgestone.com',
+      password: await hash('staff123'),
+      fullName: 'Staff Produksi',
+      nip: 'NIP-SP-001',
+      roleId: staffProduksiRole.id
+    }
+  });
+
   // Operators
-  const sections = ['Bantrac', 'TBR', 'PCR', 'LTR', 'Curing'];
+  const sections = ['Curing', 'Curing', 'Curing', 'Curing', 'Curing'];
   const lines = ['Line A', 'Line B', 'Line C', 'Line D', 'Line E'];
   const groups = ['4-3A', '4-3B', '4-3C', '4-3D', 'Non-Shift'];
-  const positions = ['Assembly Operator', 'Quality Checker', 'Inspector', 'Curing Operator', 'Mixing Operator'];
+  const positions = ['Curing Operator', 'Curing Operator', 'Curing Operator', 'Curing Operator', 'Curing Operator'];
 
   const operators = [];
   for (let i = 0; i < 5; i++) {
@@ -173,17 +200,13 @@ async function main() {
     operators.push(op);
   }
 
-  console.log('Created 8 users (1 Super Admin, 1 SM, 2 Foremen, 5 Operators)');
+  console.log('Created 9 users (1 Super Admin, 1 SM, 2 Foremen, 1 Staff Produksi, 5 Operators)');
 
   // ================================================================
   // 3. QR LOCATION AREAS
   // ================================================================
   const qrAreas = [
-    { name: 'Area Bantrac', code: 'QR-BAN', area: 'Bantrac', description: 'Area kerja Bantrac' },
-    { name: 'Area TBR', code: 'QR-TBR', area: 'TBR', description: 'Area kerja TBR (Truck Bus Radial)' },
-    { name: 'Area PCR', code: 'QR-PCR', area: 'PCR', description: 'Area kerja PCR (Passenger Car Radial)' },
     { name: 'Area Curing', code: 'QR-CUR', area: 'Curing', description: 'Area kerja Curing' },
-    { name: 'Area Mixing', code: 'QR-MIX', area: 'Mixing', description: 'Area kerja Mixing' },
   ];
 
   for (const area of qrAreas) {
@@ -194,7 +217,7 @@ async function main() {
     });
   }
 
-  console.log('Created 5 QR location areas');
+  console.log('Created 1 QR location area (Curing)');
 
   // ================================================================
   // 4. SAMPLE VOO SUBMISSIONS
@@ -245,6 +268,7 @@ async function main() {
   console.log('  Section Manager: section_manager / manager123');
   console.log('  Foreman:         foreman01 / foreman123');
   console.log('                 foreman02 / foreman123');
+  console.log('  Staff Produksi:  staff_produksi / staff123');
   console.log('  Operators:       operator01-05 / operator123');
 }
 

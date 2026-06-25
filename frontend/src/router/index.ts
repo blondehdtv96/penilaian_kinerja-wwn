@@ -48,6 +48,10 @@ const routes: Array<RouteRecordRaw> = [
   { path: '/admin/roles', name: 'AdminRoles', component: () => import('@/pages/admin/RolesPage.vue'), meta: { roles: ['Super Admin'] } },
   { path: '/admin/qr-locations', name: 'AdminQrLocations', component: () => import('@/pages/admin/QrLocationsPage.vue'), meta: { roles: ['Super Admin'] } },
 
+  // ---- Staff Produksi ----
+  { path: '/staff/voo-monitor', name: 'StaffVooMonitor', component: () => import('@/pages/staff/VooMonitorPage.vue'), meta: { roles: ['Staff Produksi'] } },
+  { path: '/staff/misconduct-monitor', name: 'StaffMisconductMonitor', component: () => import('@/pages/staff/MisconductMonitorPage.vue'), meta: { roles: ['Staff Produksi'] } },
+
   // ---- Umum (semua role) ----
   { path: '/profile', name: 'Profile', component: () => import('@/pages/ProfilePage.vue') },
 
@@ -61,6 +65,8 @@ export function landingFor(role: string | null): string {
       return '/performance';
     case 'Foreman':
       return '/voo/approve';
+    case 'Staff Produksi':
+      return '/staff/voo-monitor';
     case 'Section Manager':
     case 'Super Admin':
       return '/dashboard';

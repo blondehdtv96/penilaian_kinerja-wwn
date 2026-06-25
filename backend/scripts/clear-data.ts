@@ -2,82 +2,59 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-/**
- * Clear all TRANSACTIONAL data while keeping master data:
- *   KEPT    : User, Role, Operator, QrLocation
- *   CLEARED : VooSubmission, Misconduct, Counseling, KartuKuning,
- *             SuratPeringatan, Approval, EventLog, BlockchainHash, QrScanLog
- *
- * Operator performance counters are reset to 0 so testing starts clean.
- */
 async function clearData() {
-  console.log('🧹 Clearing transactional data (keeping users, roles, operators, QR locations)...\n');
+  console.log('🗑️  Menghapus semua data transaksi (menyisakan User & Role)...\n');
 
   try {
-    // Order matters because of foreign-key relations.
-    // Delete dependent records first.
-    const blockchain = await prisma.blockchainHash.deleteMany({});
-    console.log(`  - BlockchainHash      : ${blockchain.count} deleted`);
+    // Hapus dari child ke parent (sesuai relasi)
+    const blockchainCount = await prisma.blockchainHash.deleteMany({});
+    console.log(`✅ BlockchainHash: ${blockchainCount.count} dihapus`);
 
-    const approvals = await prisma.approval.deleteMany({});
-    console.log(`  - Approval            : ${approvals.count} deleted`);
+    const approvalCount = await prisma.approval.deleteMany({});
+    console.log(`✅ Approval: ${approvalCount.count} dihapus`);
 
-    const voo = await prisma.vooSubmission.deleteMany({});
-    console.log(`  - VooSubmission       : ${voo.count} deleted`);
+    const eventLogCount = await prisma.eventLog.deleteMany({});
+    console.log(`✅ EventLog: ${eventLogCount.count} dihapus`);
 
-    const misconduct = await prisma.misconduct.deleteMany({});
-    console.log(`  - Misconduct          : ${misconduct.count} deleted`);
+    const qrScanCount = await prisma.qrScanLog.deleteMany({});
+    console.log(`✅ QrScanLog: ${qrScanCount.count} dihapus`);
 
-    const counseling = await prisma.counseling.deleteMany({});
-    console.log(`  - Counseling          : ${counseling.count} deleted`);
+    const qrLocationCount = await prisma.qrLocation.deleteMany({});
+    console.log(`✅ QrLocation: ${qrLocationCount.count} dihapus`);
 
-    const kartuKuning = await prisma.kartuKuning.deleteMany({});
-    console.log(`  - KartuKuning         : ${kartuKuning.count} deleted`);
+    const vooCount = await prisma.vooSubmission.deleteMany({});
+    console.log(`✅ VooSubmission: ${vooCount.count} dihapus`);
 
-    const suratPeringatan = await prisma.suratPeringatan.deleteMany({});
-    console.log(`  - SuratPeringatan     : ${suratPeringatan.count} deleted`);
+    const misconductCount = await prisma.misconduct.deleteMany({});
+    console.log(`✅ Misconduct: ${misconductCount.count} dihapus`);
 
-    const qrScans = await prisma.qrScanLog.deleteMany({});
-    console.log(`  - QrScanLog           : ${qrScans.count} deleted`);
+    const counselingCount = await prisma.counseling.deleteMany({});
+    console.log(`✅ Counseling: ${counselingCount.count} dihapus`);
 
-    const events = await prisma.eventLog.deleteMany({});
-    console.log(`  - EventLog            : ${events.count} deleted`);
+    const kartuKuningCount = await prisma.kartuKuning.deleteMany({});
+    console.log(`✅ KartuKuning: ${kartuKuningCount.count} dihapus`);
 
-    // Reset operator performance counters
-    const opsReset = await prisma.operator.updateMany({
-      data: {
-        performanceScore: 0,
-        totalMerit: 0,
-        totalMisconduct: 0,
-      },
+    const suratCount = await prisma.suratPeringatan.deleteMany({});
+    console.log(`✅ SuratPeringatan: ${suratCount.count} dihapus`);
+
+    const operatorCount = await prisma.operator.deleteMany({});
+    console.log(`✅ Operator: ${operatorCount.count} dihapus`);
+
+    console.log('\n✅ Selesai! Data User & Role tetap tersimpan.');
+
+    // Tampilkan user yang tersisa
+    const users = await prisma.user.findMany({
+      select: { id: true, username: true, fullName: true, role: { select: { name: true } } }
     });
-    console.log(`\n  ↺ Operator counters reset: ${opsReset.count} operators`);
+    console.log(`\n👤 ${users.length} User tersisa:`);
+    users.forEach(u => console.log(`   - ${u.username} (${u.role.name}) — ${u.fullName}`));
 
-    // Report what remains
-    const [users, roles, operators, qrLocations] = await Promise.all([
-      prisma.user.count(),
-      prisma.role.count(),
-      prisma.operator.count(),
-      prisma.qrLocation.count(),
-    ]);
-
-    console.log('\n✅ Done. Remaining master data:');
-    console.log(`     Users        : ${users}`);
-    console.log(`     Roles        : ${roles}`);
-    console.log(`     Operators    : ${operators}`);
-    console.log(`     QR Locations : ${qrLocations}`);
-    console.log('\nAll transactional data is empty. Ready for fresh input testing. 🚀');
   } catch (error) {
-    console.error('❌ Clear failed:', error);
+    console.error('❌ Gagal:', error);
     throw error;
   }
 }
 
 clearData()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+  .catch((e) => { console.error(e); process.exit(1); })
+  .finally(async () => { await prisma.$disconnect(); });
