@@ -4,15 +4,19 @@
       <div class="alert ok" v-if="okMsg"><ion-icon :icon="checkmarkCircleOutline" /> {{ okMsg }}</div>
       <div class="alert err" v-if="error"><ion-icon :icon="alertCircleOutline" /> {{ error }}</div>
 
-      <form class="form-grid" @submit.prevent="submit">
-        <div class="field">
-          <label>Tipe Pengajuan</label>
-          <div class="seg-tabs">
-            <button type="button" :class="{ on: type === 'VoO' }" @click="type = 'VoO'">VoO</button>
-            <button type="button" :class="{ on: type === 'IdeKaizen' }" @click="type = 'IdeKaizen'">Ide Kaizen</button>
+      <div class="loc-banner" v-if="scanned.lokasi || scanned.area">
+        <ion-icon :icon="locationOutline" />
+        <div>
+          <div class="loc-ttl">Lokasi dari hasil scan QR</div>
+          <div class="loc-sub">
+            <b>{{ scanned.lokasi || scanned.area }}</b>
+            <span v-if="scanned.area && scanned.lokasi"> · {{ scanned.area }}</span>
+            <span v-if="scanned.kode" class="loc-code">{{ scanned.kode }}</span>
           </div>
         </div>
+      </div>
 
+      <form class="form-grid" @submit.prevent="submit">
         <div class="field">
           <label for="t">Judul</label>
           <input id="t" v-model.trim="title" maxlength="120" placeholder="mis. Perbaikan alur material di Line A" required />
@@ -50,21 +54,36 @@
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue';
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { checkmarkCircleOutline, alertCircleOutline, closeOutline, sendOutline } from 'ionicons/icons';
+import { useRouter, useRoute } from 'vue-router';
+import { checkmarkCircleOutline, alertCircleOutline, closeOutline, sendOutline, locationOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { vooService } from '@/services/voo.service';
 
 const router = useRouter();
+const route = useRoute();
 const go = (p: string) => router.push(p);
 
-const type = ref<'VoO' | 'IdeKaizen'>('VoO');
+const type = ref<string>('VoO/IdeKaizen');
 const title = ref('');
 const description = ref('');
 const photos = ref<string[]>([]);
 const submitting = ref(false);
 const error = ref('');
 const okMsg = ref('');
+
+// Lokasi yang dibawa dari halaman Scan QR (query params). Dipakai untuk menampilkan
+// banner lokasi dan mengisi awal deskripsi agar operator tinggal melengkapi.
+const scanned = {
+  lokasi: (route.query.lokasi as string) || '',
+  area: (route.query.area as string) || '',
+  kode: (route.query.kode as string) || '',
+};
+
+if (scanned.lokasi || scanned.area) {
+  const parts = [scanned.lokasi, scanned.area].filter(Boolean).join(' - ');
+  const kode = scanned.kode ? ` (${scanned.kode})` : '';
+  description.value = `Lokasi: ${parts}${kode}\n\n`;
+}
 
 const onFiles = (e: Event) => {
   const input = e.target as HTMLInputElement;
@@ -110,6 +129,18 @@ const submit = async () => {
 
 <style scoped>
 .form-card { max-width: 660px; }
+.loc-banner {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+  padding: 12px 14px; border-radius: 12px;
+  background: var(--db-icon-bg); border: 1px solid var(--db-line);
+}
+.loc-banner ion-icon { font-size: 22px; color: var(--db-brand); flex-shrink: 0; }
+.loc-ttl { font-size: 12px; color: var(--db-muted); }
+.loc-sub { font-size: 14px; color: var(--db-ink); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.loc-code {
+  font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px;
+  background: var(--db-card); border: 1px solid var(--db-line-2); color: var(--db-muted);
+}
 .field input[type='file'] { padding: 9px 11px; font-size: 13px; }
 .thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
 .thumb { position: relative; width: 76px; height: 76px; border-radius: 10px; overflow: hidden; border: 1px solid var(--db-line); }

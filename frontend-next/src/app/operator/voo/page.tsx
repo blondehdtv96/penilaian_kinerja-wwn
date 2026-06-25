@@ -8,7 +8,7 @@ export default function SubmitVooPage() {
   const { checkAuth } = useAuthStore();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [type, setType] = useState('VoO');
+  const [type] = useState('VoO/IdeKaizen');
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
 
@@ -35,14 +35,6 @@ export default function SubmitVooPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           {success && <div className="bg-green-50 text-green-600 p-3 rounded-lg">{success}</div>}
           {error && <div className="bg-red-50 text-red-600 p-3 rounded-lg">{error}</div>}
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Type</label>
-            <select value={type} onChange={e => setType(e.target.value)} className="w-full border rounded-lg p-2.5">
-              <option value="VoO">VoO (Voice of Operator)</option>
-              <option value="IdeKaizen">Ide Kaizen</option>
-            </select>
-          </div>
 
           <div>
             <label className="block text-sm font-medium mb-1">Title</label>

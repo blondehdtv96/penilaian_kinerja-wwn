@@ -3,7 +3,12 @@
     <div class="card">
       <div class="card-head">
         <h3>Menunggu Persetujuan</h3>
-        <span class="muted">{{ items.length }} pengajuan</span>
+        <div class="head-right">
+          <span class="muted">{{ items.length }} pengajuan</span>
+          <button class="btn-ghost btn-sm" :disabled="loading" @click="load(true)">
+            <ion-icon :icon="refreshOutline" /> Muat Ulang
+          </button>
+        </div>
       </div>
 
       <div v-if="loading" class="loading"><ion-spinner name="crescent" /> Memuat…</div>
@@ -50,8 +55,8 @@
 
 <script setup lang="ts">
 import { IonIcon, IonSpinner } from '@ionic/vue';
-import { onMounted, ref } from 'vue';
-import { checkmarkOutline, closeOutline } from 'ionicons/icons';
+import { onMounted, onUnmounted, ref } from 'vue';
+import { checkmarkOutline, closeOutline, refreshOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { vooService } from '@/services/voo.service';
 import { fmtDate, vooTypeLabel, initials, parsePhotos } from '@/utils/format';
@@ -66,8 +71,8 @@ const reason = ref('');
 
 const photoCount = (v: VooSubmission) => parsePhotos(v.photos).length;
 
-const load = async () => {
-  loading.value = true;
+const load = async (showSpinner = true) => {
+  if (showSpinner) loading.value = true;
   error.value = '';
   try {
     const { data } = await vooService.getAll({ status: 'pending' });
@@ -80,6 +85,11 @@ const load = async () => {
   }
 };
 
+// Auto-refresh: poll berkala + refresh saat tab kembali fokus, agar pengajuan baru
+// dari operator langsung muncul tanpa perlu reload manual.
+let pollTimer: ReturnType<typeof setInterval> | null = null;
+const onFocus = () => load(false);
+
 const cancelReject = () => {
   rejectId.value = null;
   reason.value = '';
@@ -89,7 +99,7 @@ const approve = async (id: number) => {
   busy.value = true;
   try {
     await vooService.approveForeman(id, { action: 'approve' });
-    await load();
+    await load(false);
   } catch (e: any) {
     error.value = e?.response?.data?.message || 'Gagal menyetujui.';
   } finally {
@@ -102,7 +112,7 @@ const reject = async (id: number) => {
   try {
     await vooService.approveForeman(id, { action: 'reject', rejectionReason: reason.value });
     cancelReject();
-    await load();
+    await load(false);
   } catch (e: any) {
     error.value = e?.response?.data?.message || 'Gagal menolak.';
   } finally {
@@ -110,11 +120,23 @@ const reject = async (id: number) => {
   }
 };
 
-onMounted(load);
+onMounted(() => {
+  load();
+  pollTimer = setInterval(() => load(false), 15000);
+  window.addEventListener('focus', onFocus);
+  document.addEventListener('visibilitychange', onFocus);
+});
+
+onUnmounted(() => {
+  if (pollTimer) clearInterval(pollTimer);
+  window.removeEventListener('focus', onFocus);
+  document.removeEventListener('visibilitychange', onFocus);
+});
 </script>
 
 <style scoped>
 .appr-list { display: flex; flex-direction: column; gap: 12px; }
+.head-right { display: flex; align-items: center; gap: 12px; }
 .appr {
   display: flex;
   gap: 16px;

@@ -41,10 +41,13 @@
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue';
 import { onUnmounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { scanOutline, stopCircleOutline, alertCircleOutline, checkmarkCircleOutline } from 'ionicons/icons';
 import { Html5Qrcode } from 'html5-qrcode';
 import PageShell from '@/components/PageShell.vue';
 import { operatorService } from '@/services/operators.service';
+
+const router = useRouter();
 
 let scanner: Html5Qrcode | null = null;
 const scanning = ref(false);
@@ -56,8 +59,24 @@ const handle = async (text: string) => {
   error.value = '';
   try {
     const { data } = await operatorService.scanQR(text);
-    if (data?.success) result.value = data.data;
-    else error.value = 'QR tidak dikenali.';
+    if (data?.success) {
+      result.value = data.data;
+      const r = data.data;
+      // QR area kerja → arahkan operator langsung ke form Ajukan VoO / Ide Kaizen,
+      // membawa info lokasi agar form bisa menampilkan & mengisinya otomatis.
+      if (r?.type === 'area' && r.location) {
+        router.push({
+          path: '/voo/submit',
+          query: {
+            lokasi: r.location.name ?? '',
+            area: r.location.area ?? '',
+            kode: r.location.code ?? '',
+          },
+        });
+      }
+    } else {
+      error.value = 'QR tidak dikenali.';
+    }
   } catch (e: any) {
     error.value = e?.response?.data?.message || 'QR tidak valid.';
   }
@@ -80,6 +99,15 @@ const stop = async () => {
 
 const start = async () => {
   error.value = '';
+
+  // Camera (getUserMedia) only works on secure origins. localhost is exempt, but a LAN
+  // IP must be served over HTTPS. Give a clear message instead of a silent failure.
+  if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
+    error.value =
+      'Kamera membutuhkan koneksi aman (HTTPS). Buka aplikasi lewat https:// (mis. https://192.168.137.1:5173) dan terima peringatan sertifikat, atau gunakan input manual di bawah.';
+    return;
+  }
+
   try {
     scanner = new Html5Qrcode('qr-reader');
     scanning.value = true;
@@ -94,9 +122,16 @@ const start = async () => {
         /* abaikan frame gagal-decode */
       }
     );
-  } catch {
+  } catch (e: any) {
     scanning.value = false;
-    error.value = 'Tidak bisa mengakses kamera. Gunakan input manual di bawah.';
+    const name = e?.name || '';
+    if (name === 'NotAllowedError' || name === 'PermissionDeniedError') {
+      error.value = 'Izin kamera ditolak. Aktifkan izin kamera untuk situs ini di pengaturan browser, lalu coba lagi.';
+    } else if (name === 'NotFoundError' || name === 'DevicesNotFoundError') {
+      error.value = 'Kamera tidak ditemukan pada perangkat ini. Gunakan input manual di bawah.';
+    } else {
+      error.value = 'Tidak bisa mengakses kamera. Pastikan memakai HTTPS dan izin kamera aktif, atau gunakan input manual di bawah.';
+    }
   }
 };
 

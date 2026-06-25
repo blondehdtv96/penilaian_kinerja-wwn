@@ -13,6 +13,7 @@
     "prisma:studio": "prisma studio",
     "prisma:seed": "tsx prisma/seed.ts",
     "db:reset": "tsx scripts/reset-db.ts",
+    "db:clear": "tsx scripts/clear-data.ts",
     "test:password": "tsx scripts/test-password.ts"
   },
   "prisma": {

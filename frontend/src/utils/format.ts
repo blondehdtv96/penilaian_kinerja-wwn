@@ -25,7 +25,7 @@ export const fmtDateShort = (iso?: string) => {
   }).format(new Date(iso));
 };
 
-export const vooTypeLabel = (t?: string) => (t === 'IdeKaizen' ? 'Ide Kaizen' : 'VoO');
+export const vooTypeLabel = (_t?: string) => 'VoO / Ide Kaizen';
 
 // "2026-06" → "Jun"
 export const monthShort = (ym?: string) => {
