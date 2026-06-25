@@ -61,6 +61,7 @@ import { computed, onMounted, ref } from 'vue';
 import { trendingUpOutline, trendingDownOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { dashboardService } from '@/services/dashboard.service';
+import { useRealtime } from '@/composables/useRealtime';
 import { fmtNum, monthShort } from '@/utils/format';
 import type { DashboardKPI } from '@/types';
 
@@ -93,7 +94,7 @@ const bars = computed(() => {
   }));
 });
 
-onMounted(async () => {
+const load = async () => {
   try {
     const { data } = await dashboardService.kpi();
     if (data?.success) t.value = data.data.trends;
@@ -103,5 +104,8 @@ onMounted(async () => {
   } finally {
     loading.value = false;
   }
-});
+};
+
+onMounted(load);
+useRealtime(['voo:changed', 'record:changed'], load, { throttleMs: 800 });
 </script>

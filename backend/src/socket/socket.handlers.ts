@@ -1,42 +1,46 @@
 import { Server, Socket } from 'socket.io';
+import jwt from 'jsonwebtoken';
 
-export const initSocketHandlers = (io: Server) => {
-  io.on('connection', (socket: Socket) => {
-    console.log(`✅ Client connected: ${socket.id}`);
+// Payload JWT (lihat auth.middleware.ts): { userId, role, permissions }.
+interface SocketUser {
+  userId: number;
+  role: string;
+  permissions?: string[];
+}
 
-    socket.on('join:operator', (operatorId: number) => {
-      socket.join(`operator:${operatorId}`);
-      console.log(`Operator ${operatorId} joined room`);
-    });
-
-    socket.on('join:supervisor', () => {
-      socket.join('supervisors');
-      console.log(`Supervisor joined room`);
-    });
-
-    socket.on('join:hrd', () => {
-      socket.join('hrd');
-      console.log(`HRD joined room`);
-    });
-
-    socket.on('join:manager', () => {
-      socket.join('managers');
-      console.log(`Manager joined room`);
-    });
-
-    socket.on('disconnect', () => {
-      console.log(`❌ Client disconnected: ${socket.id}`);
-    });
+/**
+ * Wiring tunggal untuk Socket.IO:
+ * 1) Handshake diautentikasi pakai JWT yang sama dengan REST (io.use).
+ * 2) Room diturunkan HANYA dari token terverifikasi (user:<id> & role:<peran>),
+ *    bukan dari pesan 'join' yang dikirim client — menutup celah seorang operator
+ *    ikut "menguping" room manajer.
+ */
+export const initSocket = (io: Server) => {
+  io.use((socket, next) => {
+    const token = socket.handshake.auth?.token as string | undefined;
+    if (!token) return next(new Error('No token provided'));
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as SocketUser;
+      socket.data.user = decoded;
+      next();
+    } catch {
+      next(new Error('Invalid or expired token'));
+    }
   });
 
-  // Helper functions to emit events
-  const emitToOperator = (operatorId: number, event: string, data: any) => {
-    io.to(`operator:${operatorId}`).emit(event, data);
-  };
+  io.on('connection', (socket: Socket) => {
+    const user = socket.data.user as SocketUser;
+    socket.join(`user:${user.userId}`);
+    if (user.role) socket.join(`role:${user.role}`);
 
-  const emitToRole = (role: string, event: string, data: any) => {
-    io.to(role).emit(event, data);
-  };
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`✅ Socket connected: user ${user.userId} (${user.role})`);
+    }
 
-  return { emitToOperator, emitToRole };
+    socket.on('disconnect', () => {
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`❌ Socket disconnected: user ${user.userId}`);
+      }
+    });
+  });
 };

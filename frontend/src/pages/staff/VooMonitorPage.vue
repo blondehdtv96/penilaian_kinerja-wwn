@@ -4,7 +4,7 @@
     <div class="filter-bar">
       <div class="filter-group">
         <label>Status</label>
-        <select v-model="filterStatus" @change="load">
+        <select v-model="filterStatus" @change="load()">
           <option value="">Semua Status</option>
           <option value="pending">Menunggu Foreman</option>
           <option value="approved_foreman">Diteruskan ke Manager</option>
@@ -14,7 +14,7 @@
       </div>
       <div class="filter-group">
         <label>Jenis</label>
-        <select v-model="filterType" @change="load">
+        <select v-model="filterType" @change="load()">
           <option value="">Semua Jenis</option>
           <option value="VoO">VoO</option>
           <option value="IdeKaizen">Ide Kaizen</option>

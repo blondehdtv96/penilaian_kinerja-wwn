@@ -60,6 +60,7 @@ import { checkmarkCircleOutline, alertCircleOutline, saveOutline } from 'ionicon
 import PageShell from '@/components/PageShell.vue';
 import OperatorSelect from '@/components/OperatorSelect.vue';
 import { recordsService } from '@/services/records.service';
+import { useRealtime } from '@/composables/useRealtime';
 import { initials, fmtDateShort, severityMeta } from '@/utils/format';
 import type { MisconductItem } from '@/types';
 
@@ -110,4 +111,5 @@ const submit = async () => {
 };
 
 onMounted(load);
+useRealtime('record:changed', load);
 </script>

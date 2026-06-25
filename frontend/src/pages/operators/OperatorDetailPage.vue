@@ -30,6 +30,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { arrowBackOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { operatorService } from '@/services/operators.service';
+import { useRealtime } from '@/composables/useRealtime';
 import type { OperatorDetail } from '@/types';
 
 const route = useRoute();
@@ -39,7 +40,7 @@ const loading = ref(true);
 const error = ref('');
 const back = () => router.back();
 
-onMounted(async () => {
+const load = async () => {
   const id = Number(route.params.id);
   try {
     const { data } = await operatorService.getById(id);
@@ -50,7 +51,10 @@ onMounted(async () => {
   } finally {
     loading.value = false;
   }
-});
+};
+
+onMounted(load);
+useRealtime(['voo:changed', 'record:changed'], load);
 </script>
 
 <style scoped>

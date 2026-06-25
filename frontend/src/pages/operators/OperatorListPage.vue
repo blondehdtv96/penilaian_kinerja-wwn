@@ -45,6 +45,7 @@ import { useRouter } from 'vue-router';
 import { searchOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { operatorService } from '@/services/operators.service';
+import { useRealtime } from '@/composables/useRealtime';
 import { initials } from '@/utils/format';
 import type { OperatorListItem } from '@/types';
 
@@ -66,7 +67,7 @@ const filtered = computed(() => {
   );
 });
 
-onMounted(async () => {
+const load = async () => {
   try {
     const { data } = await operatorService.getAll();
     if (data?.success) items.value = data.data;
@@ -76,7 +77,10 @@ onMounted(async () => {
   } finally {
     loading.value = false;
   }
-});
+};
+
+onMounted(load);
+useRealtime(['voo:changed', 'record:changed'], load);
 </script>
 
 <style scoped>

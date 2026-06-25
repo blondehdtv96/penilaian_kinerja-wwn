@@ -59,6 +59,7 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { checkmarkOutline, closeOutline, refreshOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { vooService } from '@/services/voo.service';
+import { useRealtime } from '@/composables/useRealtime';
 import { fmtDate, vooTypeLabel, initials, parsePhotos } from '@/utils/format';
 import type { VooSubmission } from '@/types';
 
@@ -85,10 +86,11 @@ const load = async (showSpinner = true) => {
   }
 };
 
-// Auto-refresh: poll berkala + refresh saat tab kembali fokus, agar pengajuan baru
-// dari operator langsung muncul tanpa perlu reload manual.
-let pollTimer: ReturnType<typeof setInterval> | null = null;
+// Auto-refresh real-time: server mendorong 'voo:changed' saat ada pengajuan/status
+// baru, jadi tak perlu polling berkala lagi. Refresh saat tab kembali fokus tetap
+// dipertahankan sebagai fallback bila socket sempat terputus.
 const onFocus = () => load(false);
+useRealtime('voo:changed', () => load(false));
 
 const cancelReject = () => {
   rejectId.value = null;
@@ -122,13 +124,11 @@ const reject = async (id: number) => {
 
 onMounted(() => {
   load();
-  pollTimer = setInterval(() => load(false), 15000);
   window.addEventListener('focus', onFocus);
   document.addEventListener('visibilitychange', onFocus);
 });
 
 onUnmounted(() => {
-  if (pollTimer) clearInterval(pollTimer);
   window.removeEventListener('focus', onFocus);
   document.removeEventListener('visibilitychange', onFocus);
 });

@@ -1,11 +1,20 @@
 import { PrismaClient } from '@prisma/client';
+import { NotificationService } from '../notifications/notifications.service';
+import { emitToRooms } from '../socket/emit';
 
 const prisma = new PrismaClient();
+const notifications = new NotificationService();
+
+const recordRooms = (operatorUserId: number) => [
+  'role:Foreman',
+  'role:Section Manager',
+  `user:${operatorUserId}`,
+];
 
 export class MisconductService {
   // MISCONDUCT
   async createMisconduct(data: { operatorId: number; createdById: number; type: string; severity: string; description: string; evidencePhotos?: string; points?: number }) {
-    return prisma.misconduct.create({
+    const record = await prisma.misconduct.create({
       data: {
         operatorId: data.operatorId,
         createdById: data.createdById,
@@ -20,6 +29,29 @@ export class MisconductService {
         createdBy: { select: { id: true, fullName: true } }
       }
     });
+
+    const operatorUserId = record.operator.user.id;
+    await notifications.notifyUser(operatorUserId, {
+      type: 'warning',
+      category: 'misconduct',
+      title: 'Pelanggaran tercatat',
+      body: record.type,
+      entityType: 'Misconduct',
+      entityId: record.id,
+      link: '/performance',
+    });
+    await notifications.notifyRole('Section Manager', {
+      type: 'info',
+      category: 'misconduct',
+      title: 'Pelanggaran baru dicatat',
+      body: `${record.operator.user.fullName} — ${record.type}`,
+      entityType: 'Misconduct',
+      entityId: record.id,
+      link: '/operators',
+    });
+    emitToRooms(recordRooms(operatorUserId), 'record:changed', { kind: 'misconduct', id: record.id });
+
+    return record;
   }
 
   async getAllMisconducts(filters?: { operatorId?: number; severity?: string }) {
@@ -39,7 +71,7 @@ export class MisconductService {
 
   // COUNSELING
   async createCounseling(data: { operatorId: number; foremanId: number; topic: string; notes?: string }) {
-    return prisma.counseling.create({
+    const record = await prisma.counseling.create({
       data: {
         operatorId: data.operatorId,
         foremanId: data.foremanId,
@@ -51,6 +83,20 @@ export class MisconductService {
         foreman: { select: { id: true, fullName: true } }
       }
     });
+
+    const operatorUserId = record.operator.user.id;
+    await notifications.notifyUser(operatorUserId, {
+      type: 'info',
+      category: 'counseling',
+      title: 'Sesi konseling dicatat',
+      body: record.topic,
+      entityType: 'Counseling',
+      entityId: record.id,
+      link: '/performance',
+    });
+    emitToRooms(recordRooms(operatorUserId), 'record:changed', { kind: 'counseling', id: record.id });
+
+    return record;
   }
 
   async getAllCounselings(operatorId?: number) {
@@ -66,7 +112,7 @@ export class MisconductService {
 
   // KARTU KUNING
   async createKartuKuning(data: { operatorId: number; issuedById: number; reason: string }) {
-    return prisma.kartuKuning.create({
+    const record = await prisma.kartuKuning.create({
       data: {
         operatorId: data.operatorId,
         issuedById: data.issuedById,
@@ -77,6 +123,29 @@ export class MisconductService {
         issuedBy: { select: { id: true, fullName: true } }
       }
     });
+
+    const operatorUserId = record.operator.user.id;
+    await notifications.notifyUser(operatorUserId, {
+      type: 'warning',
+      category: 'kartu_kuning',
+      title: 'Kartu Kuning diterbitkan',
+      body: record.reason,
+      entityType: 'KartuKuning',
+      entityId: record.id,
+      link: '/performance',
+    });
+    await notifications.notifyRole('Section Manager', {
+      type: 'info',
+      category: 'kartu_kuning',
+      title: 'Kartu Kuning diterbitkan',
+      body: `${record.operator.user.fullName} — ${record.reason}`,
+      entityType: 'KartuKuning',
+      entityId: record.id,
+      link: '/operators',
+    });
+    emitToRooms(recordRooms(operatorUserId), 'record:changed', { kind: 'kartu_kuning', id: record.id });
+
+    return record;
   }
 
   async getAllKartuKuning(operatorId?: number) {
@@ -92,7 +161,7 @@ export class MisconductService {
 
   // SURAT PERINGATAN
   async createSuratPeringatan(data: { operatorId: number; issuedById: number; level: number; reason: string }) {
-    return prisma.suratPeringatan.create({
+    const record = await prisma.suratPeringatan.create({
       data: {
         operatorId: data.operatorId,
         issuedById: data.issuedById,
@@ -104,6 +173,29 @@ export class MisconductService {
         issuedBy: { select: { id: true, fullName: true } }
       }
     });
+
+    const operatorUserId = record.operator.user.id;
+    await notifications.notifyUser(operatorUserId, {
+      type: 'error',
+      category: 'surat_peringatan',
+      title: `Surat Peringatan level ${record.level} diterbitkan`,
+      body: record.reason,
+      entityType: 'SuratPeringatan',
+      entityId: record.id,
+      link: '/performance',
+    });
+    await notifications.notifyRole('Section Manager', {
+      type: 'warning',
+      category: 'surat_peringatan',
+      title: `Surat Peringatan level ${record.level}`,
+      body: `${record.operator.user.fullName} — ${record.reason}`,
+      entityType: 'SuratPeringatan',
+      entityId: record.id,
+      link: '/operators',
+    });
+    emitToRooms(recordRooms(operatorUserId), 'record:changed', { kind: 'surat_peringatan', id: record.id });
+
+    return record;
   }
 
   async getAllSuratPeringatan(operatorId?: number) {

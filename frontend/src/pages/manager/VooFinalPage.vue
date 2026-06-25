@@ -104,6 +104,7 @@ import { onMounted, ref } from 'vue';
 import { checkmarkOutline, closeOutline, imagesOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { vooService } from '@/services/voo.service';
+import { useRealtime } from '@/composables/useRealtime';
 import { fmtDate, vooTypeLabel, initials, parsePhotos } from '@/utils/format';
 import type { VooSubmission } from '@/types';
 
@@ -169,6 +170,7 @@ const reject = async (id: number) => {
 };
 
 onMounted(load);
+useRealtime('voo:changed', load);
 </script>
 
 <style scoped>

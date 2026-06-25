@@ -25,6 +25,24 @@ export const fmtDateShort = (iso?: string) => {
   }).format(new Date(iso));
 };
 
+// Waktu relatif singkat utk notifikasi: "baru saja", "5 menit lalu", "2 jam lalu"…
+// Lebih lama dari sepekan → jatuh ke tanggal pendek.
+export const fmtRelative = (iso?: string): string => {
+  if (!iso) return '';
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return '';
+  const sec = Math.round((then - Date.now()) / 1000); // negatif = lampau
+  const rtf = new Intl.RelativeTimeFormat('id', { numeric: 'auto' });
+  if (Math.abs(sec) < 45) return 'baru saja';
+  const min = Math.round(sec / 60);
+  if (Math.abs(min) < 60) return rtf.format(min, 'minute');
+  const hr = Math.round(min / 60);
+  if (Math.abs(hr) < 24) return rtf.format(hr, 'hour');
+  const day = Math.round(hr / 24);
+  if (Math.abs(day) < 7) return rtf.format(day, 'day');
+  return fmtDateShort(iso);
+};
+
 export const vooTypeLabel = (_t?: string) => 'VoO / Ide Kaizen';
 
 // "2026-06" → "Jun"
