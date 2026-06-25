@@ -1,6 +1,6 @@
 // Tipe domain V2 (acuan: backend/prisma/schema.prisma & controller).
 
-export type RoleName = 'Super Admin' | 'Section Manager' | 'Foreman' | 'Operator';
+export type RoleName = 'Super Admin' | 'Section Manager' | 'Foreman' | 'Operator' | 'Staff Produksi';
 
 export interface OperatorProfile {
   id: number;

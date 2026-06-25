@@ -81,6 +81,26 @@
                 <span class="demo-user">{{ acc.username }}</span>
               </button>
             </div>
+
+            <div class="demo-divider">
+              <span>Staff Produksi</span>
+            </div>
+            <div class="demo-grid demo-grid-staff">
+              <button
+                v-for="acc in staffProduksiAccounts"
+                :key="acc.username"
+                type="button"
+                class="demo-item demo-item-staff"
+                @click="fill(acc)"
+              >
+                <div class="demo-item-inner">
+                  <span class="demo-role">{{ acc.label }}</span>
+                  <span class="demo-badge">Monitor</span>
+                </div>
+                <span class="demo-user">{{ acc.username }}</span>
+                <span class="demo-desc">Akses VoO &amp; Misconduct Monitor</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -110,12 +130,16 @@ const password = ref('');
 const showPw = ref(false);
 const error = ref('');
 
-interface DemoAccount { label: string; username: string; password: string }
+interface DemoAccount { label: string; username: string; password: string; badge?: string }
 const demoAccounts: DemoAccount[] = [
   { label: 'Super Admin', username: 'superadmin', password: 'superadmin123' },
   { label: 'Section Manager', username: 'section_manager', password: 'manager123' },
   { label: 'Foreman', username: 'foreman01', password: 'foreman123' },
   { label: 'Operator', username: 'operator01', password: 'operator123' },
+];
+
+const staffProduksiAccounts: DemoAccount[] = [
+  { label: 'Staff Produksi', username: 'staff_produksi', password: 'staff123', badge: 'Staff' },
 ];
 
 const fill = (acc: DemoAccount) => {
@@ -202,6 +226,34 @@ const submit = async () => {
 .demo-item:hover { border-color: var(--db-brand); }
 .demo-role { font-size: 12.5px; font-weight: 600; color: var(--db-ink); }
 .demo-user { font-size: 11px; color: var(--db-ink-3); }
+
+.demo-divider {
+  display: flex; align-items: center; gap: 10px;
+  margin: 14px 0 10px; font-size: 10.5px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--db-ink-3);
+}
+.demo-divider::before,
+.demo-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--db-line);
+}
+
+.demo-grid-staff { grid-template-columns: 1fr; }
+
+.demo-item-staff {
+  background: linear-gradient(135deg, rgba(var(--db-brand-rgb, 239,68,68), 0.04), var(--db-icon-bg));
+  border-color: rgba(239, 68, 68, 0.18);
+}
+.demo-item-staff:hover { border-color: var(--db-brand); background: rgba(239, 68, 68, 0.07); }
+
+.demo-item-inner {
+  display: flex; align-items: center; justify-content: space-between; gap: 6px;
+}
+.demo-badge {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
+  background: var(--db-brand); color: #fff;
+  padding: 2px 7px; border-radius: 20px;
+}
+.demo-desc { font-size: 10.5px; color: var(--db-ink-3); margin-top: 1px; }
 
 .foot { font-size: 11.5px; color: var(--db-ink-3); }
 

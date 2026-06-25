@@ -116,6 +116,8 @@ const allMenu: MenuItem[] = [
   { title: 'Export Laporan', path: '/reports', icon: downloadOutline, roles: ['Section Manager'] },
   { title: 'Blockchain', path: '/blockchain', icon: cubeOutline, roles: ['Section Manager'] },
   { title: 'Log Audit', path: '/audit', icon: fingerPrintOutline, roles: ['Section Manager'] },
+  { title: 'Monitor VoO / Kaizen', path: '/staff/voo-monitor', icon: bulbOutline, roles: ['Staff Produksi'] },
+  { title: 'Monitor Pelanggaran', path: '/staff/misconduct-monitor', icon: alertCircleOutline, roles: ['Staff Produksi'] },
   { title: 'Kelola User', path: '/admin/users', icon: peopleOutline, roles: ['Super Admin'] },
   { title: 'Kelola Role', path: '/admin/roles', icon: shieldCheckmarkOutline, roles: ['Super Admin'] },
   { title: 'Lokasi QR', path: '/admin/qr-locations', icon: locationOutline, roles: ['Super Admin'] },
@@ -212,6 +214,7 @@ onUnmounted(() => teardown());
 .role.sectionmanager { color: var(--db-role-manager-ink); background: var(--db-role-manager-bg); }
 .role.foreman { color: var(--db-role-foreman-ink); background: var(--db-role-foreman-bg); }
 .role.operator { color: var(--db-role-operator-ink); background: var(--db-role-operator-bg); }
+.role.staffproduksi { color: #065f46; background: #d1fae5; }
 
 .nav-label {
   font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: var(--db-ink-3);
