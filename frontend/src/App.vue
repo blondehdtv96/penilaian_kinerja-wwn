@@ -74,6 +74,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { useSocketStore } from '@/stores/socket';
+import { useNotificationsStore } from '@/stores/notifications';
 import { useSidebar } from '@/composables/useSidebar';
 import {
   gridOutline, qrCodeOutline, bulbOutline, documentTextOutline, statsChartOutline,
@@ -150,7 +151,10 @@ const hideTip = () => { tip.value = null; };
 
 onMounted(() => {
   init();
-  if (auth.isAuthenticated) socket.connect();
+  if (auth.isAuthenticated) {
+    socket.connect();
+    useNotificationsStore().fetch();
+  }
 });
 onUnmounted(() => teardown());
 </script>

@@ -54,6 +54,7 @@ import { useRouter } from 'vue-router';
 import PageShell from '@/components/PageShell.vue';
 import { operatorService } from '@/services/operators.service';
 import { vooService } from '@/services/voo.service';
+import { useRealtime } from '@/composables/useRealtime';
 import { fmtNum, vooTypeLabel, vooStatusMeta } from '@/utils/format';
 import type { OperatorListItem, VooSubmission } from '@/types';
 
@@ -64,7 +65,7 @@ const recent = ref<VooSubmission[]>([]);
 const loading = ref(true);
 const error = ref('');
 
-onMounted(async () => {
+const load = async () => {
   try {
     const [p, v] = await Promise.all([operatorService.myProfile(), vooService.getMy()]);
     if (p.data?.success) op.value = p.data.data;
@@ -74,7 +75,10 @@ onMounted(async () => {
   } finally {
     loading.value = false;
   }
-});
+};
+
+onMounted(load);
+useRealtime(['voo:changed', 'record:changed'], load);
 </script>
 
 <style scoped>

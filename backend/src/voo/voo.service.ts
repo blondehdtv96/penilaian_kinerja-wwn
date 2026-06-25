@@ -1,6 +1,16 @@
 import { PrismaClient } from '@prisma/client';
+import { NotificationService } from '../notifications/notifications.service';
+import { emitToRooms } from '../socket/emit';
 
 const prisma = new PrismaClient();
+const notifications = new NotificationService();
+
+// Room yang perlu refetch saat status VoO berubah (efemeral, untuk live-refresh halaman).
+const vooRooms = (operatorUserId: number) => [
+  'role:Foreman',
+  'role:Section Manager',
+  `user:${operatorUserId}`,
+];
 
 export class VooService {
   async create(data: {
@@ -11,7 +21,7 @@ export class VooService {
     type: string;
     photos?: string;
   }) {
-    return prisma.vooSubmission.create({
+    const submission = await prisma.vooSubmission.create({
       data: {
         operatorId: data.operatorId,
         submittedById: data.submittedById,
@@ -25,6 +35,20 @@ export class VooService {
         submittedBy: { select: { id: true, fullName: true } }
       }
     });
+
+    const label = submission.type === 'IdeKaizen' ? 'Ide Kaizen' : 'VoO';
+    await notifications.notifyRole('Foreman', {
+      type: 'info',
+      category: 'voo',
+      title: `${label} baru diajukan`,
+      body: `${submission.operator.user.fullName} — ${submission.title}`,
+      entityType: 'VooSubmission',
+      entityId: submission.id,
+      link: '/voo/approve',
+    });
+    emitToRooms(vooRooms(submission.operator.user.id), 'voo:changed', { id: submission.id });
+
+    return submission;
   }
 
   async getAll(filters?: { status?: string; operatorId?: number; type?: string }) {
@@ -73,9 +97,14 @@ export class VooService {
   }
 
   async approveForeman(id: number, foremanUserId: number, action: 'approve_foreman' | 'reject', rejectionReason?: string) {
-    const submission = await prisma.vooSubmission.findUnique({ where: { id } });
+    const submission = await prisma.vooSubmission.findUnique({
+      where: { id },
+      include: { operator: { include: { user: { select: { id: true, fullName: true } } } } }
+    });
     if (!submission) throw new Error('Submission not found');
     if (submission.status !== 'pending') throw new Error('Submission already processed');
+
+    const operatorUserId = submission.operator.user.id;
 
     if (action === 'reject') {
       const updated = await prisma.vooSubmission.update({
@@ -93,6 +122,17 @@ export class VooService {
           vooSubmissionId: id
         }
       });
+
+      await notifications.notifyUser(operatorUserId, {
+        type: 'error',
+        category: 'voo',
+        title: 'VoO/Ide Kaizen ditolak',
+        body: rejectionReason || 'Ditolak oleh Foreman',
+        entityType: 'VooSubmission',
+        entityId: id,
+        link: '/voo/my',
+      });
+      emitToRooms(vooRooms(operatorUserId), 'voo:changed', { id });
 
       return updated;
     }
@@ -113,13 +153,38 @@ export class VooService {
       }
     });
 
+    await notifications.notifyUser(operatorUserId, {
+      type: 'success',
+      category: 'voo',
+      title: 'VoO disetujui Foreman',
+      body: 'Menunggu persetujuan final Section Manager',
+      entityType: 'VooSubmission',
+      entityId: id,
+      link: '/voo/my',
+    });
+    await notifications.notifyRole('Section Manager', {
+      type: 'info',
+      category: 'voo',
+      title: 'VoO perlu persetujuan final',
+      body: `${submission.operator.user.fullName} — ${submission.title}`,
+      entityType: 'VooSubmission',
+      entityId: id,
+      link: '/voo/final',
+    });
+    emitToRooms(vooRooms(operatorUserId), 'voo:changed', { id });
+
     return updated;
   }
 
   async approveManager(id: number, managerUserId: number, action: 'approve_final' | 'reject', points?: number, rejectionReason?: string) {
-    const submission = await prisma.vooSubmission.findUnique({ where: { id } });
+    const submission = await prisma.vooSubmission.findUnique({
+      where: { id },
+      include: { operator: { include: { user: { select: { id: true, fullName: true } } } } }
+    });
     if (!submission) throw new Error('Submission not found');
     if (submission.status !== 'approved_foreman') throw new Error('Must be approved by Foreman first');
+
+    const operatorUserId = submission.operator.user.id;
 
     if (action === 'reject') {
       const updated = await prisma.vooSubmission.update({
@@ -137,6 +202,17 @@ export class VooService {
           vooSubmissionId: id
         }
       });
+
+      await notifications.notifyUser(operatorUserId, {
+        type: 'error',
+        category: 'voo',
+        title: 'VoO ditolak Section Manager',
+        body: rejectionReason || 'Ditolak oleh Section Manager',
+        entityType: 'VooSubmission',
+        entityId: id,
+        link: '/voo/my',
+      });
+      emitToRooms(vooRooms(operatorUserId), 'voo:changed', { id });
 
       return updated;
     }
@@ -170,6 +246,18 @@ export class VooService {
         vooSubmissionId: id
       }
     });
+
+    await notifications.notifyUser(operatorUserId, {
+      type: 'success',
+      category: 'voo',
+      title: 'VoO disetujui final 🎉',
+      body: `Selamat! +${awardedPoints} poin ditambahkan ke kinerjamu`,
+      entityType: 'VooSubmission',
+      entityId: id,
+      link: '/voo/my',
+      data: { points: awardedPoints },
+    });
+    emitToRooms(vooRooms(operatorUserId), 'voo:changed', { id });
 
     return updated;
   }

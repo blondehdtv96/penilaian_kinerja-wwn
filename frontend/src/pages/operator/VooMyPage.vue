@@ -41,6 +41,7 @@ import { useRouter } from 'vue-router';
 import { addOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { vooService } from '@/services/voo.service';
+import { useRealtime } from '@/composables/useRealtime';
 import { fmtDateShort, vooTypeLabel, vooStatusMeta } from '@/utils/format';
 import type { VooSubmission } from '@/types';
 
@@ -50,7 +51,7 @@ const items = ref<VooSubmission[]>([]);
 const loading = ref(true);
 const error = ref('');
 
-onMounted(async () => {
+const load = async () => {
   try {
     const { data } = await vooService.getMy();
     if (data?.success) items.value = data.data;
@@ -60,7 +61,10 @@ onMounted(async () => {
   } finally {
     loading.value = false;
   }
-});
+};
+
+onMounted(load);
+useRealtime('voo:changed', load);
 </script>
 
 <style scoped>

@@ -47,6 +47,7 @@ model User {
   eventLogs           EventLog[]
   blockchainHashes    BlockchainHash[]
   qrScans             QrScanLog[]
+  notifications       Notification[]
 }
 
 // ================================================================
@@ -250,4 +251,28 @@ model BlockchainHash {
   createdById     Int
   createdBy       User     @relation(fields: [createdById], references: [id])
   createdAt       DateTime @default(now())
+}
+
+// ================================================================
+// NOTIFICATION (inbox per-user, real-time via Socket.IO)
+// ================================================================
+
+model Notification {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type       String    @default("info") // info | success | warning | error (severity UI)
+  category   String    // voo | misconduct | counseling | kartu_kuning | surat_peringatan
+  title      String
+  body       String?
+  entityType String?   // VooSubmission, Misconduct, dll. (untuk deep-link)
+  entityId   Int?
+  link       String?   // route frontend yang dibuka saat diklik
+  data       String    @default("{}") // payload tambahan (JSON string)
+  isRead     Boolean   @default(false)
+  readAt     DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
 }

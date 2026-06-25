@@ -149,6 +149,7 @@ import {
 import PageShell from '@/components/PageShell.vue';
 import { useAuthStore } from '@/stores/auth';
 import { dashboardService } from '@/services/dashboard.service';
+import { useRealtime } from '@/composables/useRealtime';
 import type { DashboardKPI } from '@/types';
 
 const auth = useAuthStore();
@@ -280,6 +281,8 @@ const downloadExcel = async () => {
 };
 
 onMounted(load);
+// Dashboard agregat: throttle lebih panjang agar tak refetch beruntun saat burst event.
+useRealtime(['voo:changed', 'record:changed'], load, { throttleMs: 800 });
 </script>
 
 <style scoped>

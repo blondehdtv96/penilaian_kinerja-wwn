@@ -13,17 +13,24 @@ import qrLocationRoutes from './qr-locations/qr-locations.routes';
 import userRoutes from './users/users.routes';
 import roleRoutes from './roles/roles.routes';
 import superadminRoutes from './superadmin/superadmin.routes';
+import notificationRoutes from './notifications/notifications.routes';
 import { getAuditLogs } from './middleware/audit.middleware';
 import { authMiddleware, checkRole } from './middleware/auth.middleware';
+import { setIo } from './socket/io';
+import { initSocket } from './socket/socket.handlers';
 
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-  cors: { origin: process.env.CORS_ORIGIN || 'http://localhost:3000', methods: ['GET', 'POST'] }
+  cors: { origin: process.env.CORS_ORIGIN || 'http://localhost:5173', methods: ['GET', 'POST'] }
 });
 
+// Daftarkan io sebagai singleton + wiring (auth handshake + room dari token).
+setIo(io);
+initSocket(io);
+
 // Middleware
-app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:3000' }));
+app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:5173' }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -43,24 +50,12 @@ app.use('/api/qr-locations', qrLocationRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/superadmin', superadminRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.get('/api/audit-logs', authMiddleware, checkRole(['Section Manager']), getAuditLogs);
 
-// Socket.IO
-io.on('connection', (socket) => {
-  console.log('Client connected:', socket.id);
-
-  socket.on('join', (room: string) => {
-    socket.join(room);
-    console.log(`Socket ${socket.id} joined room: ${room}`);
-  });
-
-  socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.id);
-  });
-});
-
-// Export io for use in services
+// Socket.IO di-wiring di initSocket() (lihat src/socket/socket.handlers.ts).
+// Export io dipertahankan untuk kompatibilitas; service baru memakai getIo() dari src/socket/io.
 export { io };
 
 const PORT = process.env.PORT || 3001;
