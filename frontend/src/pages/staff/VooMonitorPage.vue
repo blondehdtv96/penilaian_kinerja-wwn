@@ -144,6 +144,7 @@ import {
 } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { vooService } from '@/services/voo.service';
+import { useRealtime } from '@/composables/useRealtime';
 import { fmtDateShort, vooStatusMeta, initials, parsePhotos } from '@/utils/format';
 import type { VooSubmission } from '@/types';
 
@@ -196,17 +197,17 @@ const openPhoto = (src: string) => {
   lightboxPhoto.value = src;
 };
 
-let pollTimer: ReturnType<typeof setInterval> | null = null;
+// Realtime: server mendorong 'voo:changed' saat ada perubahan — menggantikan polling 30s.
+// Refresh saat tab kembali fokus dipertahankan sebagai fallback bila socket sempat terputus.
 const onFocus = () => load(false);
+useRealtime('voo:changed', () => load(false));
 
 onMounted(() => {
   load();
-  pollTimer = setInterval(() => load(false), 30000);
   window.addEventListener('focus', onFocus);
   document.addEventListener('visibilitychange', onFocus);
 });
 onUnmounted(() => {
-  if (pollTimer) clearInterval(pollTimer);
   window.removeEventListener('focus', onFocus);
   document.removeEventListener('visibilitychange', onFocus);
 });

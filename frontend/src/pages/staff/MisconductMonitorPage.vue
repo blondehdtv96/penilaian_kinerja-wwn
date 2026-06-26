@@ -207,6 +207,7 @@ import {
 } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { recordsService } from '@/services/records.service';
+import { useRealtime } from '@/composables/useRealtime';
 import { fmtDateShort, severityMeta, initials } from '@/utils/format';
 import type { MisconductItem, CounselingItem, KartuKuningItem, SuratPeringatanItem } from '@/types';
 
@@ -308,17 +309,16 @@ const toggleExpand = (id: number) => {
   expandId.value = expandId.value === id ? null : id;
 };
 
-let pollTimer: ReturnType<typeof setInterval> | null = null;
+// Realtime: 'record:changed' mendorong refresh — menggantikan polling 30s.
 const onFocus = () => loadAll(false);
+useRealtime('record:changed', () => loadAll(false));
 
 onMounted(() => {
   loadAll();
-  pollTimer = setInterval(() => loadAll(false), 30000);
   window.addEventListener('focus', onFocus);
   document.addEventListener('visibilitychange', onFocus);
 });
 onUnmounted(() => {
-  if (pollTimer) clearInterval(pollTimer);
   window.removeEventListener('focus', onFocus);
   document.removeEventListener('visibilitychange', onFocus);
 });

@@ -7,6 +7,25 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Seeding database...');
 
+  // Idempotent: kosongkan data dulu (urutan anak→induk) agar seed bisa dijalankan
+  // ulang tanpa error unique constraint. Asumsi skema sudah sinkron (jalankan
+  // `prisma db push` lebih dulu, atau pakai `npm run db:reset` yang sudah mencakupnya).
+  await prisma.blockchainHash.deleteMany();
+  await prisma.approval.deleteMany();
+  await prisma.eventLog.deleteMany();
+  await prisma.qrScanLog.deleteMany();
+  await prisma.notification.deleteMany();
+  await prisma.vooSubmission.deleteMany();
+  await prisma.misconduct.deleteMany();
+  await prisma.counseling.deleteMany();
+  await prisma.kartuKuning.deleteMany();
+  await prisma.suratPeringatan.deleteMany();
+  await prisma.qrLocation.deleteMany();
+  await prisma.operator.deleteMany();
+  await prisma.user.deleteMany();
+  await prisma.role.deleteMany();
+  console.log('Cleared existing data (seed idempotent)');
+
   // ================================================================
   // 1. ROLES (4 roles: Super Admin + 3 operational)
   // ================================================================
