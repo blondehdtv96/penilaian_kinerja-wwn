@@ -70,12 +70,29 @@ export class MisconductService {
   }
 
   // COUNSELING
-  async createCounseling(data: { operatorId: number; foremanId: number; topic: string; notes?: string }) {
+  async createCounseling(data: {
+    operatorId: number;
+    foremanId: number;
+    topic: string;
+    category?: string;
+    pws?: string;
+    employeeStatement?: string;
+    supervisorSuggestion?: string;
+    employeeCommitment?: string;
+    location?: string;
+    notes?: string;
+  }) {
     const record = await prisma.counseling.create({
       data: {
         operatorId: data.operatorId,
         foremanId: data.foremanId,
         topic: data.topic,
+        category: data.category || 'Others',
+        pws: data.pws || '',
+        employeeStatement: data.employeeStatement || '',
+        supervisorSuggestion: data.supervisorSuggestion || '',
+        employeeCommitment: data.employeeCommitment || '',
+        location: data.location || '',
         notes: data.notes || ''
       },
       include: {
@@ -99,12 +116,29 @@ export class MisconductService {
     return record;
   }
 
+  /** Section Manager menandatangani / mengetahui sesi konseling. */
+  async acknowledgeCounseling(id: number, acknowledgedById: number) {
+    const record = await prisma.counseling.update({
+      where: { id },
+      data: { acknowledgedById, acknowledgedAt: new Date() },
+      include: {
+        operator: { include: { user: { select: { id: true, fullName: true } } } },
+        foreman: { select: { id: true, fullName: true } },
+        acknowledgedBy: { select: { id: true, fullName: true } }
+      }
+    });
+
+    emitToRooms(recordRooms(record.operator.user.id), 'record:changed', { kind: 'counseling', id: record.id });
+    return record;
+  }
+
   async getAllCounselings(operatorId?: number) {
     return prisma.counseling.findMany({
       where: operatorId ? { operatorId: Number(operatorId) } : {},
       include: {
         operator: { include: { user: { select: { id: true, fullName: true } } } },
-        foreman: { select: { id: true, fullName: true } }
+        foreman: { select: { id: true, fullName: true } },
+        acknowledgedBy: { select: { id: true, fullName: true } }
       },
       orderBy: { date: 'desc' }
     });
@@ -203,7 +237,7 @@ export class MisconductService {
       where: operatorId ? { operatorId: Number(operatorId) } : {},
       include: {
         operator: { include: { user: { select: { id: true, fullName: true } } } },
-        issuedBy: { select: { id: true, fullName: true } }
+        issuedBy: { select: { id: true, fullName: true, role: { select: { name: true } } } }
       },
       orderBy: { issuedAt: 'desc' }
     });

@@ -109,11 +109,19 @@ export interface MisconductItem {
 export interface CounselingItem {
   id: number;
   topic: string;
+  category: string;
+  pws: string;
+  employeeStatement: string;
+  supervisorSuggestion: string;
+  employeeCommitment: string;
+  location: string;
   notes: string;
   date: string;
   createdAt: string;
-  operator?: { id: number; user: UserRef };
+  acknowledgedAt?: string | null;
+  operator?: { id: number; user: UserRef; employeeId?: string; section?: string; position?: string };
   foreman?: UserRef;
+  acknowledgedBy?: UserRef | null;
 }
 
 export interface KartuKuningItem {
@@ -129,8 +137,17 @@ export interface SuratPeringatanItem {
   level: number;
   reason: string;
   issuedAt: string;
-  operator?: { id: number; user: UserRef };
-  issuedBy?: UserRef;
+  // Backend mengembalikan seluruh field scalar operator (include) — berguna untuk template cetak.
+  operator?: {
+    id: number;
+    employeeId?: string;
+    section?: string;
+    line?: string;
+    group?: string;
+    position?: string;
+    user: UserRef;
+  };
+  issuedBy?: UserRef & { role?: { name: string } | string };
 }
 
 export interface OperatorDetail extends OperatorListItem {
