@@ -1,9 +1,34 @@
 <template>
   <page-shell title="Scan Area QR" subtitle="Pindai QR area kerja atau identitas operator">
     <div class="grid g-bottom">
-      <div class="card">
-        <div id="qr-reader" class="qr-reader"></div>
-        <div class="form-actions" style="margin-top: 14px">
+      <div class="card scan-card">
+        <div class="scan-stage">
+          <!-- Area kamera (html5-qrcode menyuntik <video> ke sini saat scanning) -->
+          <div id="qr-reader" class="qr-reader" :class="{ active: scanning }"></div>
+
+          <!-- Placeholder profesional saat kamera belum aktif -->
+          <div v-if="!scanning" class="scan-placeholder">
+            <div class="scan-frame">
+              <span class="corner tl"></span>
+              <span class="corner tr"></span>
+              <span class="corner bl"></span>
+              <span class="corner br"></span>
+              <div class="scan-icon"><ion-icon :icon="qrCodeOutline" /></div>
+            </div>
+            <h3 class="ph-title">Arahkan kamera ke kode QR</h3>
+            <p class="ph-sub">Pindai QR area kerja untuk langsung mengajukan VoO / Ide Kaizen, atau QR identitas operator.</p>
+            <ul class="ph-tips">
+              <li><ion-icon :icon="checkmarkCircleOutline" /> Pastikan QR berada di dalam bingkai</li>
+              <li><ion-icon :icon="checkmarkCircleOutline" /> Jaga pencahayaan tetap cukup</li>
+              <li><ion-icon :icon="checkmarkCircleOutline" /> Izinkan akses kamera saat diminta</li>
+            </ul>
+          </div>
+
+          <!-- Garis pemindai animatif saat scanning -->
+          <div v-else class="scan-line"></div>
+        </div>
+
+        <div class="form-actions" style="margin-top: 16px">
           <button class="btn-primary" v-if="!scanning" @click="start"><ion-icon :icon="scanOutline" /> Mulai Scan</button>
           <button class="btn-ghost" v-else @click="stop"><ion-icon :icon="stopCircleOutline" /> Berhenti</button>
         </div>
@@ -42,7 +67,7 @@
 import { IonIcon } from '@ionic/vue';
 import { onUnmounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { scanOutline, stopCircleOutline, alertCircleOutline, checkmarkCircleOutline } from 'ionicons/icons';
+import { scanOutline, stopCircleOutline, alertCircleOutline, checkmarkCircleOutline, qrCodeOutline } from 'ionicons/icons';
 import { Html5Qrcode } from 'html5-qrcode';
 import PageShell from '@/components/PageShell.vue';
 import { operatorService } from '@/services/operators.service';
@@ -141,14 +166,115 @@ onUnmounted(stop);
 </script>
 
 <style scoped>
+/* ---------- Panggung kamera / placeholder ---------- */
+.scan-stage {
+  position: relative;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 120% at 50% 0%, color-mix(in srgb, var(--db-brand) 8%, transparent), transparent 60%),
+    var(--db-icon-bg);
+  border: 1px solid var(--db-line);
+  min-height: 340px;
+  display: grid;
+  place-items: center;
+}
 .qr-reader {
   width: 100%;
-  min-height: 240px;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
-  background: var(--db-icon-bg);
-  border: 1px solid var(--db-line);
 }
+.qr-reader.active { min-height: 340px; }
+.qr-reader :deep(video) { border-radius: 16px; object-fit: cover; }
+
+/* ---------- Placeholder ---------- */
+.scan-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 28px 22px;
+  gap: 6px;
+}
+.scan-frame {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 18px;
+}
+.scan-frame .corner {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border: 3px solid var(--db-brand);
+}
+.scan-frame .tl { top: 0; left: 0; border-right: none; border-bottom: none; border-radius: 8px 0 0 0; }
+.scan-frame .tr { top: 0; right: 0; border-left: none; border-bottom: none; border-radius: 0 8px 0 0; }
+.scan-frame .bl { bottom: 0; left: 0; border-right: none; border-top: none; border-radius: 0 0 0 8px; }
+.scan-frame .br { bottom: 0; right: 0; border-left: none; border-top: none; border-radius: 0 0 8px 0; }
+.scan-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--db-brand) 14%, transparent);
+  color: var(--db-brand);
+  font-size: 38px;
+}
+.ph-title { font-size: 16px; font-weight: 700; color: var(--db-ink); }
+.ph-sub {
+  font-size: 13px;
+  color: var(--db-ink-2);
+  max-width: 360px;
+  line-height: 1.5;
+  margin-top: 2px;
+}
+.ph-tips {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  text-align: left;
+}
+.ph-tips li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--db-ink-2);
+}
+.ph-tips li ion-icon { font-size: 16px; color: var(--db-green); flex-shrink: 0; }
+
+/* ---------- Garis pemindai animatif ---------- */
+.scan-line {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--db-brand), transparent);
+  box-shadow: 0 0 12px 2px color-mix(in srgb, var(--db-brand) 60%, transparent);
+  animation: scan-sweep 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes scan-sweep {
+  0%   { top: 12%; opacity: 0.2; }
+  50%  { top: 88%; opacity: 1; }
+  100% { top: 12%; opacity: 0.2; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scan-line { animation: none; top: 50%; }
+}
+
 .manual { margin-top: 18px; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--db-line); padding-top: 16px; }
 .manual textarea {
   width: 100%; border: 1px solid var(--db-line-2); border-radius: 10px; padding: 10px 12px;
