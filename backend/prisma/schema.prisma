@@ -41,6 +41,7 @@ model User {
   vooSubmissions      VooSubmission[]
   misconducts         Misconduct[]
   counselingsGiven    Counseling[]      @relation("CounselingForeman")
+  counselingsAcknowledged Counseling[]  @relation("CounselingAcknowledger")
   kartuKuningIssued     KartuKuning[]         @relation("KartuKuningIssuer")
   suratPeringatanIssued SuratPeringatan[]     @relation("SuratPeringatanIssuer")
   approvals           Approval[]
@@ -159,8 +160,22 @@ model Counseling {
   operator    Operator @relation(fields: [operatorId], references: [id], onDelete: Cascade)
   foremanId   Int
   foreman     User     @relation("CounselingForeman", fields: [foremanId], references: [id])
-  topic       String
-  notes       String   @default("")
+
+  // Lembar COUNSELING - COACHING
+  category             String  @default("Others") // Safety | Quality | Produksi | Behaviour | Others
+  topic                String                      // Perihal (ringkas)
+  pws                  String  @default("")        // Nama pengawas/atasan langsung
+  employeeStatement    String  @default("")        // Paparan/Penjelasan dari karyawan (uraian masalah)
+  supervisorSuggestion String  @default("")        // Saran dari atasan
+  employeeCommitment   String  @default("")        // Komitmen karyawan (mencegah kejadian ulang)
+  location             String  @default("")        // Tempat penandatanganan (mis. Bekasi)
+  notes                String  @default("")         // catatan tambahan (kompatibilitas data lama)
+
+  // Persetujuan / mengetahui oleh Section Manager
+  acknowledgedById Int?
+  acknowledgedBy   User?     @relation("CounselingAcknowledger", fields: [acknowledgedById], references: [id])
+  acknowledgedAt   DateTime?
+
   date        DateTime @default(now())
   createdAt   DateTime @default(now())
 }

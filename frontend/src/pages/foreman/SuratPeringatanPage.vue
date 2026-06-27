@@ -29,13 +29,18 @@
         <div v-if="items.length === 0" class="empty">Belum ada surat peringatan diterbitkan.</div>
         <div class="table-wrap" v-else>
           <table>
-            <thead><tr><th>Operator</th><th>Tingkat</th><th>Alasan</th><th>Tanggal</th></tr></thead>
+            <thead><tr><th>Operator</th><th>Tingkat</th><th>Alasan</th><th>Tanggal</th><th></th></tr></thead>
             <tbody>
               <tr v-for="s in items" :key="s.id">
                 <td><div class="who"><div class="t-ava">{{ initials(s.operator?.user?.fullName) }}</div>{{ s.operator?.user?.fullName }}</div></td>
                 <td><span class="status" :class="s.level >= 3 ? 'critical' : s.level === 2 ? 'high' : 'medium'">SP {{ s.level }}</span></td>
                 <td class="cell-wrap">{{ s.reason }}</td>
                 <td class="muted">{{ fmtDateShort(s.issuedAt) }}</td>
+                <td>
+                  <button class="btn-ghost btn-sm" type="button" @click="print(s)" title="Cetak Surat Peringatan">
+                    <ion-icon :icon="printOutline" /> Cetak
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -48,12 +53,13 @@
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue';
 import { onMounted, ref } from 'vue';
-import { checkmarkCircleOutline, alertCircleOutline, saveOutline } from 'ionicons/icons';
+import { checkmarkCircleOutline, alertCircleOutline, saveOutline, printOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import OperatorSelect from '@/components/OperatorSelect.vue';
 import { recordsService } from '@/services/records.service';
 import { useRealtime } from '@/composables/useRealtime';
 import { initials, fmtDateShort } from '@/utils/format';
+import { printSuratPeringatan } from '@/utils/suratPeringatanTemplate';
 import type { SuratPeringatanItem } from '@/types';
 
 const operatorId = ref<number | null>(null);
@@ -72,6 +78,8 @@ const load = async () => {
     /* abaikan */
   }
 };
+
+const print = (s: SuratPeringatanItem) => printSuratPeringatan(s);
 
 const submit = async () => {
   if (!operatorId.value) return;
@@ -98,4 +106,6 @@ useRealtime('record:changed', load);
 
 <style scoped>
 .cell-wrap { max-width: 300px; }
+.btn-sm { padding: 5px 10px; font-size: 12px; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.btn-sm ion-icon { font-size: 15px; }
 </style>

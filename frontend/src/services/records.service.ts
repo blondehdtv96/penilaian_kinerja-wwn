@@ -11,8 +11,19 @@ export const recordsService = {
 
   listCounseling: (operatorId?: number) =>
     api.get('/records/counseling', { params: operatorId ? { operatorId } : {} }),
-  createCounseling: (data: { operatorId: number; topic: string; notes?: string }) =>
-    api.post('/records/counseling', data),
+  createCounseling: (data: {
+    operatorId: number;
+    topic: string;
+    category?: string;
+    pws?: string;
+    employeeStatement?: string;
+    supervisorSuggestion?: string;
+    employeeCommitment?: string;
+    location?: string;
+    notes?: string;
+  }) => api.post('/records/counseling', data),
+  acknowledgeCounseling: (id: number) =>
+    api.patch(`/records/counseling/${id}/acknowledge`),
 
   listKartuKuning: (operatorId?: number) =>
     api.get('/records/kartu-kuning', { params: operatorId ? { operatorId } : {} }),

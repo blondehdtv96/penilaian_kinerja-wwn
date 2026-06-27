@@ -31,7 +31,7 @@ const routes: Array<RouteRecordRaw> = [
   // ---- Foreman ----
   { path: '/voo/approve', name: 'VooApprove', component: () => import('@/pages/foreman/VooApprovePage.vue'), meta: { roles: ['Foreman'] } },
   { path: '/records/misconduct', name: 'Misconduct', component: () => import('@/pages/foreman/MisconductPage.vue'), meta: { roles: ['Foreman'] } },
-  { path: '/records/counseling', name: 'Counseling', component: () => import('@/pages/foreman/CounselingPage.vue'), meta: { roles: ['Foreman'] } },
+  { path: '/records/counseling', name: 'Counseling', component: () => import('@/pages/foreman/CounselingPage.vue'), meta: { roles: ['Foreman', 'Section Manager'] } },
   { path: '/records/kartu-kuning', name: 'KartuKuning', component: () => import('@/pages/foreman/KartuKuningPage.vue'), meta: { roles: ['Foreman'] } },
   { path: '/records/surat-peringatan', name: 'SuratPeringatan', component: () => import('@/pages/foreman/SuratPeringatanPage.vue'), meta: { roles: ['Foreman'] } },
   { path: '/operators', name: 'Operators', component: () => import('@/pages/operators/OperatorListPage.vue'), meta: { roles: ['Foreman', 'Section Manager'] } },

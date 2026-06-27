@@ -45,6 +45,15 @@ export class MisconductController {
     }
   };
 
+  acknowledgeCounseling = async (req: any, res: Response) => {
+    try {
+      const result = await service.acknowledgeCounseling(parseInt(req.params.id), req.user.userId);
+      res.json({ success: true, data: result });
+    } catch (error: any) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  };
+
   // KARTU KUNING
   createKartuKuning = async (req: any, res: Response) => {
     try {

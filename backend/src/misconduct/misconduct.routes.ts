@@ -14,6 +14,7 @@ router.get('/misconduct', controller.getAllMisconducts);
 // Counseling
 router.post('/counseling', checkRole(['Foreman']), controller.createCounseling);
 router.get('/counseling', controller.getAllCounselings);
+router.patch('/counseling/:id/acknowledge', checkRole(['Section Manager']), controller.acknowledgeCounseling);
 
 // Kartu Kuning
 router.post('/kartu-kuning', checkRole(['Foreman', 'Section Manager']), controller.createKartuKuning);
