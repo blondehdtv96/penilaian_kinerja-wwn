@@ -5,9 +5,11 @@ import { emitToRooms } from '../socket/emit';
 const prisma = new PrismaClient();
 const notifications = new NotificationService();
 
+// Staff Produksi memonitor seluruh catatan disiplin → ikut menerima.
 const recordRooms = (operatorUserId: number) => [
   'role:Foreman',
   'role:Section Manager',
+  'role:Staff Produksi',
   `user:${operatorUserId}`,
 ];
 

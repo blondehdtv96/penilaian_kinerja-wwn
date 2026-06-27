@@ -6,9 +6,11 @@ const prisma = new PrismaClient();
 const notifications = new NotificationService();
 
 // Room yang perlu refetch saat status VoO berubah (efemeral, untuk live-refresh halaman).
+// Staff Produksi memonitor seluruh pengajuan → ikut menerima.
 const vooRooms = (operatorUserId: number) => [
   'role:Foreman',
   'role:Section Manager',
+  'role:Staff Produksi',
   `user:${operatorUserId}`,
 ];
 

@@ -12,7 +12,7 @@
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
     "prisma:seed": "tsx prisma/seed.ts",
-    "db:reset": "tsx scripts/reset-db.ts",
+    "db:reset": "prisma db push --force-reset --skip-generate && tsx prisma/seed.ts",
     "db:clear": "tsx scripts/clear-data.ts",
     "test:password": "tsx scripts/test-password.ts"
   },
