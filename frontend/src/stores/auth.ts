@@ -77,6 +77,21 @@ export const useAuthStore = defineStore('auth', () => {
     }
   };
 
+  // Update profil sendiri (email, NIK, password) — untuk semua role.
+  const updateProfile = async (payload: {
+    email?: string;
+    nik?: string | null;
+    password?: string;
+    currentPassword?: string;
+  }) => {
+    const { data } = await authService.updateProfile(payload);
+    if (data?.success) {
+      user.value = data.data;
+      persist();
+    }
+    return data;
+  };
+
   return {
     token,
     user,
@@ -91,5 +106,6 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     logout,
     refreshUser,
+    updateProfile,
   };
 });

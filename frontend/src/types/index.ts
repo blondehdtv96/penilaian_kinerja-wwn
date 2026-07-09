@@ -22,7 +22,7 @@ export interface AuthUser {
   username: string;
   email: string;
   fullName: string;
-  nip?: string | null;
+  nik?: string | null;
   isActive: boolean;
   roleId: number;
   role: string; // V2: peran tunggal (string), bukan array
@@ -75,7 +75,28 @@ export interface OperatorListItem {
   performanceScore: number;
   totalMerit: number;
   totalMisconduct: number;
+  // Total poin dari pelanggaran aktif — dasar evaluasi eskalasi (R8.1).
+  accumulatedPoints: number;
   user: UserRef;
+}
+
+// Katalog jenis pelanggaran (R1) — sumber poin yang di-snapshot ke Misconduct.
+export interface ViolationTypeItem {
+  id: number;
+  name: string;
+  category: string;
+  severity: string;
+  points: number;
+  isActive: boolean;
+}
+
+// Ambang batas eskalasi aktif (default atau override Section Manager, R4.6).
+export interface EscalationThresholds {
+  counseling: number;
+  kartuKuning: number;
+  sp1: number;
+  sp2: number;
+  sp3: number;
 }
 
 export type VooStatus = 'pending' | 'approved_foreman' | 'approved_final' | 'rejected';
@@ -95,15 +116,34 @@ export interface VooSubmission {
   approvals?: unknown[];
 }
 
+// Referensi operator dengan field scalar penuh — bentuk aktual dari Prisma
+// `include: { operator: { include: { user: {...} } } }` (mengembalikan semua
+// kolom scalar Operator, bukan hanya id).
+export interface OperatorRef {
+  id: number;
+  employeeId?: string;
+  section?: string;
+  line?: string;
+  group?: string;
+  position?: string;
+  accumulatedPoints?: number;
+  user: UserRef;
+}
+
 export interface MisconductItem {
   id: number;
   type: string;
   severity: string;
   description: string;
   points: number;
+  violationTypeId?: number | null;
   createdAt: string;
-  operator?: { id: number; user: UserRef };
-  createdBy?: UserRef;
+  operator?: OperatorRef;
+  // createdBy.role terisi pada endpoint /misconduct/my agar operator tahu
+  // siapa (Foreman/Section Manager) yang menerbitkan pelanggaran ini.
+  createdBy?: UserRef & { role?: { name: string } };
+  // Tindak lanjut konseling (null jika pelanggaran belum dikonseling).
+  counseling?: { id: number; topic: string; date: string; acknowledgedAt?: string | null } | null;
 }
 
 export interface CounselingItem {
@@ -119,7 +159,9 @@ export interface CounselingItem {
   date: string;
   createdAt: string;
   acknowledgedAt?: string | null;
-  operator?: { id: number; user: UserRef; employeeId?: string; section?: string; position?: string };
+  misconductId?: number | null;
+  misconduct?: { id: number; type: string; severity: string; description?: string } | null;
+  operator?: OperatorRef;
   foreman?: UserRef;
   acknowledgedBy?: UserRef | null;
 }
@@ -128,7 +170,12 @@ export interface KartuKuningItem {
   id: number;
   reason: string;
   issuedAt: string;
-  operator?: { id: number; user: UserRef };
+  // Snapshot poin akumulasi & level eskalasi saat penerbitan (R5.1).
+  accumulatedPointsAtIssuance?: number;
+  escalationLevelAtIssuance?: number;
+  // true bila diterbitkan meski poin masih di bawah ambang batas (R5.2).
+  isManualOverride?: boolean;
+  operator?: OperatorRef;
   issuedBy?: UserRef;
 }
 
@@ -137,16 +184,10 @@ export interface SuratPeringatanItem {
   level: number;
   reason: string;
   issuedAt: string;
+  accumulatedPointsAtIssuance?: number;
+  isManualOverride?: boolean;
   // Backend mengembalikan seluruh field scalar operator (include) — berguna untuk template cetak.
-  operator?: {
-    id: number;
-    employeeId?: string;
-    section?: string;
-    line?: string;
-    group?: string;
-    position?: string;
-    user: UserRef;
-  };
+  operator?: OperatorRef;
   issuedBy?: UserRef & { role?: { name: string } | string };
 }
 
@@ -187,7 +228,7 @@ export interface AdminUser {
   username: string;
   email: string;
   fullName: string;
-  nip?: string | null;
+  nik?: string | null;
   isActive: boolean;
   roleId: number;
   createdAt: string;

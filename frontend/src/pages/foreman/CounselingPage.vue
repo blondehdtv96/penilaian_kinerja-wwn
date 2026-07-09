@@ -7,15 +7,28 @@
         <div class="alert err" v-if="error"><ion-icon :icon="alertCircleOutline" /> {{ error }}</div>
 
         <form class="form-grid" @submit.prevent="submit">
-          <!-- Identitas karyawan -->
+          <!-- Pilih pelanggaran yang akan ditindaklanjuti -->
           <div class="field">
-            <label>Operator (Karyawan)</label>
-            <select v-model.number="operatorId" required>
-              <option :value="null" disabled>{{ loadingOps ? 'Memuat operator…' : 'Pilih operator…' }}</option>
-              <option v-for="o in operators" :key="o.id" :value="o.id">
-                {{ o.user.fullName }} — {{ o.employeeId }} ({{ o.section }})
+            <label>Pelanggaran (Misconduct) yang Ditindaklanjuti</label>
+            <select v-model.number="misconductId" required>
+              <option :value="null" disabled>
+                {{ loadingMis ? 'Memuat pelanggaran…' : (pendingMisconducts.length ? 'Pilih pelanggaran…' : 'Tidak ada pelanggaran menunggu konseling') }}
+              </option>
+              <option v-for="m in pendingMisconducts" :key="m.id" :value="m.id">
+                {{ m.operator?.user?.fullName }} — {{ m.type }} ({{ fmtDateShort(m.createdAt) }})
               </option>
             </select>
+            <p class="hint-line">
+              <ion-icon :icon="informationCircleOutline" />
+              Konseling hanya bisa dibuat untuk pelanggaran yang sudah diinput dan belum dikonseling.
+            </p>
+          </div>
+
+          <div class="mis-info" v-if="selectedMisconduct">
+            <div><span class="k">Operator</span><span class="v">{{ selectedMisconduct.operator?.user?.fullName }}</span></div>
+            <div><span class="k">Jenis Pelanggaran</span><span class="v">{{ selectedMisconduct.type }}</span></div>
+            <div><span class="k">Keparahan</span><span class="v"><span class="status" :class="severityMeta(selectedMisconduct.severity).cls">{{ severityMeta(selectedMisconduct.severity).label }}</span></span></div>
+            <div class="mis-desc"><span class="k">Deskripsi</span><span class="v">{{ selectedMisconduct.description || '-' }}</span></div>
           </div>
 
           <div class="op-info" v-if="selectedOperator">
@@ -50,7 +63,7 @@
           <div class="field"><label>Tempat</label><input v-model.trim="location" placeholder="Bekasi" /></div>
 
           <div class="form-actions">
-            <button class="btn-primary" :disabled="submitting || !operatorId || !topic">
+            <button class="btn-primary" :disabled="submitting || !misconductId || !topic">
               <ion-icon :icon="saveOutline" /> {{ submitting ? 'Menyimpan…' : 'Simpan' }}
             </button>
           </div>
@@ -62,10 +75,11 @@
         <div v-if="items.length === 0" class="empty">Belum ada catatan konseling.</div>
         <div class="table-wrap" v-else>
           <table>
-            <thead><tr><th>Operator</th><th>Perihal</th><th>Topik</th><th>Tanggal</th><th class="ta-r">Aksi</th></tr></thead>
+            <thead><tr><th>Operator</th><th>Pelanggaran</th><th>Perihal</th><th>Topik</th><th>Tanggal</th><th class="ta-r">Aksi</th></tr></thead>
             <tbody>
               <tr v-for="c in items" :key="c.id">
                 <td><div class="who"><div class="t-ava">{{ initials(c.operator?.user?.fullName) }}</div>{{ c.operator?.user?.fullName }}</div></td>
+                <td><span v-if="c.misconduct" class="badge-muted">{{ c.misconduct.type }}</span><span v-else class="muted">—</span></td>
                 <td><span class="badge-muted">{{ c.category }}</span></td>
                 <td>{{ c.topic }}</td>
                 <td class="muted">
@@ -91,24 +105,25 @@
 
 <script setup lang="ts">
 import { IonIcon } from '@ionic/vue';
-import { computed, onMounted, ref } from 'vue';
-import { checkmarkCircleOutline, alertCircleOutline, saveOutline, documentTextOutline, checkmarkDoneOutline } from 'ionicons/icons';
+import { computed, onMounted, ref, watch } from 'vue';
+import { checkmarkCircleOutline, alertCircleOutline, saveOutline, documentTextOutline, checkmarkDoneOutline, informationCircleOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import CounselingSheet from '@/components/CounselingSheet.vue';
 import { recordsService } from '@/services/records.service';
 import { operatorService } from '@/services/operators.service';
 import { useRealtime } from '@/composables/useRealtime';
 import { useAuthStore } from '@/stores/auth';
-import { initials, fmtDateShort } from '@/utils/format';
-import type { CounselingItem, OperatorListItem } from '@/types';
+import { initials, fmtDateShort, severityMeta } from '@/utils/format';
+import type { CounselingItem, MisconductItem, OperatorListItem } from '@/types';
 
 const auth = useAuthStore();
 
 const categories = ['Safety', 'Quality', 'Produksi', 'Behaviour', 'Others'];
 
 const operators = ref<OperatorListItem[]>([]);
-const loadingOps = ref(true);
-const operatorId = ref<number | null>(null);
+const pendingMisconducts = ref<MisconductItem[]>([]);
+const loadingMis = ref(true);
+const misconductId = ref<number | null>(null);
 const category = ref('Safety');
 const topic = ref('');
 const pws = ref('');
@@ -123,8 +138,19 @@ const okMsg = ref('');
 const items = ref<CounselingItem[]>([]);
 const sheet = ref<CounselingItem | null>(null);
 
-const selectedOperator = computed(() => operators.value.find((o) => o.id === operatorId.value) || null);
+const selectedMisconduct = computed(() => pendingMisconducts.value.find((m) => m.id === misconductId.value) || null);
+const selectedOperator = computed(() =>
+  operators.value.find((o) => o.id === selectedMisconduct.value?.operator?.id) || null,
+);
 const canCreate = computed(() => auth.hasRole('Foreman'));
+
+// Ketika pelanggaran dipilih, isi otomatis topik & kategori dari data pelanggaran.
+watch(misconductId, () => {
+  const m = selectedMisconduct.value;
+  if (!m) return;
+  if (!topic.value) topic.value = m.type;
+  employeeStatement.value = m.description || employeeStatement.value;
+});
 
 const loadOperators = async () => {
   try {
@@ -132,8 +158,18 @@ const loadOperators = async () => {
     if (data?.success) operators.value = data.data;
   } catch {
     /* abaikan */
+  }
+};
+
+const loadPendingMisconducts = async () => {
+  loadingMis.value = true;
+  try {
+    const { data } = await recordsService.listMisconduct({ counselingStatus: 'pending' });
+    if (data?.success) pendingMisconducts.value = data.data;
+  } catch {
+    /* abaikan */
   } finally {
-    loadingOps.value = false;
+    loadingMis.value = false;
   }
 };
 
@@ -154,16 +190,17 @@ const resetForm = () => {
   employeeCommitment.value = '';
   location.value = '';
   category.value = 'Safety';
+  misconductId.value = null;
 };
 
 const submit = async () => {
-  if (!operatorId.value) return;
+  if (!misconductId.value) return;
   submitting.value = true;
   error.value = '';
   okMsg.value = '';
   try {
     const { data } = await recordsService.createCounseling({
-      operatorId: operatorId.value,
+      misconductId: misconductId.value,
       topic: topic.value,
       category: category.value,
       pws: pws.value,
@@ -175,7 +212,7 @@ const submit = async () => {
     if (data?.success) {
       okMsg.value = 'Lembar counseling tercatat.';
       resetForm();
-      await load();
+      await Promise.all([load(), loadPendingMisconducts()]);
     } else error.value = 'Gagal menyimpan.';
   } catch (e: any) {
     error.value = e?.response?.data?.message || 'Gagal menyimpan.';
@@ -195,8 +232,8 @@ const acknowledge = async (c: CounselingItem) => {
   }
 };
 
-onMounted(() => { loadOperators(); load(); });
-useRealtime('record:changed', load);
+onMounted(() => { loadOperators(); loadPendingMisconducts(); load(); });
+useRealtime('record:changed', () => { loadPendingMisconducts(); load(); });
 </script>
 
 <style scoped>
@@ -213,4 +250,11 @@ useRealtime('record:changed', load);
 .ico-btn { width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; color: var(--db-ink-2); font-size: 17px; }
 .ico-btn:hover { background: var(--db-icon-bg); color: var(--db-ink); }
 .ack { margin-left: 6px; color: var(--db-green, #16a34a); vertical-align: middle; }
+.hint-line { display: flex; align-items: center; gap: 6px; margin: 6px 0 0; font-size: 12px; color: var(--db-ink-3); }
+.hint-line ion-icon { font-size: 15px; flex-shrink: 0; }
+.mis-info { display: flex; flex-wrap: wrap; gap: 18px; padding: 10px 12px; background: var(--db-icon-bg); border: 1px solid var(--db-line); border-radius: 10px; }
+.mis-info > div { display: flex; flex-direction: column; }
+.mis-info .k { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--db-ink-3); }
+.mis-info .v { font-size: 13.5px; font-weight: 600; color: var(--db-ink); }
+.mis-info .mis-desc { flex-basis: 100%; }
 </style>

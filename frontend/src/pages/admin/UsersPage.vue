@@ -13,7 +13,7 @@
         <div class="field"><label>Nama Lengkap</label><input v-model.trim="f.fullName" required /></div>
         <div class="field"><label>Nama Pengguna</label><input v-model.trim="f.username" :disabled="!!editing" required /></div>
         <div class="field"><label>Email</label><input type="email" v-model.trim="f.email" required /></div>
-        <div class="field"><label>NIP</label><input v-model.trim="f.nip" placeholder="opsional" /></div>
+        <div class="field"><label>NIK</label><input v-model.trim="f.nik" placeholder="opsional" /></div>
         <div class="field">
           <label>Peran</label>
           <select v-model.number="f.roleId" required>
@@ -90,7 +90,7 @@ const editing = ref<AdminUser | null>(null);
 const saving = ref(false);
 const formError = ref('');
 
-const blankForm = () => ({ fullName: '', username: '', email: '', nip: '', roleId: 0, password: '', isActive: true });
+const blankForm = () => ({ fullName: '', username: '', email: '', nik: '', roleId: 0, password: '', isActive: true });
 const f = reactive(blankForm());
 const op = reactive({ employeeId: '', section: '', line: '', group: '', position: '' });
 
@@ -119,7 +119,7 @@ const openCreate = () => {
 
 const openEdit = (u: AdminUser) => {
   editing.value = u;
-  Object.assign(f, { fullName: u.fullName, username: u.username, email: u.email, nip: u.nip || '', roleId: u.roleId, password: '', isActive: u.isActive });
+  Object.assign(f, { fullName: u.fullName, username: u.username, email: u.email, nik: u.nik || '', roleId: u.roleId, password: '', isActive: u.isActive });
   formError.value = '';
   showForm.value = true;
 };
@@ -132,11 +132,11 @@ const submit = async () => {
   formError.value = '';
   try {
     if (editing.value) {
-      const payload: any = { email: f.email, fullName: f.fullName, nip: f.nip, roleId: f.roleId, isActive: f.isActive };
+      const payload: any = { email: f.email, fullName: f.fullName, nik: f.nik, roleId: f.roleId, isActive: f.isActive };
       if (f.password) payload.password = f.password;
       await superadminService.updateUser(editing.value.id, payload);
     } else {
-      const payload: any = { username: f.username, email: f.email, password: f.password, fullName: f.fullName, nip: f.nip, roleId: f.roleId, isActive: f.isActive };
+      const payload: any = { username: f.username, email: f.email, password: f.password, fullName: f.fullName, nik: f.nik, roleId: f.roleId, isActive: f.isActive };
       if (isOperatorRole.value) {
         payload.createOperator = true;
         payload.operatorData = { ...op, position: op.position || 'Operator' };

@@ -36,6 +36,14 @@
           <option value="critical">Kritis</option>
         </select>
       </div>
+      <div class="filter-group">
+        <label>Tindak Lanjut</label>
+        <select v-model="filterFollowup" @change="applyFilter">
+          <option value="">Semua</option>
+          <option value="pending">Belum dikonseling</option>
+          <option value="done">Sudah dikonseling</option>
+        </select>
+      </div>
       <button class="btn-ghost btn-sm" :disabled="loading" @click="loadAll(true)">
         <ion-icon :icon="refreshOutline" /> Muat Ulang
       </button>
@@ -61,7 +69,7 @@
       <div v-else-if="activeTab === 'misconduct'" class="table-wrap">
         <table>
           <thead>
-            <tr><th>#</th><th>Operator</th><th>Jenis</th><th>Keparahan</th><th>Poin Penalti</th><th>Dicatat Oleh</th><th>Tanggal</th><th>Detail</th></tr>
+            <tr><th>#</th><th>Operator</th><th>Jenis</th><th>Keparahan</th><th>Poin Penalti</th><th>Status Tindak Lanjut</th><th>Dicatat Oleh</th><th>Tanggal</th><th>Detail</th></tr>
           </thead>
           <tbody>
             <template v-for="(m, idx) in activeItems" :key="m.id">
@@ -83,6 +91,10 @@
                   <span v-if="m.points > 0" class="pts-bad">-{{ m.points }}</span>
                   <span v-else class="muted">-</span>
                 </td>
+                <td>
+                  <span v-if="m.counseling" class="fu-badge done"><ion-icon :icon="checkmarkCircleOutline" /> Sudah dikonseling</span>
+                  <span v-else class="fu-badge pending"><ion-icon :icon="timeOutline" /> Belum dikonseling</span>
+                </td>
                 <td class="muted">{{ m.createdBy?.fullName ?? '-' }}</td>
                 <td class="muted">{{ fmtDateShort(m.createdAt) }}</td>
                 <td>
@@ -92,7 +104,7 @@
                 </td>
               </tr>
               <tr v-if="expandId === m.id" class="detail-row">
-                <td colspan="8">
+                <td colspan="9">
                   <div class="detail-box">
                     <div class="detail-section">
                       <div class="detail-label">Deskripsi</div>
@@ -204,6 +216,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue';
 import {
   refreshOutline, alertCircleOutline, chatbubblesOutline,
   cardOutline, documentAttachOutline, chevronDownOutline, chevronUpOutline,
+  checkmarkCircleOutline, timeOutline,
 } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { recordsService } from '@/services/records.service';
@@ -224,6 +237,7 @@ const activeTab = ref<TabKey>('misconduct');
 const loading = ref(true);
 const error = ref('');
 const filterSeverity = ref('');
+const filterFollowup = ref('');
 const expandId = ref<number | null>(null);
 
 const misconducts = ref<MisconductItem[]>([]);
@@ -243,9 +257,12 @@ const activeTabMeta = computed(() => tabs.find((t) => t.key === activeTab.value)
 const activeItems = computed<any[]>(() => {
   switch (activeTab.value) {
     case 'misconduct':
-      return filterSeverity.value
-        ? misconducts.value.filter((m) => m.severity === filterSeverity.value)
-        : misconducts.value;
+      return misconducts.value.filter((m) => {
+        if (filterSeverity.value && m.severity !== filterSeverity.value) return false;
+        if (filterFollowup.value === 'pending' && m.counseling) return false;
+        if (filterFollowup.value === 'done' && !m.counseling) return false;
+        return true;
+      });
     case 'counseling': return counselings.value;
     case 'kartu-kuning': return kartuKunings.value;
     case 'surat-peringatan': return suratPeringatan.value;
@@ -257,8 +274,8 @@ const activeSummary = computed(() => {
   if (activeTab.value === 'misconduct') {
     return [
       { label: 'Total', count: misconducts.value.length, cls: 'all' },
-      { label: 'Rendah', count: misconducts.value.filter((m) => m.severity === 'low').length, cls: 'low' },
-      { label: 'Sedang', count: misconducts.value.filter((m) => m.severity === 'medium').length, cls: 'medium' },
+      { label: 'Belum Konseling', count: misconducts.value.filter((m) => !m.counseling).length, cls: 'high' },
+      { label: 'Sudah Konseling', count: misconducts.value.filter((m) => !!m.counseling).length, cls: 'low' },
       { label: 'Tinggi', count: misconducts.value.filter((m) => m.severity === 'high').length, cls: 'high' },
       { label: 'Kritis', count: misconducts.value.filter((m) => m.severity === 'critical').length, cls: 'critical' },
     ];
@@ -298,6 +315,7 @@ const loadAll = async (showSpinner = true) => {
 const switchTab = (key: TabKey) => {
   activeTab.value = key;
   filterSeverity.value = '';
+  filterFollowup.value = '';
   expandId.value = null;
 };
 
@@ -428,6 +446,21 @@ onUnmounted(() => {
 /* Points */
 .pts-bad { font-weight: 700; color: var(--db-brand); }
 .err-text { color: var(--db-brand); }
+
+/* Follow-up (konseling) status badge */
+.fu-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.fu-badge ion-icon { font-size: 14px; }
+.fu-badge.done { background: #dcfce7; color: #166534; }
+.fu-badge.pending { background: #fef3c7; color: #92400e; }
 
 /* SP level badges */
 .badge-sp {

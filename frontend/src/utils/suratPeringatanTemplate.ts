@@ -158,7 +158,7 @@ export function buildSuratPeringatanHtml(record: SuratPeringatanItem): string {
 
     <table class="bio">
       <tr><td class="k">Nama</td><td class="s">:</td><td>${nama}</td></tr>
-      <tr><td class="k">No. Code / NIP</td><td class="s">:</td><td>${noCode}</td></tr>
+      <tr><td class="k">No. Code / NIK</td><td class="s">:</td><td>${noCode}</td></tr>
       <tr><td class="k">Bagian / Line</td><td class="s">:</td><td>${bagian}</td></tr>
       <tr><td class="k">Jabatan</td><td class="s">:</td><td>${jabatan}</td></tr>
     </table>
