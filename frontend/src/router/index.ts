@@ -27,10 +27,11 @@ const routes: Array<RouteRecordRaw> = [
   { path: '/reports', name: 'Reports', component: () => import('@/pages/manager/ReportsPage.vue'), meta: { roles: ['Section Manager'] } },
   { path: '/blockchain', name: 'Blockchain', component: () => import('@/pages/manager/BlockchainPage.vue'), meta: { roles: ['Section Manager'] } },
   { path: '/audit', name: 'Audit', component: () => import('@/pages/manager/AuditPage.vue'), meta: { roles: ['Section Manager'] } },
+  { path: '/violation-types', name: 'ViolationTypes', component: () => import('@/pages/manager/ViolationTypesPage.vue'), meta: { roles: ['Section Manager'] } },
 
   // ---- Foreman ----
   { path: '/voo/approve', name: 'VooApprove', component: () => import('@/pages/foreman/VooApprovePage.vue'), meta: { roles: ['Foreman'] } },
-  { path: '/records/misconduct', name: 'Misconduct', component: () => import('@/pages/foreman/MisconductPage.vue'), meta: { roles: ['Foreman'] } },
+  { path: '/records/misconduct', name: 'Misconduct', component: () => import('@/pages/foreman/MisconductPage.vue'), meta: { roles: ['Foreman', 'Section Manager'] } },
   { path: '/records/counseling', name: 'Counseling', component: () => import('@/pages/foreman/CounselingPage.vue'), meta: { roles: ['Foreman', 'Section Manager'] } },
   { path: '/records/kartu-kuning', name: 'KartuKuning', component: () => import('@/pages/foreman/KartuKuningPage.vue'), meta: { roles: ['Foreman'] } },
   { path: '/records/surat-peringatan', name: 'SuratPeringatan', component: () => import('@/pages/foreman/SuratPeringatanPage.vue'), meta: { roles: ['Foreman'] } },
@@ -42,6 +43,7 @@ const routes: Array<RouteRecordRaw> = [
   { path: '/voo/submit', name: 'VooSubmit', component: () => import('@/pages/operator/VooSubmitPage.vue'), meta: { roles: ['Operator'] } },
   { path: '/voo/my', name: 'VooMy', component: () => import('@/pages/operator/VooMyPage.vue'), meta: { roles: ['Operator'] } },
   { path: '/performance', name: 'Performance', component: () => import('@/pages/operator/PerformancePage.vue'), meta: { roles: ['Operator'] } },
+  { path: '/my-misconduct', name: 'MyMisconduct', component: () => import('@/pages/operator/MyMisconductPage.vue'), meta: { roles: ['Operator'] } },
 
   // ---- Super Admin ----
   { path: '/admin/users', name: 'AdminUsers', component: () => import('@/pages/admin/UsersPage.vue'), meta: { roles: ['Super Admin'] } },

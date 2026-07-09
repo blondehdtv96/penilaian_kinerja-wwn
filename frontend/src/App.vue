@@ -81,7 +81,7 @@ import {
   checkmarkDoneOutline, alertCircleOutline, chatbubblesOutline, cardOutline,
   documentAttachOutline, peopleOutline, trophyOutline, ribbonOutline, trendingUpOutline,
   downloadOutline, cubeOutline, fingerPrintOutline, shieldCheckmarkOutline,
-  locationOutline, personOutline, logOutOutline,
+  locationOutline, personOutline, logOutOutline, listOutline, warningOutline,
 } from 'ionicons/icons';
 
 const auth = useAuthStore();
@@ -100,12 +100,13 @@ interface MenuItem { title: string; path: string; icon: string; roles?: string[]
 
 const allMenu: MenuItem[] = [
   { title: 'Dashboard KPI', path: '/dashboard', icon: gridOutline, roles: ['Section Manager'] },
+  { title: 'Dashboard', path: '/performance', icon: gridOutline, roles: ['Operator'] },
   { title: 'Scan Area QR', path: '/scan', icon: qrCodeOutline, roles: ['Operator'] },
   { title: 'Ajukan VoO / Ide Kaizen', path: '/voo/submit', icon: bulbOutline, roles: ['Operator'] },
   { title: 'Pengajuan Saya', path: '/voo/my', icon: documentTextOutline, roles: ['Operator'] },
-  { title: 'Kinerja Saya', path: '/performance', icon: statsChartOutline, roles: ['Operator'] },
+  { title: 'Pelanggaran Saya', path: '/my-misconduct', icon: warningOutline, roles: ['Operator'] },
   { title: 'Persetujuan VoO', path: '/voo/approve', icon: checkmarkDoneOutline, roles: ['Foreman'] },
-  { title: 'Input Pelanggaran', path: '/records/misconduct', icon: alertCircleOutline, roles: ['Foreman'] },
+  { title: 'Input Pelanggaran', path: '/records/misconduct', icon: alertCircleOutline, roles: ['Foreman', 'Section Manager'] },
   { title: 'Input Konseling', path: '/records/counseling', icon: chatbubblesOutline, roles: ['Foreman'] },
   { title: 'Kartu Kuning', path: '/records/kartu-kuning', icon: cardOutline, roles: ['Foreman'] },
   { title: 'Surat Peringatan', path: '/records/surat-peringatan', icon: documentAttachOutline, roles: ['Foreman'] },
@@ -116,6 +117,7 @@ const allMenu: MenuItem[] = [
   { title: 'Export Laporan', path: '/reports', icon: downloadOutline, roles: ['Section Manager'] },
   { title: 'Blockchain', path: '/blockchain', icon: cubeOutline, roles: ['Section Manager'] },
   { title: 'Log Audit', path: '/audit', icon: fingerPrintOutline, roles: ['Section Manager'] },
+  { title: 'Katalog Pelanggaran', path: '/violation-types', icon: listOutline, roles: ['Section Manager'] },
   { title: 'Monitor VoO / Kaizen', path: '/staff/voo-monitor', icon: bulbOutline, roles: ['Staff Produksi'] },
   { title: 'Monitor Pelanggaran', path: '/staff/misconduct-monitor', icon: alertCircleOutline, roles: ['Staff Produksi'] },
   { title: 'Kelola User', path: '/admin/users', icon: peopleOutline, roles: ['Super Admin'] },
