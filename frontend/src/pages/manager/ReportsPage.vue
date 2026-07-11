@@ -17,7 +17,7 @@
             <h2>Laporan Kinerja Operator</h2>
             <div class="muted">Dibuat: {{ fmtDate(report.generatedAt) }} · PT Bridgestone Tire Indonesia</div>
           </div>
-          <div class="logo-r">B</div>
+          <div class="logo-r"><img :src="brandLogo" alt="Logo Bridgestone" /></div>
         </div>
 
         <div class="grid g4 rep-stats">
@@ -56,6 +56,7 @@ import { printOutline, downloadOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { dashboardService } from '@/services/dashboard.service';
 import { fmtDate, fmtNum } from '@/utils/format';
+import brandLogo from '@/assets/bridgestone-logo.png';
 
 const report = ref<any>(null);
 const loading = ref(true);
@@ -98,8 +99,9 @@ onMounted(async () => {
 .rep-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
 .rep-head h2 { font-size: 20px; font-weight: 700; }
 .logo-r {
-  width: 44px; height: 44px; border-radius: 12px; background: var(--db-brand); color: #fff;
-  display: grid; place-items: center; font-weight: 800; font-size: 22px;
+  width: 44px; height: 44px; border-radius: 12px; background: #fff; overflow: hidden;
+  display: grid; place-items: center; border: 1px solid var(--db-line);
 }
+.logo-r img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .rep-stats { margin-bottom: 4px; }
 </style>

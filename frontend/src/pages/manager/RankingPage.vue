@@ -14,7 +14,7 @@
       <div class="grid g3" v-if="podium.length">
         <div class="card podium" v-for="(o, i) in podium" :key="o.id" :class="'p' + (i + 1)">
           <div class="pm-rank">#{{ i + 1 }}</div>
-          <div class="pm-ava">{{ initials(o.user.fullName) }}</div>
+          <div class="pm-ava"><UserAvatar /></div>
           <div class="pm-name">{{ o.user.fullName }}</div>
           <div class="pm-score">{{ o.performanceScore }}</div>
           <div class="pm-sub">{{ o.section }} · {{ o.totalMerit }} VoO disetujui</div>
@@ -30,7 +30,7 @@
             <tbody>
               <tr v-for="(o, i) in ranked" :key="o.id" class="row-link" @click="go(`/operators/${o.id}`)">
                 <td class="rank-no">{{ i + 1 }}</td>
-                <td><div class="who"><div class="t-ava">{{ initials(o.user.fullName) }}</div>{{ o.user.fullName }}</div></td>
+                <td><div class="who"><div class="t-ava"><UserAvatar /></div>{{ o.user.fullName }}</div></td>
                 <td class="muted">{{ o.section }}</td>
                 <td class="amt">{{ o.performanceScore }}</td>
                 <td class="amt pos">{{ o.totalMerit }}</td>
@@ -51,7 +51,7 @@ import { useRouter } from 'vue-router';
 import PageShell from '@/components/PageShell.vue';
 import { operatorService } from '@/services/operators.service';
 import { useRealtime } from '@/composables/useRealtime';
-import { initials } from '@/utils/format';
+import UserAvatar from '@/components/UserAvatar.vue';
 import type { OperatorListItem } from '@/types';
 
 const router = useRouter();

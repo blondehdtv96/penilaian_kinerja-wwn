@@ -22,7 +22,7 @@
               <td class="rank-no">{{ i + 1 }}</td>
               <td>
                 <div class="who">
-                  <div class="t-ava">{{ initials(o.user.fullName) }}</div>
+                  <div class="t-ava"><UserAvatar /></div>
                   <div><div class="nm">{{ o.user.fullName }}</div><div class="muted">{{ o.employeeId }}</div></div>
                 </div>
               </td>
@@ -46,7 +46,7 @@ import { searchOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { operatorService } from '@/services/operators.service';
 import { useRealtime } from '@/composables/useRealtime';
-import { initials } from '@/utils/format';
+import UserAvatar from '@/components/UserAvatar.vue';
 import type { OperatorListItem } from '@/types';
 
 const router = useRouter();

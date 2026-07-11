@@ -29,5 +29,19 @@ logs/
 backend/prisma/dev.db
 backend/prisma/dev.db-journal
 
+# Test databases (created by vitest runs)
+test-catalog*.db
+*.test.db
+
+# Captured command output dumps (build/test logs saved to files)
+backend/build_out.txt
+backend/p2-out.txt
+backend/p2.txt
+backend/v.txt
+backend/verr.txt
+backend/deact.txt
+backend/deactivation-test-out.txt
+vitest-out.txt
+
 # TypeScript cache
 *.tsbuildinfo

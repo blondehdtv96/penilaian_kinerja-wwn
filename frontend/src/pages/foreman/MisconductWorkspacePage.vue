@@ -21,7 +21,7 @@
             <div v-if="loadingData && !operatorDetail" class="loading"><ion-spinner name="crescent" /> Memuat…</div>
             <template v-else-if="operatorDetail">
               <div class="who op-who">
-                <div class="t-ava">{{ initials(operatorDetail.user?.fullName) }}</div>
+                <div class="t-ava"><UserAvatar /></div>
                 <div>
                   <div class="op-name">{{ operatorDetail.user?.fullName }}</div>
                   <div class="muted">{{ operatorDetail.employeeId }} · {{ operatorDetail.section }}</div>
@@ -230,7 +230,8 @@ import { recordsService } from '@/services/records.service';
 import { operatorService } from '@/services/operators.service';
 import { useRealtime } from '@/composables/useRealtime';
 import { useAuthStore } from '@/stores/auth';
-import { initials, fmtDateShort, severityMeta } from '@/utils/format';
+import { fmtDateShort, severityMeta } from '@/utils/format';
+import UserAvatar from '@/components/UserAvatar.vue';
 import { printSuratPeringatan } from '@/utils/suratPeringatanTemplate';
 import type {
   MisconductItem, CounselingItem, KartuKuningItem, SuratPeringatanItem,

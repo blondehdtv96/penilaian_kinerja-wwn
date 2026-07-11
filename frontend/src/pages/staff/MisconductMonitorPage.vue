@@ -85,7 +85,7 @@
                 <td class="muted">{{ idx + 1 }}</td>
                 <td>
                   <div class="who">
-                    <div class="t-ava">{{ initials(m.operator?.user?.fullName) }}</div>
+                    <div class="t-ava"><UserAvatar /></div>
                     <span>{{ m.operator?.user?.fullName ?? '-' }}</span>
                   </div>
                 </td>
@@ -138,7 +138,7 @@
                 <td class="muted">{{ idx + 1 }}</td>
                 <td>
                   <div class="who">
-                    <div class="t-ava">{{ initials(c.operator?.user?.fullName) }}</div>
+                    <div class="t-ava"><UserAvatar /></div>
                     <span>{{ c.operator?.user?.fullName ?? '-' }}</span>
                   </div>
                 </td>
@@ -177,7 +177,7 @@
               <td class="muted">{{ idx + 1 }}</td>
               <td>
                 <div class="who">
-                  <div class="t-ava">{{ initials(k.operator?.user?.fullName) }}</div>
+                  <div class="t-ava"><UserAvatar /></div>
                   <span>{{ k.operator?.user?.fullName ?? '-' }}</span>
                 </div>
               </td>
@@ -200,7 +200,7 @@
               <td class="muted">{{ idx + 1 }}</td>
               <td>
                 <div class="who">
-                  <div class="t-ava">{{ initials(s.operator?.user?.fullName) }}</div>
+                  <div class="t-ava"><UserAvatar /></div>
                   <span>{{ s.operator?.user?.fullName ?? '-' }}</span>
                 </div>
               </td>
@@ -230,7 +230,8 @@ import PageShell from '@/components/PageShell.vue';
 import MonthYearFilter, { type MonthYearValue } from '@/components/MonthYearFilter.vue';
 import { recordsService } from '@/services/records.service';
 import { useRealtime } from '@/composables/useRealtime';
-import { fmtDateShort, severityMeta, initials } from '@/utils/format';
+import { fmtDateShort, severityMeta } from '@/utils/format';
+import UserAvatar from '@/components/UserAvatar.vue';
 import type { MisconductItem, CounselingItem, KartuKuningItem, SuratPeringatanItem } from '@/types';
 
 type TabKey = 'misconduct' | 'counseling' | 'kartu-kuning' | 'surat-peringatan';

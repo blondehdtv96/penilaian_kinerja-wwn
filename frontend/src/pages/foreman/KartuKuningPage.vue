@@ -38,7 +38,7 @@
             <thead><tr><th>Operator</th><th>Alasan</th><th>Poin Saat Terbit</th><th></th><th>Tanggal</th></tr></thead>
             <tbody>
               <tr v-for="k in items" :key="k.id">
-                <td><div class="who"><div class="t-ava">{{ initials(k.operator?.user?.fullName) }}</div>{{ k.operator?.user?.fullName }}</div></td>
+                <td><div class="who"><div class="t-ava"><UserAvatar /></div>{{ k.operator?.user?.fullName }}</div></td>
                 <td class="cell-wrap">{{ k.reason }}</td>
                 <td class="muted">{{ k.accumulatedPointsAtIssuance ?? '-' }}</td>
                 <td><span v-if="k.isManualOverride" class="fu-badge pending">Manual Override</span></td>
@@ -62,7 +62,8 @@ import MonthYearFilter, { type MonthYearValue } from '@/components/MonthYearFilt
 import { recordsService } from '@/services/records.service';
 import { operatorService } from '@/services/operators.service';
 import { useRealtime } from '@/composables/useRealtime';
-import { initials, fmtDateShort } from '@/utils/format';
+import { fmtDateShort } from '@/utils/format';
+import UserAvatar from '@/components/UserAvatar.vue';
 import type { EscalationThresholds, KartuKuningItem, OperatorListItem } from '@/types';
 
 const operators = ref<OperatorListItem[]>([]);

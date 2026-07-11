@@ -18,7 +18,7 @@
           <tbody>
             <tr v-for="l in items" :key="l.id">
               <td class="muted">{{ fmtDate(l.createdAt) }}</td>
-              <td><div class="who"><div class="t-ava">{{ initials(l.user?.fullName) }}</div>{{ l.user?.fullName || '—' }}</div></td>
+              <td><div class="who"><div class="t-ava"><UserAvatar /></div>{{ l.user?.fullName || '—' }}</div></td>
               <td><span class="status" :class="actionCls(l.action)">{{ l.action }}</span></td>
               <td class="muted">{{ l.module }}</td>
               <td class="muted detail">{{ l.details }}</td>
@@ -36,7 +36,8 @@ import { onMounted, ref } from 'vue';
 import PageShell from '@/components/PageShell.vue';
 import MonthYearFilter, { type MonthYearValue } from '@/components/MonthYearFilter.vue';
 import { auditService } from '@/services/audit.service';
-import { fmtDate, initials } from '@/utils/format';
+import { fmtDate } from '@/utils/format';
+import UserAvatar from '@/components/UserAvatar.vue';
 import type { AuditLogItem } from '@/types';
 
 const items = ref<AuditLogItem[]>([]);

@@ -12,10 +12,10 @@
       <div class="login-wrap">
         <div class="login-card">
           <div class="brand">
-            <div class="logo">B</div>
+            <div class="logo"><img :src="brandLogo" alt="Logo Bridgestone" /></div>
             <div class="b-txt">
               <b>PT Bridgestone</b>
-              <small>Tire Indonesia — Bekasi Plant</small>
+              <small>Tire Curing Indonesia — Bekasi Plant</small>
             </div>
           </div>
 
@@ -120,6 +120,7 @@ import {
 import { useAuthStore } from '@/stores/auth';
 import { useTheme } from '@/composables/useTheme';
 import { landingFor } from '@/router';
+import brandLogo from '@/assets/bridgestone-logo.png';
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -184,10 +185,11 @@ const submit = async () => {
 }
 .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
 .brand .logo {
-  width: 44px; height: 44px; border-radius: 12px; background: var(--db-brand); color: #fff;
-  display: grid; place-items: center; font-weight: 800; font-size: 22px;
-  box-shadow: 0 6px 14px rgba(239, 68, 68, 0.32);
+  width: 44px; height: 44px; border-radius: 12px; background: #fff;
+  display: grid; place-items: center; overflow: hidden;
+  border: 1px solid var(--db-line); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+.brand .logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .b-txt b { font-size: 15px; font-weight: 700; display: block; line-height: 1.15; }
 .b-txt small { font-size: 11px; color: var(--db-ink-3); }
 

@@ -84,7 +84,7 @@
             <thead><tr><th>Operator</th><th>Pelanggaran</th><th>Perihal</th><th>Topik</th><th>Tanggal</th><th class="ta-r">Aksi</th></tr></thead>
             <tbody>
               <tr v-for="c in items" :key="c.id">
-                <td><div class="who"><div class="t-ava">{{ initials(c.operator?.user?.fullName) }}</div>{{ c.operator?.user?.fullName }}</div></td>
+                <td><div class="who"><div class="t-ava"><UserAvatar /></div>{{ c.operator?.user?.fullName }}</div></td>
                 <td><span v-if="c.misconduct" class="badge-muted">{{ c.misconduct.type }}</span><span v-else class="muted">—</span></td>
                 <td><span class="badge-muted">{{ c.category }}</span></td>
                 <td>{{ c.topic }}</td>
@@ -120,7 +120,8 @@ import { recordsService } from '@/services/records.service';
 import { operatorService } from '@/services/operators.service';
 import { useRealtime } from '@/composables/useRealtime';
 import { useAuthStore } from '@/stores/auth';
-import { initials, fmtDateShort, severityMeta } from '@/utils/format';
+import { fmtDateShort, severityMeta } from '@/utils/format';
+import UserAvatar from '@/components/UserAvatar.vue';
 import type { CounselingItem, MisconductItem, OperatorListItem } from '@/types';
 
 const auth = useAuthStore();

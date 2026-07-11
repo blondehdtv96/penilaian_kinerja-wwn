@@ -58,7 +58,7 @@
           <thead><tr><th>Pengguna</th><th>Email</th><th>Peran</th><th>Status</th><th class="ta-r">Aksi</th></tr></thead>
           <tbody>
             <tr v-for="u in users" :key="u.id">
-              <td><div class="who"><div class="t-ava">{{ initials(u.fullName) }}</div><div><div class="nm">{{ u.fullName }}</div><div class="muted">{{ u.username }}</div></div></div></td>
+              <td><div class="who"><div class="t-ava"><UserAvatar /></div><div><div class="nm">{{ u.fullName }}</div><div class="muted">{{ u.username }}</div></div></div></td>
               <td class="muted">{{ u.email }}</td>
               <td><span class="badge-muted">{{ u.role.name }}</span></td>
               <td><span class="status" :class="u.isActive ? 'final' : 'rejected'">{{ u.isActive ? 'Aktif' : 'Nonaktif' }}</span></td>
@@ -83,7 +83,7 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import { addOutline, closeOutline, saveOutline, alertCircleOutline, createOutline, trashOutline, pauseOutline, playOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { superadminService } from '@/services/superadmin.service';
-import { initials } from '@/utils/format';
+import UserAvatar from '@/components/UserAvatar.vue';
 import type { AdminUser, AdminRole } from '@/types';
 
 const users = ref<AdminUser[]>([]);

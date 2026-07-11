@@ -105,6 +105,8 @@ export interface VooSubmission {
   description: string;
   type: string;
   groupShift?: string;
+  sumberVoo?: string;
+  kategori4m?: string;
   photos: string;
   status: VooStatus;
   points: number;

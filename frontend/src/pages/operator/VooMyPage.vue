@@ -21,6 +21,10 @@
                 <div class="ttl">{{ v.title }}</div>
                 <div class="muted desc">{{ v.description }}</div>
                 <div class="muted gs" v-if="v.groupShift">Group/Shift: {{ v.groupShift }}</div>
+                <div class="chips" v-if="v.sumberVoo || v.kategori4m">
+                  <span class="chip" v-if="v.sumberVoo">{{ v.sumberVoo }}</span>
+                  <span class="chip" v-if="v.kategori4m">4M: {{ v.kategori4m }}</span>
+                </div>
                 <div class="rej" v-if="v.status === 'rejected' && v.rejectionReason">Alasan: {{ v.rejectionReason }}</div>
               </td>
               <td class="muted">{{ vooTypeLabel(v.type) }}</td>
@@ -78,5 +82,10 @@ useRealtime('voo:changed', load);
   margin-top: 2px;
 }
 .gs { font-size: 12px; margin-top: 3px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+.chip {
+  font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 999px;
+  background: var(--db-icon-bg); color: var(--db-ink-2); border: 1px solid var(--db-line);
+}
 .rej { font-size: 12px; color: var(--db-red); margin-top: 3px; }
 </style>

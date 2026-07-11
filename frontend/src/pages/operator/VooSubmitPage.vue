@@ -35,6 +35,21 @@
           </div>
         </div>
 
+        <div class="field-row">
+          <div class="field">
+            <label for="sumber">Sumber VoO</label>
+            <select id="sumber" v-model="sumberVoo">
+              <option v-for="s in sumberOptions" :key="s" :value="s">{{ s }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="kat4m">Kategori 4M</label>
+            <select id="kat4m" v-model="kategori4m">
+              <option v-for="k in kategori4mOptions" :key="k" :value="k">{{ k }}</option>
+            </select>
+          </div>
+        </div>
+
         <div class="field">
           <label for="d">Deskripsi</label>
           <textarea id="d" v-model.trim="description" rows="5" placeholder="Jelaskan usulan atau ide Anda secara ringkas…" required></textarea>
@@ -96,6 +111,19 @@ const groupOptions = [
 ];
 const shiftOptions = ['NS', '1', '2', '3'];
 
+// Sumber VoO & Kategori 4M — mengikuti form Input VOO lama (Picture1/Picture2).
+const sumberOptions = [
+  'Laporan Operator',
+  'Interview Patrol',
+  'LKBK/LKK',
+  'Standard Monitoring',
+  'Pendapat Baru',
+  'Others',
+];
+const kategori4mOptions = ['Standard/Process', 'Mesin', 'Tools', 'Material', 'Lain-Lain'];
+const sumberVoo = ref(sumberOptions[0]);
+const kategori4m = ref(kategori4mOptions[0]);
+
 // Auto-isi Group dari profil operator yang login bila cocok dengan opsi (A/B/C/D).
 // Profil "Non-Shift" tidak punya huruf group, jadi group tetap "-".
 const profileGroup = auth.user?.operator?.group ?? '';
@@ -143,6 +171,8 @@ const submit = async () => {
       description: description.value,
       type: type.value,
       groupShift: `${group.value} / ${shift.value}`,
+      sumberVoo: sumberVoo.value,
+      kategori4m: kategori4m.value,
       photos: JSON.stringify(photos.value),
     });
     if (data?.success) {
@@ -173,6 +203,20 @@ const submit = async () => {
   font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px;
   background: var(--db-card); border: 1px solid var(--db-line-2); color: var(--db-muted);
 }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 520px) { .field-row { grid-template-columns: 1fr; } }
+.field select {
+  width: 100%;
+  border: 1px solid var(--db-line-2);
+  border-radius: 9px;
+  padding: 9px 12px;
+  font: inherit;
+  font-size: 14px;
+  background: var(--db-card);
+  color: var(--db-ink);
+  cursor: pointer;
+}
+.field select:focus { outline: none; border-color: var(--db-brand); }
 .gs-row { display: flex; align-items: center; gap: 10px; }
 .gs-row select {
   min-width: 90px;

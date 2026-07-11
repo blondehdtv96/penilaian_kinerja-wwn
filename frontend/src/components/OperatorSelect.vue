@@ -9,7 +9,7 @@
       @click="toggle"
     >
       <template v-if="selected">
-        <span class="op-ava">{{ initials(selected.user.fullName) }}</span>
+        <span class="op-ava"><UserAvatar /></span>
         <span class="op-trigger-text">
           <span class="op-name">{{ selected.user.fullName }}</span>
           <span class="op-meta">{{ selected.employeeId }} · {{ selected.section }}</span>
@@ -48,7 +48,7 @@
             @mouseenter="activeIndex = idx"
             @click="select(o)"
           >
-            <span class="op-ava">{{ initials(o.user.fullName) }}</span>
+            <span class="op-ava"><UserAvatar /></span>
             <span class="op-item-text">
               <span class="op-name">{{ o.user.fullName }}</span>
               <span class="op-meta">{{ o.employeeId }} · {{ o.section }} · {{ o.group }}</span>
@@ -66,7 +66,7 @@ import { IonIcon, IonSpinner } from '@ionic/vue';
 import { chevronDownOutline, searchOutline, checkmarkOutline, closeCircleOutline } from 'ionicons/icons';
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { operatorService } from '@/services/operators.service';
-import { initials } from '@/utils/format';
+import UserAvatar from '@/components/UserAvatar.vue';
 import type { OperatorListItem } from '@/types';
 
 const props = withDefaults(

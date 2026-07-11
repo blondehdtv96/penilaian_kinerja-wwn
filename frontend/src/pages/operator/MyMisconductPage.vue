@@ -34,7 +34,7 @@
               <td class="amt neg">{{ m.points > 0 ? '-' + m.points : '—' }}</td>
               <td>
                 <div class="who">
-                  <div class="t-ava">{{ initials(m.createdBy?.fullName) }}</div>
+                  <div class="t-ava"><UserAvatar /></div>
                   <div>
                     <div>{{ m.createdBy?.fullName || '-' }}</div>
                     <div class="muted role-tag">{{ m.createdBy?.role?.name || '-' }}</div>
@@ -66,7 +66,8 @@ import PageShell from '@/components/PageShell.vue';
 import MonthYearFilter, { type MonthYearValue } from '@/components/MonthYearFilter.vue';
 import { recordsService } from '@/services/records.service';
 import { useRealtime } from '@/composables/useRealtime';
-import { initials, fmtDateShort, severityMeta } from '@/utils/format';
+import { fmtDateShort, severityMeta } from '@/utils/format';
+import UserAvatar from '@/components/UserAvatar.vue';
 import type { MisconductItem } from '@/types';
 
 const items = ref<MisconductItem[]>([]);

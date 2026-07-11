@@ -3,7 +3,7 @@
     <div class="grid g-bottom">
       <div class="card">
         <div class="prof-head">
-          <div class="prof-ava">{{ initials(auth.user?.fullName) }}</div>
+          <div class="prof-ava"><UserAvatar /></div>
           <div class="prof-id">
             <h2>{{ auth.user?.fullName }}</h2>
             <span class="badge-muted">{{ auth.user?.role }}</span>
@@ -85,7 +85,7 @@ import {
 } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { useAuthStore } from '@/stores/auth';
-import { initials } from '@/utils/format';
+import UserAvatar from '@/components/UserAvatar.vue';
 
 const auth = useAuthStore();
 const router = useRouter();
