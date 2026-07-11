@@ -8,7 +8,7 @@ const blockchain = new BlockchainService();
 export class VooController {
   create = async (req: any, res: Response) => {
     try {
-      const { operatorId, title, description, type, groupShift, photos } = req.body;
+      const { operatorId, title, description, type, groupShift, sumberVoo, kategori4m, photos } = req.body;
       let submittedById = req.user.userId;
 
       // If foreman submitting for operator
@@ -43,6 +43,8 @@ export class VooController {
         description,
         type: type || 'VoO',
         groupShift: groupShift || '',
+        sumberVoo: sumberVoo || '',
+        kategori4m: kategori4m || '',
         photos: photos || '[]'
       });
 

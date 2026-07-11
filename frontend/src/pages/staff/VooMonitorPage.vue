@@ -64,7 +64,7 @@
                 <td class="muted">{{ idx + 1 }}</td>
                 <td>
                   <div class="who">
-                    <div class="t-ava">{{ initials(v.operator?.user?.fullName) }}</div>
+                    <div class="t-ava"><UserAvatar /></div>
                     <span>{{ v.operator?.user?.fullName ?? '-' }}</span>
                   </div>
                 </td>
@@ -101,6 +101,14 @@
                     <div class="detail-section" v-if="v.submittedBy">
                       <div class="detail-label">Diajukan oleh</div>
                       <div class="detail-val">{{ v.submittedBy.fullName }}</div>
+                    </div>
+                    <div class="detail-section" v-if="v.sumberVoo">
+                      <div class="detail-label">Sumber VoO</div>
+                      <div class="detail-val">{{ v.sumberVoo }}</div>
+                    </div>
+                    <div class="detail-section" v-if="v.kategori4m">
+                      <div class="detail-label">Kategori 4M</div>
+                      <div class="detail-val">{{ v.kategori4m }}</div>
                     </div>
                     <div class="detail-section" v-if="v.rejectionReason">
                       <div class="detail-label">Alasan Penolakan</div>
@@ -145,7 +153,8 @@ import {
 import PageShell from '@/components/PageShell.vue';
 import { vooService } from '@/services/voo.service';
 import { useRealtime } from '@/composables/useRealtime';
-import { fmtDateShort, vooStatusMeta, initials, parsePhotos } from '@/utils/format';
+import { fmtDateShort, vooStatusMeta, parsePhotos } from '@/utils/format';
+import UserAvatar from '@/components/UserAvatar.vue';
 import type { VooSubmission } from '@/types';
 
 const items = ref<VooSubmission[]>([]);

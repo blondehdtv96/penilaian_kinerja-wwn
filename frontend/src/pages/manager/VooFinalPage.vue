@@ -39,8 +39,10 @@
             </div>
 
             <div class="appr-by">
-              <div class="t-ava">{{ initials(v.operator?.user?.fullName) }}</div>
+              <div class="t-ava"><UserAvatar /></div>
               <span>{{ v.operator?.user?.fullName }}</span>
+              <span class="muted" v-if="v.sumberVoo">· Sumber {{ v.sumberVoo }}</span>
+              <span class="muted" v-if="v.kategori4m">· 4M {{ v.kategori4m }}</span>
               <span class="muted">· sudah disetujui Foreman</span>
             </div>
           </div>
@@ -105,7 +107,8 @@ import { checkmarkOutline, closeOutline, imagesOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { vooService } from '@/services/voo.service';
 import { useRealtime } from '@/composables/useRealtime';
-import { fmtDate, vooTypeLabel, initials, parsePhotos } from '@/utils/format';
+import { fmtDate, vooTypeLabel, parsePhotos } from '@/utils/format';
+import UserAvatar from '@/components/UserAvatar.vue';
 import type { VooSubmission } from '@/types';
 
 const items = ref<VooSubmission[]>([]);

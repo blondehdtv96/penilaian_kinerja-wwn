@@ -67,7 +67,7 @@
               >
                 <ion-icon :icon="theme.isDark.value ? sunnyOutline : moonOutline" />
               </button>
-              <div class="t-ava">{{ initial }}</div>
+              <div class="t-ava"><UserAvatar /></div>
             </div>
           </header>
 
@@ -99,10 +99,10 @@ import {
 } from 'ionicons/icons';
 import { useSidebar } from '@/composables/useSidebar';
 import { useTheme } from '@/composables/useTheme';
-import { useAuthStore } from '@/stores/auth';
 import { useNotificationsStore } from '@/stores/notifications';
 import { fmtRelative } from '@/utils/format';
 import type { NotificationDTO } from '@/services/notifications.service';
+import UserAvatar from '@/components/UserAvatar.vue';
 
 withDefaults(
   defineProps<{ title?: string; subtitle?: string; searchPlaceholder?: string }>(),
@@ -110,7 +110,6 @@ withDefaults(
 );
 
 const slots = useSlots();
-const auth = useAuthStore();
 const theme = useTheme();
 const notif = useNotificationsStore();
 const router = useRouter();
@@ -126,7 +125,6 @@ const openNotif = (n: NotificationDTO) => {
 // Tutup panel notifikasi saat berpindah halaman.
 watch(() => route.fullPath, () => { bellOpen.value = false; });
 
-const initial = computed(() => auth.user?.fullName?.charAt(0).toUpperCase() ?? '?');
 const menuIcon = computed(() => {
   if (isMobile.value) return menuOutline;
   return collapsed.value ? chevronForwardOutline : chevronBackOutline;

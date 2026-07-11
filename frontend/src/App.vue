@@ -8,14 +8,14 @@
         :class="{ collapsed: collapsed && !isMobile, 'mobile-open': mobileOpen }"
       >
         <div class="brand">
-          <div class="logo">B</div>
+          <div class="logo"><img :src="brandLogo" alt="Logo Bridgestone" /></div>
           <div class="b-txt" v-show="!isCollapsed">
-            <b>PT Bridgestone</b><small>Tire Indonesia</small>
+            <b>PT Bridgestone</b><small>Tire Curing Indonesia</small>
           </div>
         </div>
 
         <div class="me" v-if="auth.user">
-          <div class="ava">{{ initial }}</div>
+          <div class="ava"><UserAvatar /></div>
           <div class="me-txt" v-show="!isCollapsed">
             <div class="nm">{{ auth.user.fullName }}</div>
             <div class="em">{{ auth.user.email }}</div>
@@ -76,6 +76,8 @@ import { useAuthStore } from '@/stores/auth';
 import { useSocketStore } from '@/stores/socket';
 import { useNotificationsStore } from '@/stores/notifications';
 import { useSidebar } from '@/composables/useSidebar';
+import brandLogo from '@/assets/bridgestone-logo.png';
+import UserAvatar from '@/components/UserAvatar.vue';
 import {
   gridOutline, qrCodeOutline, bulbOutline, documentTextOutline,
   checkmarkDoneOutline, alertCircleOutline,
@@ -92,7 +94,6 @@ const { collapsed, mobileOpen, isMobile, init, teardown, closeMobile } = useSide
 
 const icons = { logout: logOutOutline };
 
-const initial = computed(() => auth.user?.fullName?.charAt(0).toUpperCase() ?? '?');
 const isCollapsed = computed(() => collapsed.value && !isMobile.value);
 const roleClass = computed(() => (auth.user?.role ?? '').toLowerCase().replace(/\s+/g, ''));
 
@@ -188,9 +189,10 @@ onUnmounted(() => teardown());
 .brand { display: flex; align-items: center; gap: 11px; padding: 6px 8px 12px; }
 .brand .logo {
   width: 38px; height: 38px; flex-shrink: 0; border-radius: 10px;
-  background: var(--db-brand); color: #fff; display: grid; place-items: center;
-  font-weight: 800; font-size: 19px; box-shadow: 0 6px 14px rgba(239, 68, 68, 0.32);
+  background: #fff; display: grid; place-items: center; overflow: hidden;
+  border: 1px solid var(--db-line); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+.brand .logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .b-txt b { font-size: 14.5px; font-weight: 700; line-height: 1.15; display: block; }
 .b-txt small { font-size: 11px; color: var(--db-ink-3); }
 

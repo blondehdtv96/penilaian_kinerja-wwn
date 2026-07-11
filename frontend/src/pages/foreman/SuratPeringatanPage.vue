@@ -50,7 +50,7 @@
             <thead><tr><th>Operator</th><th>Tingkat</th><th>Alasan</th><th>Poin Saat Terbit</th><th>Tanggal</th><th></th></tr></thead>
             <tbody>
               <tr v-for="s in items" :key="s.id">
-                <td><div class="who"><div class="t-ava">{{ initials(s.operator?.user?.fullName) }}</div>{{ s.operator?.user?.fullName }}</div></td>
+                <td><div class="who"><div class="t-ava"><UserAvatar /></div>{{ s.operator?.user?.fullName }}</div></td>
                 <td>
                   <span class="status" :class="s.level >= 3 ? 'critical' : s.level === 2 ? 'high' : 'medium'">SP {{ s.level }}</span>
                   <span v-if="s.isManualOverride" class="fu-badge pending">Override</span>
@@ -82,7 +82,8 @@ import MonthYearFilter, { type MonthYearValue } from '@/components/MonthYearFilt
 import { recordsService } from '@/services/records.service';
 import { operatorService } from '@/services/operators.service';
 import { useRealtime } from '@/composables/useRealtime';
-import { initials, fmtDateShort } from '@/utils/format';
+import { fmtDateShort } from '@/utils/format';
+import UserAvatar from '@/components/UserAvatar.vue';
 import { printSuratPeringatan } from '@/utils/suratPeringatanTemplate';
 import type { EscalationThresholds, OperatorListItem, SuratPeringatanItem } from '@/types';
 
