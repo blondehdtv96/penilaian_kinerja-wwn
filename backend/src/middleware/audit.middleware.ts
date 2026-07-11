@@ -31,11 +31,30 @@ export const auditLog = (module: string) => {
 // Get event logs
 export const getAuditLogs = async (req: Request, res: Response) => {
   try {
-    const { module: mod, action, userId } = req.query;
+    const { module: mod, action, userId, month, year } = req.query;
     const where: any = {};
     if (mod) where.module = mod as string;
     if (action) where.action = action as string;
     if (userId) where.userId = Number(userId);
+
+    // Filter riwayat log berdasarkan bulan/tahun (R: Filter Data).
+    const y = year !== undefined && year !== '' ? Number(year) : undefined;
+    const m = month !== undefined && month !== '' ? Number(month) : undefined;
+    if (y !== undefined || m !== undefined) {
+      const now = new Date();
+      const useYear = y ?? now.getFullYear();
+      if (m !== undefined) {
+        where.createdAt = {
+          gte: new Date(useYear, m - 1, 1, 0, 0, 0, 0),
+          lte: new Date(useYear, m, 0, 23, 59, 59, 999),
+        };
+      } else {
+        where.createdAt = {
+          gte: new Date(useYear, 0, 1, 0, 0, 0, 0),
+          lte: new Date(useYear, 11, 31, 23, 59, 59, 999),
+        };
+      }
+    }
 
     const logs = await prisma.eventLog.findMany({
       where,

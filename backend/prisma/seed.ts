@@ -127,7 +127,7 @@ async function main() {
       email: 'superadmin@bridgestone.com',
       password: await hash('superadmin123'),
       fullName: 'Super Administrator',
-      nip: 'NIP-SA-001',
+      nik: 'NIP-SA-001',
       roleId: superAdminRole.id
     }
   });
@@ -139,7 +139,7 @@ async function main() {
       email: 'sectionmanager@bridgestone.com',
       password: await hash('manager123'),
       fullName: 'Section Manager',
-      nip: 'NIP-SM-001',
+      nik: 'NIP-SM-001',
       roleId: sectionManagerRole.id
     }
   });
@@ -151,7 +151,7 @@ async function main() {
       email: 'foreman01@bridgestone.com',
       password: await hash('foreman123'),
       fullName: 'Foreman Line 1',
-      nip: 'NIP-FM-001',
+      nik: 'NIP-FM-001',
       roleId: foremanRole.id
     }
   });
@@ -162,7 +162,7 @@ async function main() {
       email: 'foreman02@bridgestone.com',
       password: await hash('foreman123'),
       fullName: 'Foreman Line 2',
-      nip: 'NIP-FM-002',
+      nik: 'NIP-FM-002',
       roleId: foremanRole.id
     }
   });
@@ -174,15 +174,14 @@ async function main() {
       email: 'staffproduksi@bridgestone.com',
       password: await hash('staff123'),
       fullName: 'Staff Produksi',
-      nip: 'NIP-SP-001',
+      nik: 'NIP-SP-001',
       roleId: staffProduksiRole.id
     }
   });
 
   // Operators
   const sections = ['Curing', 'Curing', 'Curing', 'Curing', 'Curing'];
-  const lines = ['Line A', 'Line B', 'Line C', 'Line D', 'Line E'];
-  const groups = ['4-3A', '4-3B', '4-3C', '4-3D', 'Non-Shift'];
+  const groups = ['A', 'B', 'C', 'D', 'Non-Shift'];
   const positions = ['Curing Operator', 'Curing Operator', 'Curing Operator', 'Curing Operator', 'Curing Operator'];
 
   const operators = [];
@@ -194,7 +193,7 @@ async function main() {
         email: `operator${i + 1}@bridgestone.com`,
         password: await hash('operator123'),
         fullName: `Operator ${i + 1}`,
-        nip: `NIP-OP-${(i + 1).toString().padStart(3, '0')}`,
+        nik: `NIP-OP-${(i + 1).toString().padStart(3, '0')}`,
         roleId: operatorRole.id
       }
     });
@@ -207,7 +206,6 @@ async function main() {
         userId: opUser.id,
         employeeId: empId,
         section: sections[i],
-        line: lines[i],
         group: groups[i],
         position: positions[i],
         qrCode: qrImage,

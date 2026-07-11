@@ -29,7 +29,7 @@ model User {
   email     String   @unique
   password  String
   fullName  String
-  nip       String?  @unique // Nomor Induk Pegawai
+  nik       String?  @unique @map("nip") // Nomor Induk Karyawan
   isActive  Boolean  @default(true)
   roleId    Int
   role      Role     @relation(fields: [roleId], references: [id])
@@ -61,14 +61,14 @@ model Operator {
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   employeeId      String   @unique
   section         String   @default("")
-  line            String   @default("")
-  group           String   @default("")
+  group           String   @default("") // A, B, C, D, atau Non-Shift
   position        String   @default("Operator")
   photo           String?  // base64 or file path
   qrCode          String   @unique // base64 QR image
   performanceScore Float   @default(0)
   totalMerit      Int      @default(0)
   totalMisconduct Int      @default(0)
+  accumulatedPoints Int    @default(0) // == sum(active misconduct points) (R8.1)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -118,6 +118,7 @@ model VooSubmission {
   title             String
   description       String
   type              String   @default("VoO") // VoO or IdeKaizen
+  groupShift        String   @default("") // Group/Shift saat pengajuan, mis. "A / 1" atau "- / NS"
   photos            String   @default("[]") // JSON array of base64 images
   status            String   @default("pending") // pending, approved_foreman, approved_final, rejected
   points            Int      @default(0)
@@ -128,6 +129,24 @@ model VooSubmission {
   updatedAt         DateTime @updatedAt
   approvals         Approval[]
   blockchainHashes  BlockchainHash[]
+}
+
+// ================================================================
+// VIOLATION TYPE CATALOG
+// ================================================================
+
+// Catalog of violation types with configurable point values (R1.1).
+model ViolationType {
+  id             Int      @id @default(autoincrement())
+  name           String
+  nameNormalized String   @unique // trim().toLowerCase() for duplicate detection (R1.2)
+  category       String
+  severity       String
+  points         Int      // integer 1..100 (validated in service)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  misconducts    Misconduct[]
 }
 
 // ================================================================
@@ -144,10 +163,22 @@ model Misconduct {
   severity        String   @default("low") // low, medium, high, critical
   description     String
   evidencePhotos  String   @default("[]") // JSON array
-  points          Int      @default(0)
+  points          Int      @default(0) // applied snapshot of the violation type's points (R2.1)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   blockchainHashes BlockchainHash[]
+
+  // Catalog reference + point snapshot. Nullable so historical rows stay valid (R2.1).
+  violationTypeId Int?
+  violationType   ViolationType? @relation(fields: [violationTypeId], references: [id])
+  isActive        Boolean  @default(true) // active misconducts drive accumulation
+
+  // Counseling tindak lanjut (1 pelanggaran → maksimal 1 sesi konseling).
+  counseling      Counseling?
+
+  // Linkage to disciplinary actions that this misconduct contributed to (R5.1, R6.1).
+  kartuKuningLinks     KartuKuningMisconduct[]
+  suratPeringatanLinks SuratPeringatanMisconduct[]
 }
 
 // ================================================================
@@ -160,6 +191,12 @@ model Counseling {
   operator    Operator @relation(fields: [operatorId], references: [id], onDelete: Cascade)
   foremanId   Int
   foreman     User     @relation("CounselingForeman", fields: [foremanId], references: [id])
+
+  // Pelanggaran (Misconduct) yang menjadi dasar sesi konseling ini.
+  // Alur: pelanggaran harus diinput lebih dulu, lalu ditindaklanjuti dengan konseling.
+  // 1 pelanggaran → maksimal 1 sesi konseling (unique).
+  misconductId Int?        @unique
+  misconduct   Misconduct? @relation(fields: [misconductId], references: [id], onDelete: Cascade)
 
   // Lembar COUNSELING - COACHING
   category             String  @default("Others") // Safety | Quality | Produksi | Behaviour | Others
@@ -191,8 +228,14 @@ model KartuKuning {
   issuedById  Int
   issuedBy    User     @relation("KartuKuningIssuer", fields: [issuedById], references: [id])
   reason      String
+  accumulatedPointsAtIssuance Int     @default(0)   // snapshot (R5.1)
+  escalationLevelAtIssuance   Int     @default(0)   // ordinal used for duplicate check (R5.4)
+  isManualOverride            Boolean @default(false) // R5.2
   issuedAt    DateTime @default(now())
   createdAt   DateTime @default(now())
+
+  // Contributing active misconducts at issuance (R5.1).
+  contributingMisconducts KartuKuningMisconduct[]
 }
 
 // ================================================================
@@ -207,8 +250,52 @@ model SuratPeringatan {
   issuedBy    User     @relation("SuratPeringatanIssuer", fields: [issuedById], references: [id])
   level       Int      // 1, 2, or 3
   reason      String
+  accumulatedPointsAtIssuance Int     @default(0)   // snapshot (R6.1)
+  isManualOverride            Boolean @default(false) // R6.6
   issuedAt    DateTime @default(now())
   createdAt   DateTime @default(now())
+
+  // Contributing active misconducts at issuance (R6.1).
+  contributingMisconducts SuratPeringatanMisconduct[]
+}
+
+// ================================================================
+// DISCIPLINARY LINKAGE (join tables) + ESCALATION CONFIG
+// ================================================================
+
+// Join table KartuKuning <-> Misconduct (contributing violations, R5.1).
+model KartuKuningMisconduct {
+  id            Int         @id @default(autoincrement())
+  kartuKuningId Int
+  kartuKuning   KartuKuning @relation(fields: [kartuKuningId], references: [id], onDelete: Cascade)
+  misconductId  Int
+  misconduct    Misconduct  @relation(fields: [misconductId], references: [id], onDelete: Cascade)
+
+  @@unique([kartuKuningId, misconductId])
+}
+
+// Join table SuratPeringatan <-> Misconduct (contributing violations, R6.1).
+model SuratPeringatanMisconduct {
+  id                Int             @id @default(autoincrement())
+  suratPeringatanId Int
+  suratPeringatan   SuratPeringatan @relation(fields: [suratPeringatanId], references: [id], onDelete: Cascade)
+  misconductId      Int
+  misconduct        Misconduct      @relation(fields: [misconductId], references: [id], onDelete: Cascade)
+
+  @@unique([suratPeringatanId, misconductId])
+}
+
+// Single-row escalation threshold override (R4.6, R4.7).
+// Absent by default, so defaults from escalation.ts apply until a Section Manager saves an override.
+model EscalationConfig {
+  id          Int      @id @default(autoincrement())
+  counseling  Int
+  kartuKuning Int
+  sp1         Int
+  sp2         Int
+  sp3         Int
+  updatedById Int?
+  updatedAt   DateTime @updatedAt
 }
 
 // ================================================================

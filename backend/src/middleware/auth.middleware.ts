@@ -19,6 +19,12 @@ export const checkRole = (roles: string[]) => {
     const user = req.user;
     if (!user) return res.status(401).json({ success: false, message: 'Not authenticated' });
 
+    // Token usang/rusak: klaim `role` tidak ada. Paksa re-login (401) agar klien
+    // membersihkan sesi lama; ini mencegah user "terjebak" pada 403 selamanya.
+    if (!user.role) {
+      return res.status(401).json({ success: false, message: 'Sesi tidak valid, silakan login ulang.' });
+    }
+
     // Super Admin bypasses all role checks
     if (user.role === 'Super Admin') {
       return next();
@@ -35,6 +41,11 @@ export const checkPermission = (permission: string) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
     if (!user) return res.status(401).json({ success: false, message: 'Not authenticated' });
+
+    // Token usang/rusak: klaim role/permissions tidak ada. Paksa re-login.
+    if (!user.role && !user.permissions) {
+      return res.status(401).json({ success: false, message: 'Sesi tidak valid, silakan login ulang.' });
+    }
 
     // Super Admin bypasses all permission checks
     if (user.role === 'Super Admin') {

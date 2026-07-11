@@ -7,5 +7,6 @@ const authController = new AuthController();
 
 router.post('/login', authController.login);
 router.get('/me', authMiddleware, authController.me);
+router.patch('/profile', authMiddleware, authController.updateProfile);
 
 export default router;

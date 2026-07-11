@@ -68,6 +68,22 @@ export const recordsAPI = {
   createSuratPeringatan: (data: any) => api.post('/records/surat-peringatan', data),
 };
 
+// Violation catalog (drives Input Pelanggaran point values)
+export const violationTypeAPI = {
+  getAll: (params?: any) => api.get('/records/violation-types', { params }),
+};
+
+// Escalation thresholds (drives Kartu Kuning / Surat Peringatan override warnings)
+export const escalationConfigAPI = {
+  getActive: () => api.get('/records/escalation-config'),
+};
+
+// Integrated disciplinary history (chronological view across all 4 menus)
+export const disciplinaryHistoryAPI = {
+  getByOperator: (operatorId: number) => api.get(`/records/disciplinary-history/${operatorId}`),
+  my: () => api.get('/records/disciplinary-history/my'),
+};
+
 // Dashboard
 export const dashboardAPI = {
   kpi: () => api.get('/dashboard/kpi'),

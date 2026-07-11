@@ -77,9 +77,9 @@ import { useSocketStore } from '@/stores/socket';
 import { useNotificationsStore } from '@/stores/notifications';
 import { useSidebar } from '@/composables/useSidebar';
 import {
-  gridOutline, qrCodeOutline, bulbOutline, documentTextOutline, statsChartOutline,
-  checkmarkDoneOutline, alertCircleOutline, chatbubblesOutline, cardOutline,
-  documentAttachOutline, peopleOutline, trophyOutline, ribbonOutline, trendingUpOutline,
+  gridOutline, qrCodeOutline, bulbOutline, documentTextOutline,
+  checkmarkDoneOutline, alertCircleOutline,
+  peopleOutline, trophyOutline, ribbonOutline, trendingUpOutline,
   downloadOutline, cubeOutline, fingerPrintOutline, shieldCheckmarkOutline,
   locationOutline, personOutline, logOutOutline, listOutline, warningOutline,
 } from 'ionicons/icons';
@@ -106,10 +106,7 @@ const allMenu: MenuItem[] = [
   { title: 'Pengajuan Saya', path: '/voo/my', icon: documentTextOutline, roles: ['Operator'] },
   { title: 'Pelanggaran Saya', path: '/my-misconduct', icon: warningOutline, roles: ['Operator'] },
   { title: 'Persetujuan VoO', path: '/voo/approve', icon: checkmarkDoneOutline, roles: ['Foreman'] },
-  { title: 'Input Pelanggaran', path: '/records/misconduct', icon: alertCircleOutline, roles: ['Foreman', 'Section Manager'] },
-  { title: 'Input Konseling', path: '/records/counseling', icon: chatbubblesOutline, roles: ['Foreman'] },
-  { title: 'Kartu Kuning', path: '/records/kartu-kuning', icon: cardOutline, roles: ['Foreman'] },
-  { title: 'Surat Peringatan', path: '/records/surat-peringatan', icon: documentAttachOutline, roles: ['Foreman'] },
+  { title: 'Pembinaan & Pelanggaran', path: '/records/pembinaan', icon: alertCircleOutline, roles: ['Foreman', 'Section Manager'] },
   { title: 'Monitor Operator', path: '/operators', icon: peopleOutline, roles: ['Foreman', 'Section Manager'] },
   { title: 'Persetujuan Final', path: '/voo/final', icon: ribbonOutline, roles: ['Section Manager'] },
   { title: 'Ranking Operator', path: '/ranking', icon: trophyOutline, roles: ['Section Manager'] },

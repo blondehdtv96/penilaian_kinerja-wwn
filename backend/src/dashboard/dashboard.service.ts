@@ -87,7 +87,7 @@ export class DashboardService {
       { header: 'Employee ID', key: 'employeeId', width: 15 },
       { header: 'Name', key: 'name', width: 25 },
       { header: 'Section', key: 'section', width: 15 },
-      { header: 'Line', key: 'line', width: 15 },
+      { header: 'Group', key: 'group', width: 15 },
       { header: 'Performance Score', key: 'score', width: 18 },
       { header: 'Total Merit', key: 'merit', width: 12 },
       { header: 'Total Misconduct', key: 'misconduct', width: 18 },
@@ -103,7 +103,7 @@ export class DashboardService {
         employeeId: o.employeeId,
         name: o.user.fullName,
         section: o.section,
-        line: o.line,
+        group: o.group,
         score: o.performanceScore,
         merit: o.totalMerit,
         misconduct: o.totalMisconduct

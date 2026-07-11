@@ -7,9 +7,11 @@
     </template>
 
     <div v-if="loading" class="loading"><ion-spinner name="crescent" /> Memuat data kinerja…</div>
-    <div v-else-if="error" class="card"><div class="empty">{{ error }}</div></div>
 
-    <template v-else-if="op">
+    <template v-else>
+      <div v-if="error" class="alert err"><ion-icon :icon="alertCircleOutline" /> {{ error }}</div>
+
+    <template v-if="op">
       <div class="grid g-bottom">
         <div class="card">
           <div class="muted">Skor Kinerja</div>
@@ -25,7 +27,6 @@
           <div class="info-list">
             <div class="info-row"><span>ID Karyawan</span><b>{{ op.employeeId }}</b></div>
             <div class="info-row"><span>Section</span><b>{{ op.section }}</b></div>
-            <div class="info-row"><span>Line</span><b>{{ op.line }}</b></div>
             <div class="info-row"><span>Group</span><b>{{ op.group }}</b></div>
             <div class="info-row"><span>Posisi</span><b>{{ op.position }}</b></div>
           </div>
@@ -77,6 +78,9 @@
       </div>
     </template>
 
+      <div v-else-if="!error" class="card"><div class="empty">Data kinerja belum tersedia.</div></div>
+    </template>
+
     <misconduct-sheet v-if="sheet" :m="sheet" @close="sheet = null" />
   </page-shell>
 </template>
@@ -85,7 +89,7 @@
 import { IonSpinner, IonIcon } from '@ionic/vue';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { documentTextOutline, checkmarkCircleOutline, timeOutline, qrCodeOutline } from 'ionicons/icons';
+import { documentTextOutline, checkmarkCircleOutline, timeOutline, qrCodeOutline, alertCircleOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import MisconductSheet from '@/components/MisconductSheet.vue';
 import { operatorService } from '@/services/operators.service';
@@ -105,20 +109,30 @@ const loading = ref(true);
 const error = ref('');
 
 const load = async () => {
-  try {
-    const [p, v, m] = await Promise.all([
-      operatorService.myProfile(),
-      vooService.getMy(),
-      recordsService.listMyMisconduct(),
-    ]);
-    if (p.data?.success) op.value = p.data.data;
-    if (v.data?.success) recent.value = (v.data.data as VooSubmission[]).slice(0, 5);
-    if (m.data?.success) misconducts.value = m.data.data;
-  } catch (e: any) {
-    error.value = e?.response?.data?.message || 'Gagal memuat data kinerja.';
-  } finally {
-    loading.value = false;
+  error.value = '';
+  // Muat tiap bagian secara independen: kegagalan salah satu panggilan tidak boleh
+  // mengosongkan seluruh dashboard. Profil adalah bagian utama; VoO & pelanggaran
+  // bersifat pelengkap (best-effort).
+  const [p, v, m] = await Promise.allSettled([
+    operatorService.myProfile(),
+    vooService.getMy(),
+    recordsService.listMyMisconduct(),
+  ]);
+
+  if (p.status === 'fulfilled' && p.value.data?.success) {
+    op.value = p.value.data.data;
+  } else if (p.status === 'rejected') {
+    error.value = p.reason?.response?.data?.message || 'Gagal memuat profil operator.';
   }
+
+  if (v.status === 'fulfilled' && v.value.data?.success) {
+    recent.value = (v.value.data.data as VooSubmission[]).slice(0, 5);
+  }
+  if (m.status === 'fulfilled' && m.value.data?.success) {
+    misconducts.value = m.value.data.data;
+  }
+
+  loading.value = false;
 };
 
 onMounted(load);

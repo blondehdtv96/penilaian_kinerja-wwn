@@ -34,7 +34,7 @@ export class SuperAdminService {
         email: data.email,
         password: hashedPassword,
         fullName: data.fullName,
-        nip: data.nip,
+        nik: data.nik ?? data.nip,
         roleId: data.roleId,
         isActive: data.isActive !== undefined ? data.isActive : true
       },
@@ -56,7 +56,6 @@ export class SuperAdminService {
           userId: user.id,
           employeeId: data.operatorData.employeeId,
           section: data.operatorData.section || '',
-          line: data.operatorData.line || '',
           group: data.operatorData.group || '',
           position: data.operatorData.position || 'Operator',
           qrCode
@@ -71,7 +70,7 @@ export class SuperAdminService {
     const updateData: any = {
       email: data.email,
       fullName: data.fullName,
-      nip: data.nip,
+      nik: data.nik ?? data.nip,
       roleId: data.roleId,
       isActive: data.isActive
     };

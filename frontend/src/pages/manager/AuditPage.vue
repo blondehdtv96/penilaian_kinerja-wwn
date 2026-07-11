@@ -5,6 +5,7 @@
         <option value="">Semua Modul</option>
         <option v-for="m in modules" :key="m.v" :value="m.v">{{ m.l }}</option>
       </select>
+      <month-year-filter v-model="period" @update:modelValue="load" />
     </template>
 
     <div class="card">
@@ -33,6 +34,7 @@
 import { IonSpinner } from '@ionic/vue';
 import { onMounted, ref } from 'vue';
 import PageShell from '@/components/PageShell.vue';
+import MonthYearFilter, { type MonthYearValue } from '@/components/MonthYearFilter.vue';
 import { auditService } from '@/services/audit.service';
 import { fmtDate, initials } from '@/utils/format';
 import type { AuditLogItem } from '@/types';
@@ -41,6 +43,7 @@ const items = ref<AuditLogItem[]>([]);
 const loading = ref(true);
 const error = ref('');
 const moduleSel = ref('');
+const period = ref<MonthYearValue>({ month: null, year: null });
 
 const modules = [
   { v: 'voo', l: 'VoO' },
@@ -62,7 +65,11 @@ const load = async () => {
   loading.value = true;
   error.value = '';
   try {
-    const { data } = await auditService.logs(moduleSel.value ? { module: moduleSel.value } : {});
+    const { data } = await auditService.logs({
+      ...(moduleSel.value ? { module: moduleSel.value } : {}),
+      ...(period.value.month ? { month: period.value.month } : {}),
+      ...(period.value.year ? { year: period.value.year } : {}),
+    });
     if (data?.success) items.value = data.data;
     else error.value = 'Gagal memuat log.';
   } catch (e: any) {

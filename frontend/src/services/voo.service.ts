@@ -4,6 +4,7 @@ export interface VooCreatePayload {
   title: string;
   description: string;
   type: string; // 'VoO' | 'IdeKaizen'
+  groupShift?: string; // mis. "A / 1" atau "- / NS"
   photos?: string; // JSON string array (base64 data URL)
   operatorId?: number; // hanya jika Foreman mengajukan untuk operator
 }

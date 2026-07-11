@@ -39,7 +39,6 @@ async function main() {
         userId: u.id,
         employeeId,
         section: 'Curing',
-        line: '',
         group: '',
         position: 'Operator',
         qrCode,

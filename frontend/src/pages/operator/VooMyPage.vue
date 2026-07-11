@@ -20,6 +20,7 @@
               <td>
                 <div class="ttl">{{ v.title }}</div>
                 <div class="muted desc">{{ v.description }}</div>
+                <div class="muted gs" v-if="v.groupShift">Group/Shift: {{ v.groupShift }}</div>
                 <div class="rej" v-if="v.status === 'rejected' && v.rejectionReason">Alasan: {{ v.rejectionReason }}</div>
               </td>
               <td class="muted">{{ vooTypeLabel(v.type) }}</td>
@@ -76,5 +77,6 @@ useRealtime('voo:changed', load);
   white-space: nowrap;
   margin-top: 2px;
 }
+.gs { font-size: 12px; margin-top: 3px; }
 .rej { font-size: 12px; color: var(--db-red); margin-top: 3px; }
 </style>

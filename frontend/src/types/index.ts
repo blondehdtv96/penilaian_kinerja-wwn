@@ -7,7 +7,6 @@ export interface OperatorProfile {
   userId: number;
   employeeId: string;
   section: string;
-  line: string;
   group: string;
   position: string;
   photo?: string | null;
@@ -69,7 +68,6 @@ export interface OperatorListItem {
   id: number;
   employeeId: string;
   section: string;
-  line: string;
   group: string;
   position: string;
   performanceScore: number;
@@ -106,6 +104,7 @@ export interface VooSubmission {
   title: string;
   description: string;
   type: string;
+  groupShift?: string;
   photos: string;
   status: VooStatus;
   points: number;
@@ -123,7 +122,6 @@ export interface OperatorRef {
   id: number;
   employeeId?: string;
   section?: string;
-  line?: string;
   group?: string;
   position?: string;
   accumulatedPoints?: number;

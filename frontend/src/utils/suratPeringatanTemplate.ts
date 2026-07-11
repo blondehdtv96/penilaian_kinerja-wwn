@@ -78,7 +78,7 @@ export function buildSuratPeringatanHtml(record: SuratPeringatanItem): string {
   const op = record.operator;
   const nama = esc(op?.user?.fullName);
   const noCode = esc(op?.employeeId || '-');
-  const bagian = esc([op?.section, op?.line].filter(Boolean).join(' / ') || '-');
+  const bagian = esc(op?.section || '-');
   const jabatan = esc(op?.position || 'Operator');
   const grup = esc(op?.group || '-');
   const tanggal = fmtLong(record.issuedAt);
@@ -159,7 +159,7 @@ export function buildSuratPeringatanHtml(record: SuratPeringatanItem): string {
     <table class="bio">
       <tr><td class="k">Nama</td><td class="s">:</td><td>${nama}</td></tr>
       <tr><td class="k">No. Code / NIK</td><td class="s">:</td><td>${noCode}</td></tr>
-      <tr><td class="k">Bagian / Line</td><td class="s">:</td><td>${bagian}</td></tr>
+      <tr><td class="k">Bagian</td><td class="s">:</td><td>${bagian}</td></tr>
       <tr><td class="k">Jabatan</td><td class="s">:</td><td>${jabatan}</td></tr>
     </table>
 

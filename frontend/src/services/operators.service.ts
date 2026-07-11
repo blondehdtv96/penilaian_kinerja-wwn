@@ -1,7 +1,7 @@
 import api from './api';
 
 export const operatorService = {
-  getAll: (params?: { section?: string; line?: string; group?: string }) =>
+  getAll: (params?: { section?: string; group?: string }) =>
     api.get('/operators', { params }),
   getById: (id: number) => api.get(`/operators/${id}`),
   myProfile: () => api.get('/operators/my-profile'),

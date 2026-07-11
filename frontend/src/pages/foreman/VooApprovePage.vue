@@ -27,6 +27,7 @@
             <div class="appr-by">
               <div class="t-ava">{{ initials(v.operator?.user?.fullName) }}</div>
               <span>{{ v.operator?.user?.fullName }}</span>
+              <span class="muted" v-if="v.groupShift">· Group/Shift {{ v.groupShift }}</span>
               <span class="muted">· diajukan {{ v.submittedBy?.fullName }}</span>
               <span class="muted" v-if="photoCount(v)">· {{ photoCount(v) }} foto</span>
             </div>

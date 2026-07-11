@@ -37,7 +37,13 @@
       </div>
 
       <div class="card">
-        <div class="card-head"><h3>Surat Peringatan Terbaru</h3><span class="muted">{{ items.length }}</span></div>
+        <div class="card-head">
+          <h3>Surat Peringatan Terbaru</h3>
+          <div class="head-actions">
+            <month-year-filter v-model="period" @update:modelValue="load" />
+            <span class="muted">{{ items.length }}</span>
+          </div>
+        </div>
         <div v-if="items.length === 0" class="empty">Belum ada surat peringatan diterbitkan.</div>
         <div class="table-wrap" v-else>
           <table>
@@ -72,6 +78,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { checkmarkCircleOutline, alertCircleOutline, saveOutline, printOutline, informationCircleOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import OperatorSelect from '@/components/OperatorSelect.vue';
+import MonthYearFilter, { type MonthYearValue } from '@/components/MonthYearFilter.vue';
 import { recordsService } from '@/services/records.service';
 import { operatorService } from '@/services/operators.service';
 import { useRealtime } from '@/composables/useRealtime';
@@ -89,6 +96,7 @@ const submitting = ref(false);
 const error = ref('');
 const okMsg = ref('');
 const items = ref<SuratPeringatanItem[]>([]);
+const period = ref<MonthYearValue>({ month: null, year: null });
 
 const selectedOperator = computed(() => operators.value.find((o) => o.id === operatorId.value) || null);
 const levelThreshold = computed(() => {
@@ -119,7 +127,10 @@ const loadThresholds = async () => {
 
 const load = async () => {
   try {
-    const { data } = await recordsService.listSuratPeringatan();
+    const { data } = await recordsService.listSuratPeringatan(undefined, {
+      month: period.value.month || undefined,
+      year: period.value.year || undefined,
+    });
     if (data?.success) items.value = data.data;
   } catch {
     /* abaikan */
@@ -172,6 +183,7 @@ useRealtime('record:changed', () => { load(); loadOperators(); });
 
 <style scoped>
 .cell-wrap { max-width: 300px; }
+.head-actions { display: flex; align-items: center; gap: 12px; }
 .btn-sm { padding: 5px 10px; font-size: 12px; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
 .btn-sm ion-icon { font-size: 15px; }
 .hint-line { display: flex; align-items: center; gap: 6px; margin: 6px 0 0; font-size: 12px; color: var(--db-ink-3); }

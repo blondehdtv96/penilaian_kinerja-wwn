@@ -1,5 +1,11 @@
 <template>
   <page-shell title="Pelanggaran Saya" subtitle="Riwayat pelanggaran yang diberikan Foreman / Section Manager">
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label>Periode</label>
+        <month-year-filter v-model="period" @update:modelValue="load" />
+      </div>
+    </div>
     <div class="card">
       <div v-if="loading" class="loading"><ion-spinner name="crescent" /> Memuat…</div>
       <div v-else-if="error" class="empty">{{ error }}</div>
@@ -57,6 +63,7 @@ import { IonIcon, IonSpinner } from '@ionic/vue';
 import { onMounted, ref } from 'vue';
 import { checkmarkCircleOutline, timeOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
+import MonthYearFilter, { type MonthYearValue } from '@/components/MonthYearFilter.vue';
 import { recordsService } from '@/services/records.service';
 import { useRealtime } from '@/composables/useRealtime';
 import { initials, fmtDateShort, severityMeta } from '@/utils/format';
@@ -65,10 +72,14 @@ import type { MisconductItem } from '@/types';
 const items = ref<MisconductItem[]>([]);
 const loading = ref(true);
 const error = ref('');
+const period = ref<MonthYearValue>({ month: null, year: null });
 
 const load = async () => {
   try {
-    const { data } = await recordsService.listMyMisconduct();
+    const { data } = await recordsService.listMyMisconduct({
+      month: period.value.month || undefined,
+      year: period.value.year || undefined,
+    });
     if (data?.success) items.value = data.data;
     else error.value = 'Gagal memuat data pelanggaran.';
   } catch (e: any) {
@@ -83,6 +94,15 @@ useRealtime('record:changed', load);
 </script>
 
 <style scoped>
+.filter-bar { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+.filter-group { display: flex; flex-direction: column; gap: 5px; }
+.filter-group label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--db-ink-3);
+}
 .ttl { font-weight: 500; }
 .desc {
   max-width: 320px;

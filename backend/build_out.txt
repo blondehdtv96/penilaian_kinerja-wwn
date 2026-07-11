@@ -1,0 +1,89 @@
+
+> merit-misconduct-backend@1.0.0 build
+> tsc
+
+src/merit/merit.service.ts(10,32): error TS2339: Property 'meritEvent' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/merit/merit.service.ts(45,32): error TS2339: Property 'meritEvent' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/merit/merit.service.ts(86,29): error TS2339: Property 'addBlock' does not exist on type 'BlockchainService'.
+src/merit/merit.service.ts(98,9): error TS2353: Object literal may only specify known properties, and 'operatorId' does not exist in type '(Without<NotificationCreateInput, NotificationUncheckedCreateInput> & NotificationUncheckedCreateInput) | (Without<...> & NotificationCreateInput)'.
+src/merit/merit.service.ts(109,32): error TS2339: Property 'meritEvent' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/merit/merit.service.ts(127,9): error TS2353: Object literal may only specify known properties, and 'operatorId' does not exist in type '(Without<NotificationCreateInput, NotificationUncheckedCreateInput> & NotificationUncheckedCreateInput) | (Without<...> & NotificationCreateInput)'.
+src/merit/merit.service.ts(143,25): error TS2339: Property 'meritEvent' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/merit/merit.service.ts(165,25): error TS2339: Property 'meritEvent' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/merit/merit.service.ts(194,18): error TS2339: Property 'performanceLog' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/misconduct/route-authorization.test.ts(289,7): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(predicate: (value: [], index: number, array: [][]) => value is [], thisArg?: any): [][]', gave the following error.
+    Argument of type '([, input]: [string, any]) => boolean' is not assignable to parameter of type '(value: [], index: number, array: [][]) => value is []'.
+      Types of parameters '__0' and 'value' are incompatible.
+        Type '[]' is not assignable to type '[string, any]'.
+          Source has 0 element(s) but target requires 2.
+  Overload 2 of 2, '(predicate: (value: [], index: number, array: [][]) => unknown, thisArg?: any): [][]', gave the following error.
+    Argument of type '([, input]: [string, any]) => boolean' is not assignable to parameter of type '(value: [], index: number, array: [][]) => unknown'.
+      Types of parameters '__0' and 'value' are incompatible.
+        Type '[]' is not assignable to type '[string, any]'.
+          Source has 0 element(s) but target requires 2.
+src/misconduct/route-authorization.test.ts(302,7): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(predicate: (value: [], index: number, array: [][]) => value is [], thisArg?: any): [][]', gave the following error.
+    Argument of type '([, input]: [string, any]) => boolean' is not assignable to parameter of type '(value: [], index: number, array: [][]) => value is []'.
+      Types of parameters '__0' and 'value' are incompatible.
+        Type '[]' is not assignable to type '[string, any]'.
+          Source has 0 element(s) but target requires 2.
+  Overload 2 of 2, '(predicate: (value: [], index: number, array: [][]) => unknown, thisArg?: any): [][]', gave the following error.
+    Argument of type '([, input]: [string, any]) => boolean' is not assignable to parameter of type '(value: [], index: number, array: [][]) => unknown'.
+      Types of parameters '__0' and 'value' are incompatible.
+        Type '[]' is not assignable to type '[string, any]'.
+          Source has 0 element(s) but target requires 2.
+src/misconduct/route-authorization.test.ts(305,55): error TS2345: Argument of type '([role]: [string, any]) => string' is not assignable to parameter of type '(value: [], index: number, array: [][]) => string'.
+  Types of parameters '__0' and 'value' are incompatible.
+    Type '[]' is not assignable to type '[string, any]'.
+      Source has 0 element(s) but target requires 2.
+src/misconduct/route-authorization.test.ts(333,7): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(predicate: (value: [], index: number, array: [][]) => value is [], thisArg?: any): [][]', gave the following error.
+    Argument of type '([, input]: [string, any]) => boolean' is not assignable to parameter of type '(value: [], index: number, array: [][]) => value is []'.
+      Types of parameters '__0' and 'value' are incompatible.
+        Type '[]' is not assignable to type '[string, any]'.
+          Source has 0 element(s) but target requires 2.
+  Overload 2 of 2, '(predicate: (value: [], index: number, array: [][]) => unknown, thisArg?: any): [][]', gave the following error.
+    Argument of type '([, input]: [string, any]) => boolean' is not assignable to parameter of type '(value: [], index: number, array: [][]) => unknown'.
+      Types of parameters '__0' and 'value' are incompatible.
+        Type '[]' is not assignable to type '[string, any]'.
+          Source has 0 element(s) but target requires 2.
+src/permissions/permissions.service.ts(7,25): error TS2339: Property 'permission' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/permissions/permissions.service.ts(16,25): error TS2339: Property 'permission' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/permissions/permissions.service.ts(29,25): error TS2339: Property 'permission' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/permissions/permissions.service.ts(39,25): error TS2339: Property 'permission' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/permissions/permissions.service.ts(50,25): error TS2339: Property 'permission' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/permissions/permissions.service.ts(56,38): error TS2339: Property 'permission' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/permissions/permissions.service.ts(63,51): error TS7006: Parameter 'perm' implicitly has an 'any' type.
+src/reports/reports.service.ts(31,9): error TS2353: Object literal may only specify known properties, and 'department' does not exist in type 'OperatorInclude<DefaultArgs>'.
+src/reports/reports.service.ts(51,16): error TS2339: Property 'user' does not exist on type '{ id: number; createdAt: Date; updatedAt: Date; userId: number; employeeId: string; section: string; line: string; group: string; position: string; photo: string | null; qrCode: string; performanceScore: number; totalMerit: number; totalMisconduct: number; accumulatedPoints: number; }'.
+src/reports/reports.service.ts(52,22): error TS2339: Property 'department' does not exist on type '{ id: number; createdAt: Date; updatedAt: Date; userId: number; employeeId: string; section: string; line: string; group: string; position: string; photo: string | null; qrCode: string; performanceScore: number; totalMerit: number; totalMisconduct: number; accumulatedPoints: number; }'.
+src/reports/reports.service.ts(53,20): error TS2339: Property 'department' does not exist on type '{ id: number; createdAt: Date; updatedAt: Date; userId: number; employeeId: string; section: string; line: string; group: string; position: string; photo: string | null; qrCode: string; performanceScore: number; totalMerit: number; totalMisconduct: number; accumulatedPoints: number; }'.
+src/reports/reports.service.ts(54,17): error TS2339: Property 'shift' does not exist on type '{ id: number; createdAt: Date; updatedAt: Date; userId: number; employeeId: string; section: string; line: string; group: string; position: string; photo: string | null; qrCode: string; performanceScore: number; totalMerit: number; totalMisconduct: number; accumulatedPoints: number; }'.
+src/reports/reports.service.ts(55,26): error TS2339: Property 'productionLine' does not exist on type '{ id: number; createdAt: Date; updatedAt: Date; userId: number; employeeId: string; section: string; line: string; group: string; position: string; photo: string | null; qrCode: string; performanceScore: number; totalMerit: number; totalMisconduct: number; accumulatedPoints: number; }'.
+src/reports/reports.service.ts(60,22): error TS2339: Property 'meritEvents' does not exist on type '{ id: number; createdAt: Date; updatedAt: Date; userId: number; employeeId: string; section: string; line: string; group: string; position: string; photo: string | null; qrCode: string; performanceScore: number; totalMerit: number; totalMisconduct: number; accumulatedPoints: number; }'.
+src/reports/reports.service.ts(61,27): error TS2339: Property 'misconductEvents' does not exist on type '{ id: number; createdAt: Date; updatedAt: Date; userId: number; employeeId: string; section: string; line: string; group: string; position: string; photo: string | null; qrCode: string; performanceScore: number; totalMerit: number; totalMisconduct: number; accumulatedPoints: number; }'.
+src/reports/reports.service.ts(85,14): error TS2339: Property 'meritEvent' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/reports/reports.service.ts(100,14): error TS2551: Property 'misconductEvent' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'. Did you mean 'misconduct'?
+src/reports/reports.service.ts(121,38): error TS2339: Property 'department' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/reports/reports.service.ts(137,28): error TS7006: Parameter 'dept' implicitly has an 'any' type.
+src/reports/reports.service.ts(138,49): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+src/reports/reports.service.ts(138,54): error TS7006: Parameter 'op' implicitly has an 'any' type.
+src/reports/reports.service.ts(139,54): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+src/reports/reports.service.ts(139,59): error TS7006: Parameter 'op' implicitly has an 'any' type.
+src/reports/reports.service.ts(141,34): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+src/reports/reports.service.ts(141,39): error TS7006: Parameter 'op' implicitly has an 'any' type.
+src/reports/reports.service.ts(173,33): error TS2339: Property 'blockchainLog' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/roles/roles.service.ts(16,13): error TS2353: Object literal may only specify known properties, and 'userRoles' does not exist in type 'RoleCountOutputTypeSelect<DefaultArgs>'.
+src/roles/roles.service.ts(27,9): error TS2353: Object literal may only specify known properties, and 'rolePermissions' does not exist in type 'RoleInclude<DefaultArgs>'.
+src/roles/roles.service.ts(52,9): error TS2561: Object literal may only specify known properties, but 'rolePermissions' does not exist in type '(Without<RoleCreateInput, RoleUncheckedCreateInput> & RoleUncheckedCreateInput) | (Without<...> & RoleCreateInput)'. Did you mean to write 'permissions'?
+src/roles/roles.service.ts(59,9): error TS2353: Object literal may only specify known properties, and 'rolePermissions' does not exist in type 'RoleInclude<DefaultArgs>'.
+src/roles/roles.service.ts(70,20): error TS2339: Property 'rolePermission' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/roles/roles.service.ts(80,9): error TS2561: Object literal may only specify known properties, but 'rolePermissions' does not exist in type '(Without<RoleUpdateInput, RoleUncheckedUpdateInput> & RoleUncheckedUpdateInput) | (Without<...> & RoleUpdateInput)'. Did you mean to write 'permissions'?
+src/roles/roles.service.ts(87,9): error TS2353: Object literal may only specify known properties, and 'rolePermissions' does not exist in type 'RoleInclude<DefaultArgs>'.
+src/users/users.service.ts(16,9): error TS2353: Object literal may only specify known properties, and 'userRoles' does not exist in type 'UserSelect<DefaultArgs>'.
+src/users/users.service.ts(52,13): error TS2353: Object literal may only specify known properties, and 'department' does not exist in type 'OperatorInclude<DefaultArgs>'.
+src/users/users.service.ts(76,9): error TS2353: Object literal may only specify known properties, and 'userRoles' does not exist in type '(Without<UserCreateInput, UserUncheckedCreateInput> & UserUncheckedCreateInput) | (Without<...> & UserCreateInput)'.
+src/users/users.service.ts(88,9): error TS2353: Object literal may only specify known properties, and 'userRoles' does not exist in type 'UserSelect<DefaultArgs>'.
+src/users/users.service.ts(109,20): error TS2339: Property 'userRole' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/users/users.service.ts(129,9): error TS2353: Object literal may only specify known properties, and 'userRoles' does not exist in type 'UserSelect<DefaultArgs>'.
