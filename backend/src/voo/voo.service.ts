@@ -21,6 +21,7 @@ export class VooService {
     title: string;
     description: string;
     type: string;
+    groupShift?: string;
     photos?: string;
   }) {
     const submission = await prisma.vooSubmission.create({
@@ -30,6 +31,7 @@ export class VooService {
         title: data.title,
         description: data.description,
         type: data.type || 'VoO',
+        groupShift: data.groupShift || '',
         photos: data.photos || '[]'
       },
       include: {

@@ -44,11 +44,19 @@
           <option value="done">Sudah dikonseling</option>
         </select>
       </div>
+      <div class="filter-group">
+        <label>Periode</label>
+        <month-year-filter v-model="period" @update:modelValue="onPeriodChange" />
+      </div>
       <button class="btn-ghost btn-sm" :disabled="loading" @click="loadAll(true)">
         <ion-icon :icon="refreshOutline" /> Muat Ulang
       </button>
     </div>
     <div class="filter-bar" v-else>
+      <div class="filter-group">
+        <label>Periode</label>
+        <month-year-filter v-model="period" @update:modelValue="onPeriodChange" />
+      </div>
       <button class="btn-ghost btn-sm" :disabled="loading" @click="loadAll(true)">
         <ion-icon :icon="refreshOutline" /> Muat Ulang
       </button>
@@ -219,6 +227,7 @@ import {
   checkmarkCircleOutline, timeOutline,
 } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
+import MonthYearFilter, { type MonthYearValue } from '@/components/MonthYearFilter.vue';
 import { recordsService } from '@/services/records.service';
 import { useRealtime } from '@/composables/useRealtime';
 import { fmtDateShort, severityMeta, initials } from '@/utils/format';
@@ -239,6 +248,7 @@ const error = ref('');
 const filterSeverity = ref('');
 const filterFollowup = ref('');
 const expandId = ref<number | null>(null);
+const period = ref<MonthYearValue>({ month: null, year: null });
 
 const misconducts = ref<MisconductItem[]>([]);
 const counselings = ref<CounselingItem[]>([]);
@@ -294,12 +304,13 @@ const activeSummary = computed(() => {
 const loadAll = async (showSpinner = true) => {
   if (showSpinner) loading.value = true;
   error.value = '';
+  const filter = { month: period.value.month || undefined, year: period.value.year || undefined };
   try {
     const [r1, r2, r3, r4] = await Promise.all([
-      recordsService.listMisconduct(),
-      recordsService.listCounseling(),
-      recordsService.listKartuKuning(),
-      recordsService.listSuratPeringatan(),
+      recordsService.listMisconduct(filter),
+      recordsService.listCounseling(undefined, filter),
+      recordsService.listKartuKuning(undefined, filter),
+      recordsService.listSuratPeringatan(undefined, filter),
     ]);
     if (r1.data?.success) misconducts.value = r1.data.data;
     if (r2.data?.success) counselings.value = r2.data.data;
@@ -321,6 +332,10 @@ const switchTab = (key: TabKey) => {
 
 const applyFilter = () => {
   expandId.value = null;
+};
+
+const onPeriodChange = () => {
+  loadAll(true);
 };
 
 const toggleExpand = (id: number) => {

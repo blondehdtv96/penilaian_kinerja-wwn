@@ -25,4 +25,19 @@ export class AuthController {
       res.status(401).json({ success: false, message: error.message });
     }
   };
+
+  updateProfile = async (req: any, res: Response) => {
+    try {
+      const { email, nik, password, currentPassword } = req.body;
+      const user = await authService.updateProfile(req.user.userId, {
+        email,
+        nik,
+        password,
+        currentPassword
+      });
+      res.json({ success: true, data: user });
+    } catch (error: any) {
+      res.status(400).json({ success: false, message: error.message });
+    }
+  };
 }

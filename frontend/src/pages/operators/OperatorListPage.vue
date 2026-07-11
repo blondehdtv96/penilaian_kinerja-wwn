@@ -15,7 +15,7 @@
       <div v-else class="table-wrap">
         <table>
           <thead>
-            <tr><th>#</th><th>Operator</th><th>Section / Line</th><th class="amt">Skor</th><th class="amt">VoO</th><th class="amt">Pelanggaran</th></tr>
+            <tr><th>#</th><th>Operator</th><th>Section / Group</th><th class="amt">Skor</th><th class="amt">VoO</th><th class="amt">Pelanggaran</th></tr>
           </thead>
           <tbody>
             <tr v-for="(o, i) in filtered" :key="o.id" class="row-link" @click="go(`/operators/${o.id}`)">
@@ -26,7 +26,7 @@
                   <div><div class="nm">{{ o.user.fullName }}</div><div class="muted">{{ o.employeeId }}</div></div>
                 </div>
               </td>
-              <td class="muted">{{ o.section }} · {{ o.line }}</td>
+              <td class="muted">{{ o.section }} · {{ o.group }}</td>
               <td class="amt">{{ o.performanceScore }}</td>
               <td class="amt pos">{{ o.totalMerit }}</td>
               <td class="amt neg">{{ o.totalMisconduct }}</td>

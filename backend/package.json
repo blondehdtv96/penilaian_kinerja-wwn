@@ -14,7 +14,11 @@
     "prisma:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma db push --force-reset --skip-generate && tsx prisma/seed.ts",
     "db:clear": "tsx scripts/clear-data.ts",
-    "test:password": "tsx scripts/test-password.ts"
+    "backfill:operators": "tsx scripts/backfill-operators.ts",
+    "seed:violation-types": "tsx scripts/seed-violation-types.ts",
+    "test:password": "tsx scripts/test-password.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -43,7 +47,9 @@
     "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^20.10.0",
     "@types/qrcode": "^1.5.6",
+    "fast-check": "^4.8.0",
     "tsx": "^4.7.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^4.1.9"
   }
 }

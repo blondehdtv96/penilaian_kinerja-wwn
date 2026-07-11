@@ -15,7 +15,7 @@
         <div class="card"><div class="muted">Skor Kinerja</div><div class="val">{{ op.performanceScore }}</div></div>
         <div class="card"><div class="muted">VoO Disetujui</div><div class="val up">{{ op.totalMerit }}</div></div>
         <div class="card"><div class="muted">Pelanggaran</div><div class="val down">{{ op.totalMisconduct }}</div></div>
-        <div class="card"><div class="muted">Line / Group</div><div class="val sm">{{ op.line }} · {{ op.group }}</div></div>
+        <div class="card"><div class="muted">Group</div><div class="val sm">{{ op.group }}</div></div>
       </div>
 
 

@@ -3,10 +3,9 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export class OperatorService {
-  async getAll(filters?: { section?: string; line?: string; group?: string }) {
+  async getAll(filters?: { section?: string; group?: string }) {
     const where: any = {};
     if (filters?.section) where.section = filters.section;
-    if (filters?.line) where.line = filters.line;
     if (filters?.group) where.group = filters.group;
 
     return prisma.operator.findMany({
@@ -38,7 +37,11 @@ export class OperatorService {
       include: { user: { select: { id: true, fullName: true, username: true, email: true } } }
     });
     if (!op) throw new Error('Operator profile not found');
-    return op;
+
+    // Hitung jumlah pelanggaran secara langsung dari data aktual agar akurat
+    // meskipun counter tersimpan belum tersinkron (mis. data lama).
+    const misconductCount = await prisma.misconduct.count({ where: { operatorId: op.id } });
+    return { ...op, totalMisconduct: misconductCount };
   }
 
   async scanQR(qrData: string, userId: number) {

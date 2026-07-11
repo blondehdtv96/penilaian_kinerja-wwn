@@ -30,8 +30,13 @@
           <div class="op-divider">Data Operator</div>
           <div class="field"><label>ID Karyawan</label><input v-model.trim="op.employeeId" required /></div>
           <div class="field"><label>Section</label><input v-model.trim="op.section" /></div>
-          <div class="field"><label>Line</label><input v-model.trim="op.line" /></div>
-          <div class="field"><label>Group</label><input v-model.trim="op.group" /></div>
+          <div class="field">
+            <label>Group</label>
+            <select v-model="op.group">
+              <option value="">Pilih group…</option>
+              <option v-for="g in groupOptions" :key="g" :value="g">{{ g }}</option>
+            </select>
+          </div>
           <div class="field"><label>Posisi</label><input v-model.trim="op.position" placeholder="Operator" /></div>
         </template>
 
@@ -90,9 +95,11 @@ const editing = ref<AdminUser | null>(null);
 const saving = ref(false);
 const formError = ref('');
 
+const groupOptions = ['A', 'B', 'C', 'D', 'Non-Shift'];
+
 const blankForm = () => ({ fullName: '', username: '', email: '', nik: '', roleId: 0, password: '', isActive: true });
 const f = reactive(blankForm());
-const op = reactive({ employeeId: '', section: '', line: '', group: '', position: '' });
+const op = reactive({ employeeId: '', section: '', group: '', position: '' });
 
 const isOperatorRole = computed(() => roles.value.find((r) => r.id === f.roleId)?.name === 'Operator');
 
@@ -111,7 +118,7 @@ const load = async () => {
 
 const openCreate = () => {
   Object.assign(f, blankForm());
-  Object.assign(op, { employeeId: '', section: '', line: '', group: '', position: '' });
+  Object.assign(op, { employeeId: '', section: '', group: '', position: '' });
   editing.value = null;
   formError.value = '';
   showForm.value = true;

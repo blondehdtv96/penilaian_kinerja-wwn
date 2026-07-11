@@ -46,7 +46,7 @@ async function main() {
         email: 'staffproduksi@bridgestone.com',
         password: hashedPassword,
         fullName: 'Staff Produksi',
-        nip: 'NIP-SP-001',
+        nik: 'NIP-SP-001',
         roleId: role.id
       }
     });

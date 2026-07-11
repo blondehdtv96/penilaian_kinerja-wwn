@@ -63,7 +63,6 @@
         <div class="info-list">
           <div class="info-row"><span>ID Karyawan</span><b>{{ op.employeeId }}</b></div>
           <div class="info-row"><span>Section</span><b>{{ op.section }}</b></div>
-          <div class="info-row"><span>Line</span><b>{{ op.line }}</b></div>
           <div class="info-row"><span>Group</span><b>{{ op.group }}</b></div>
           <div class="info-row"><span>Posisi</span><b>{{ op.position }}</b></div>
         </div>

@@ -43,7 +43,13 @@
       </div>
 
       <div class="card">
-        <div class="card-head"><h3>Pelanggaran Terbaru</h3><span class="muted">{{ items.length }}</span></div>
+        <div class="card-head">
+          <h3>Pelanggaran Terbaru</h3>
+          <div class="head-actions">
+            <month-year-filter v-model="period" @update:modelValue="load" />
+            <span class="muted">{{ items.length }}</span>
+          </div>
+        </div>
         <div v-if="items.length === 0" class="empty">Belum ada pelanggaran tercatat.</div>
         <div class="table-wrap" v-else>
           <table>
@@ -74,6 +80,7 @@ import { computed, onMounted, ref } from 'vue';
 import { checkmarkCircleOutline, alertCircleOutline, saveOutline, timeOutline, informationCircleOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import OperatorSelect from '@/components/OperatorSelect.vue';
+import MonthYearFilter, { type MonthYearValue } from '@/components/MonthYearFilter.vue';
 import { recordsService } from '@/services/records.service';
 import { operatorService } from '@/services/operators.service';
 import { useRealtime } from '@/composables/useRealtime';
@@ -90,6 +97,7 @@ const submitting = ref(false);
 const error = ref('');
 const okMsg = ref('');
 const items = ref<MisconductItem[]>([]);
+const period = ref<MonthYearValue>({ month: null, year: null });
 
 const selectedOperator = computed(() => operators.value.find((o) => o.id === operatorId.value) || null);
 const selectedType = computed(() => violationTypes.value.find((t) => t.id === violationTypeId.value) || null);
@@ -117,7 +125,10 @@ const loadViolationTypes = async () => {
 
 const load = async () => {
   try {
-    const { data } = await recordsService.listMisconduct();
+    const { data } = await recordsService.listMisconduct({
+      month: period.value.month || undefined,
+      year: period.value.year || undefined,
+    });
     if (data?.success) items.value = data.data;
   } catch {
     /* abaikan */
@@ -168,4 +179,5 @@ useRealtime('record:changed', () => { load(); loadOperators(); });
 .fu-badge.pending { background: #fef3c7; color: #92400e; }
 .hint-line { display: flex; align-items: center; gap: 6px; margin: 6px 0 0; font-size: 12px; color: var(--db-ink-3); }
 .hint-line ion-icon { font-size: 15px; flex-shrink: 0; }
+.head-actions { display: flex; align-items: center; gap: 12px; }
 </style>

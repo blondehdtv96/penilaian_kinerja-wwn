@@ -8,7 +8,7 @@ const blockchain = new BlockchainService();
 export class VooController {
   create = async (req: any, res: Response) => {
     try {
-      const { operatorId, title, description, type, photos } = req.body;
+      const { operatorId, title, description, type, groupShift, photos } = req.body;
       let submittedById = req.user.userId;
 
       // If foreman submitting for operator
@@ -22,7 +22,18 @@ export class VooController {
         const { PrismaClient } = require('@prisma/client');
         const prisma = new PrismaClient();
         const op = await prisma.operator.findUnique({ where: { userId: req.user.userId } });
-        if (op) actualOperatorId = op.id;
+        if (!op) {
+          return res.status(400).json({
+            success: false,
+            message: 'Profil operator belum tersedia untuk akun ini. Hubungi admin untuk melengkapi data operator sebelum mengajukan VoO / Ide Kaizen.',
+          });
+        }
+        actualOperatorId = op.id;
+      }
+
+      // Pastikan operator tujuan valid sebelum menyimpan (menghindari error Prisma yang tidak jelas).
+      if (!actualOperatorId) {
+        return res.status(400).json({ success: false, message: 'operatorId is required' });
       }
 
       const result = await vooService.create({
@@ -31,6 +42,7 @@ export class VooController {
         title,
         description,
         type: type || 'VoO',
+        groupShift: groupShift || '',
         photos: photos || '[]'
       });
 

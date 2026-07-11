@@ -23,6 +23,19 @@
         </div>
 
         <div class="field">
+          <label>Group / Shift</label>
+          <div class="gs-row">
+            <select v-model="group" aria-label="Group">
+              <option v-for="g in groupOptions" :key="g.value" :value="g.value">{{ g.label }}</option>
+            </select>
+            <span class="gs-sep">-</span>
+            <select v-model="shift" aria-label="Shift">
+              <option v-for="s in shiftOptions" :key="s" :value="s">{{ s }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
           <label for="d">Deskripsi</label>
           <textarea id="d" v-model.trim="description" rows="5" placeholder="Jelaskan usulan atau ide Anda secara ringkas…" required></textarea>
         </div>
@@ -58,9 +71,11 @@ import { useRouter, useRoute } from 'vue-router';
 import { checkmarkCircleOutline, alertCircleOutline, closeOutline, sendOutline, locationOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { vooService } from '@/services/voo.service';
+import { useAuthStore } from '@/stores/auth';
 
 const router = useRouter();
 const route = useRoute();
+const auth = useAuthStore();
 const go = (p: string) => router.push(p);
 
 const type = ref<string>('VoO/IdeKaizen');
@@ -70,6 +85,22 @@ const photos = ref<string[]>([]);
 const submitting = ref(false);
 const error = ref('');
 const okMsg = ref('');
+
+// Group / Shift — pilihan mengikuti standar profil operator (A, B, C, D, Non-Shift).
+const groupOptions = [
+  { value: '-', label: '-' },
+  { value: 'A', label: 'A' },
+  { value: 'B', label: 'B' },
+  { value: 'C', label: 'C' },
+  { value: 'D', label: 'D' },
+];
+const shiftOptions = ['NS', '1', '2', '3'];
+
+// Auto-isi Group dari profil operator yang login bila cocok dengan opsi (A/B/C/D).
+// Profil "Non-Shift" tidak punya huruf group, jadi group tetap "-".
+const profileGroup = auth.user?.operator?.group ?? '';
+const group = ref(groupOptions.some((g) => g.value === profileGroup) ? profileGroup : '-');
+const shift = ref('NS');
 
 // Lokasi yang dibawa dari halaman Scan QR (query params). Dipakai untuk menampilkan
 // banner lokasi dan mengisi awal deskripsi agar operator tinggal melengkapi.
@@ -111,6 +142,7 @@ const submit = async () => {
       title: title.value,
       description: description.value,
       type: type.value,
+      groupShift: `${group.value} / ${shift.value}`,
       photos: JSON.stringify(photos.value),
     });
     if (data?.success) {
@@ -141,6 +173,20 @@ const submit = async () => {
   font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px;
   background: var(--db-card); border: 1px solid var(--db-line-2); color: var(--db-muted);
 }
+.gs-row { display: flex; align-items: center; gap: 10px; }
+.gs-row select {
+  min-width: 90px;
+  border: 1px solid var(--db-line-2);
+  border-radius: 9px;
+  padding: 9px 12px;
+  font: inherit;
+  font-size: 14px;
+  background: var(--db-card);
+  color: var(--db-ink);
+  cursor: pointer;
+}
+.gs-row select:focus { outline: none; border-color: var(--db-brand); }
+.gs-sep { color: var(--db-ink-3); font-weight: 600; }
 .field input[type='file'] { padding: 9px 11px; font-size: 13px; }
 .thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
 .thumb { position: relative; width: 76px; height: 76px; border-radius: 10px; overflow: hidden; border: 1px solid var(--db-line); }

@@ -71,7 +71,13 @@
       </div>
 
       <div class="card">
-        <div class="card-head"><h3>Riwayat Counseling</h3><span class="muted">{{ items.length }}</span></div>
+        <div class="card-head">
+          <h3>Riwayat Counseling</h3>
+          <div class="head-actions">
+            <month-year-filter v-model="period" @update:modelValue="load" />
+            <span class="muted">{{ items.length }}</span>
+          </div>
+        </div>
         <div v-if="items.length === 0" class="empty">Belum ada catatan konseling.</div>
         <div class="table-wrap" v-else>
           <table>
@@ -109,6 +115,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { checkmarkCircleOutline, alertCircleOutline, saveOutline, documentTextOutline, checkmarkDoneOutline, informationCircleOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import CounselingSheet from '@/components/CounselingSheet.vue';
+import MonthYearFilter, { type MonthYearValue } from '@/components/MonthYearFilter.vue';
 import { recordsService } from '@/services/records.service';
 import { operatorService } from '@/services/operators.service';
 import { useRealtime } from '@/composables/useRealtime';
@@ -137,6 +144,7 @@ const error = ref('');
 const okMsg = ref('');
 const items = ref<CounselingItem[]>([]);
 const sheet = ref<CounselingItem | null>(null);
+const period = ref<MonthYearValue>({ month: null, year: null });
 
 const selectedMisconduct = computed(() => pendingMisconducts.value.find((m) => m.id === misconductId.value) || null);
 const selectedOperator = computed(() =>
@@ -175,7 +183,10 @@ const loadPendingMisconducts = async () => {
 
 const load = async () => {
   try {
-    const { data } = await recordsService.listCounseling();
+    const { data } = await recordsService.listCounseling(undefined, {
+      month: period.value.month || undefined,
+      year: period.value.year || undefined,
+    });
     if (data?.success) items.value = data.data;
   } catch {
     /* abaikan */
@@ -237,6 +248,7 @@ useRealtime('record:changed', () => { loadPendingMisconducts(); load(); });
 </script>
 
 <style scoped>
+.head-actions { display: flex; align-items: center; gap: 12px; }
 .op-info { display: flex; flex-wrap: wrap; gap: 18px; padding: 10px 12px; background: var(--db-icon-bg); border: 1px solid var(--db-line); border-radius: 10px; }
 .op-info > div { display: flex; flex-direction: column; }
 .op-info .k { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--db-ink-3); }
