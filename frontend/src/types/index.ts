@@ -107,6 +107,7 @@ export interface VooSubmission {
   groupShift?: string;
   sumberVoo?: string;
   kategori4m?: string;
+  classification?: string; // JSON array: safety, environment, quality, cost, delivery
   photos: string;
   status: VooStatus;
   points: number;

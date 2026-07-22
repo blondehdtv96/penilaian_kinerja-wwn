@@ -7,6 +7,7 @@ export interface VooCreatePayload {
   groupShift?: string; // mis. "A / 1" atau "- / NS"
   sumberVoo?: string; // Sumber VoO (Laporan Operator, Interview Patrol, dll.)
   kategori4m?: string; // Kategori 4M (Standard/Process, Mesin, Tools, Material, Lain-Lain)
+  classification?: string; // JSON array: safety, environment, quality, cost, delivery
   photos?: string; // JSON string array (base64 data URL)
   operatorId?: number; // hanya jika Foreman mengajukan untuk operator
 }

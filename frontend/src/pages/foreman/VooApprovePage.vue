@@ -36,20 +36,111 @@
           </div>
 
           <div class="appr-actions">
-            <template v-if="rejectId !== v.id">
-              <button class="btn-success btn-sm" :disabled="busy" @click="approve(v.id)">
-                <ion-icon :icon="checkmarkOutline" /> Setujui
-              </button>
-              <button class="btn-ghost btn-sm" :disabled="busy" @click="rejectId = v.id">
-                <ion-icon :icon="closeOutline" /> Tolak
-              </button>
-            </template>
-            <template v-else>
-              <input v-model.trim="reason" class="reason" placeholder="Alasan penolakan…" />
-              <button class="btn-danger btn-sm" :disabled="busy || !reason" @click="reject(v.id)">Konfirmasi</button>
-              <button class="btn-ghost btn-sm" :disabled="busy" @click="cancelReject">Batal</button>
-            </template>
+            <button class="btn-ghost btn-sm" :disabled="busy" @click="openDetail(v)">
+              <ion-icon :icon="eyeOutline" /> Detail
+            </button>
+            <button class="btn-success btn-sm" :disabled="busy" @click="openDetail(v)">
+              <ion-icon :icon="checkmarkOutline" /> Setujui
+            </button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Popup detail & konfirmasi persetujuan VoO -->
+    <div class="vd-overlay" v-if="detail" @click.self="closeDetail">
+      <div class="vd-modal">
+        <div class="vd-head">
+          <div class="vd-head-l">
+            <span class="status foreman">{{ vooTypeLabel(detail.type) }}</span>
+            <span class="muted">{{ fmtDate(detail.createdAt) }}</span>
+          </div>
+          <button class="vd-close" type="button" @click="closeDetail" aria-label="Tutup">
+            <ion-icon :icon="closeOutline" />
+          </button>
+        </div>
+
+        <div class="vd-body">
+          <h2 class="vd-title">{{ detail.title }}</h2>
+
+          <div class="vd-operator">
+            <div class="t-ava lg"><UserAvatar /></div>
+            <div>
+              <div class="vd-op-name">{{ detail.operator?.user?.fullName || '-' }}</div>
+              <div class="muted vd-op-sub">Diajukan oleh {{ detail.submittedBy?.fullName || '-' }}</div>
+            </div>
+          </div>
+
+          <div class="vd-grid">
+            <div class="vd-cell">
+              <span class="vd-k">Group / Shift</span>
+              <span class="vd-v">{{ detail.groupShift || '-' }}</span>
+            </div>
+            <div class="vd-cell">
+              <span class="vd-k">Sumber VoO</span>
+              <span class="vd-v">{{ detail.sumberVoo || '-' }}</span>
+            </div>
+            <div class="vd-cell">
+              <span class="vd-k">Kategori 4M</span>
+              <span class="vd-v">{{ detail.kategori4m || '-' }}</span>
+            </div>
+            <div class="vd-cell">
+              <span class="vd-k">Klasifikasi</span>
+              <span class="vd-v">
+                <span v-if="detailClassification.length" class="vd-tags">
+                  <span class="vd-tag" v-for="c in detailClassification" :key="c">{{ c }}</span>
+                </span>
+                <span v-else>-</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="vd-section">
+            <span class="vd-k">Deskripsi</span>
+            <p class="vd-desc">{{ detail.description }}</p>
+          </div>
+
+          <div class="vd-section" v-if="detailPhotos.length">
+            <span class="vd-k">Foto Pendukung ({{ detailPhotos.length }})</span>
+            <div class="vd-photos">
+              <a
+                v-for="(p, i) in detailPhotos"
+                :key="i"
+                :href="p"
+                target="_blank"
+                rel="noopener"
+                class="vd-photo"
+              >
+                <img :src="p" alt="foto pendukung" />
+              </a>
+            </div>
+          </div>
+
+          <div class="alert err vd-alert" v-if="error"><ion-icon :icon="closeOutline" /> {{ error }}</div>
+
+          <div class="vd-reject" v-if="rejecting">
+            <label>Alasan penolakan</label>
+            <textarea v-model.trim="reason" rows="3" placeholder="Jelaskan alasan penolakan…"></textarea>
+          </div>
+        </div>
+
+        <div class="vd-actions">
+          <template v-if="!rejecting">
+            <button class="btn-ghost" type="button" :disabled="busy" @click="rejecting = true">
+              <ion-icon :icon="closeOutline" /> Tolak
+            </button>
+            <button class="btn-success" type="button" :disabled="busy" @click="approve(detail.id)">
+              <ion-icon :icon="checkmarkOutline" /> {{ busy ? 'Memproses…' : 'Setujui Pengajuan' }}
+            </button>
+          </template>
+          <template v-else>
+            <button class="btn-ghost" type="button" :disabled="busy" @click="rejecting = false; reason = ''">
+              Kembali
+            </button>
+            <button class="btn-danger" type="button" :disabled="busy || !reason" @click="reject(detail.id)">
+              {{ busy ? 'Memproses…' : 'Konfirmasi Penolakan' }}
+            </button>
+          </template>
         </div>
       </div>
     </div>
@@ -58,12 +149,12 @@
 
 <script setup lang="ts">
 import { IonIcon, IonSpinner } from '@ionic/vue';
-import { onMounted, onUnmounted, ref } from 'vue';
-import { checkmarkOutline, closeOutline, refreshOutline } from 'ionicons/icons';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { checkmarkOutline, closeOutline, refreshOutline, eyeOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { vooService } from '@/services/voo.service';
 import { useRealtime } from '@/composables/useRealtime';
-import { fmtDate, vooTypeLabel, parsePhotos } from '@/utils/format';
+import { fmtDate, vooTypeLabel, parsePhotos, parseClassification } from '@/utils/format';
 import UserAvatar from '@/components/UserAvatar.vue';
 import type { VooSubmission } from '@/types';
 
@@ -71,8 +162,26 @@ const items = ref<VooSubmission[]>([]);
 const loading = ref(true);
 const error = ref('');
 const busy = ref(false);
-const rejectId = ref<number | null>(null);
 const reason = ref('');
+
+// Popup detail & konfirmasi persetujuan.
+const detail = ref<VooSubmission | null>(null);
+const rejecting = ref(false);
+const detailPhotos = computed(() => parsePhotos(detail.value?.photos));
+const detailClassification = computed(() => parseClassification(detail.value?.classification));
+
+const openDetail = (v: VooSubmission) => {
+  error.value = '';
+  reason.value = '';
+  rejecting.value = false;
+  detail.value = v;
+};
+const closeDetail = () => {
+  if (busy.value) return;
+  detail.value = null;
+  rejecting.value = false;
+  reason.value = '';
+};
 
 const photoCount = (v: VooSubmission) => parsePhotos(v.photos).length;
 
@@ -96,32 +205,32 @@ const load = async (showSpinner = true) => {
 const onFocus = () => load(false);
 useRealtime('voo:changed', () => load(false));
 
-const cancelReject = () => {
-  rejectId.value = null;
-  reason.value = '';
-};
-
 const approve = async (id: number) => {
   busy.value = true;
+  error.value = '';
   try {
     await vooService.approveForeman(id, { action: 'approve' });
+    busy.value = false;
+    detail.value = null;
     await load(false);
   } catch (e: any) {
     error.value = e?.response?.data?.message || 'Gagal menyetujui.';
-  } finally {
     busy.value = false;
   }
 };
 
 const reject = async (id: number) => {
   busy.value = true;
+  error.value = '';
   try {
     await vooService.approveForeman(id, { action: 'reject', rejectionReason: reason.value });
-    cancelReject();
+    busy.value = false;
+    detail.value = null;
+    rejecting.value = false;
+    reason.value = '';
     await load(false);
   } catch (e: any) {
     error.value = e?.response?.data?.message || 'Gagal menolak.';
-  } finally {
     busy.value = false;
   }
 };
@@ -166,5 +275,75 @@ onUnmounted(() => {
 @media (max-width: 720px) {
   .appr { flex-direction: column; }
   .appr-actions { max-width: none; justify-content: flex-start; }
+}
+
+/* Popup detail & konfirmasi persetujuan */
+.vd-overlay {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, .55);
+  display: grid; place-items: center; padding: 20px; z-index: 1000; overflow: auto;
+}
+.vd-modal {
+  background: var(--db-card); border: 1px solid var(--db-line);
+  border-radius: 16px; width: 100%; max-width: 560px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .35);
+  display: flex; flex-direction: column; max-height: calc(100vh - 40px);
+}
+.vd-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 14px 18px; border-bottom: 1px solid var(--db-line); flex-shrink: 0;
+}
+.vd-head-l { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.vd-close {
+  width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center;
+  background: transparent; color: var(--db-muted); border: 1px solid var(--db-line-2);
+  cursor: pointer; font-size: 16px; flex-shrink: 0;
+}
+.vd-close:hover { color: var(--db-ink); border-color: var(--db-brand); }
+.vd-body { padding: 18px; overflow-y: auto; }
+.vd-title { font-size: 19px; font-weight: 700; color: var(--db-ink); margin: 0 0 14px; line-height: 1.3; }
+.vd-operator { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.t-ava.lg { width: 42px; height: 42px; font-size: 15px; }
+.vd-op-name { font-weight: 600; color: var(--db-ink); font-size: 14px; }
+.vd-op-sub { font-size: 12px; }
+.vd-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  padding: 14px; border: 1px solid var(--db-line); border-radius: 12px;
+  background: var(--db-icon-bg); margin-bottom: 16px;
+}
+.vd-cell { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.vd-k { font-size: 11.5px; color: var(--db-muted); text-transform: uppercase; letter-spacing: .03em; }
+.vd-v { font-size: 14px; color: var(--db-ink); font-weight: 500; word-break: break-word; }
+.vd-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.vd-tag {
+  font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px;
+  background: var(--db-card); border: 1px solid var(--db-brand); color: var(--db-brand);
+}
+.vd-section { margin-bottom: 16px; display: flex; flex-direction: column; gap: 6px; }
+.vd-desc {
+  margin: 0; font-size: 14px; line-height: 1.6; color: var(--db-ink-2);
+  white-space: pre-wrap; word-break: break-word;
+}
+.vd-photos { display: flex; flex-wrap: wrap; gap: 10px; }
+.vd-photo {
+  width: 92px; height: 92px; border-radius: 10px; overflow: hidden;
+  border: 1px solid var(--db-line); display: block;
+}
+.vd-photo img { width: 100%; height: 100%; object-fit: cover; }
+.vd-alert { margin-bottom: 12px; }
+.vd-reject { display: flex; flex-direction: column; gap: 6px; }
+.vd-reject label { font-size: 13px; color: var(--db-muted); }
+.vd-reject textarea {
+  border: 1px solid var(--db-line-2); border-radius: 10px; padding: 10px 12px;
+  font: inherit; font-size: 14px; background: var(--db-card); color: var(--db-ink); resize: vertical;
+}
+.vd-reject textarea:focus { outline: none; border-color: var(--db-brand); }
+.vd-actions {
+  display: flex; gap: 10px; justify-content: flex-end;
+  padding: 14px 18px; border-top: 1px solid var(--db-line); flex-shrink: 0;
+}
+@media (max-width: 480px) {
+  .vd-grid { grid-template-columns: 1fr; }
+  .vd-actions { flex-direction: column-reverse; }
+  .vd-actions button { width: 100%; }
 }
 </style>

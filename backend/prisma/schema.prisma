@@ -121,6 +121,7 @@ model VooSubmission {
   groupShift        String   @default("") // Group/Shift saat pengajuan, mis. "A / 1" atau "- / NS"
   sumberVoo         String   @default("") // Sumber VoO: Laporan Operator, Interview Patrol, LKBK/LKK, Standard Monitoring, Pendapat Baru, Others
   kategori4m        String   @default("") // Kategori 4M: Standard/Process, Mesin, Tools, Material, Lain-Lain
+  classification    String   @default("[]") // JSON array: safety, environment, quality, cost, delivery
   photos            String   @default("[]") // JSON array of base64 images
   status            String   @default("pending") // pending, approved_foreman, approved_final, rejected
   points            Int      @default(0)
