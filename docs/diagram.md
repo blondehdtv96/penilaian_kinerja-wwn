@@ -1,91 +1,56 @@
-# Diagram - Sistem Manajemen Kinerja VoO / Ide Kaizen v2.0
+# Diagram — Sistem Penilaian Kinerja VoO / Ide Kaizen + Disiplin Terintegrasi
 
-## 1. Diagram Use Case
+> Dihasilkan dari deep-dive kode pada branch `zhafran`
+> (backend Express + Prisma + Socket.IO, frontend Ionic Vue 3 + Pinia).
+>
+> **Peran (5):** Super Admin · Section Manager · Foreman · Staff Produksi · Operator.
+>
+> **Struktur file:**
+> - `diagrams/<kategori>.svg` — **satu file gabungan per tipe** (dipakai di dokumen ini).
+> - `diagrams/individual/*.svg` — versi per-diagram terpisah (untuk kebutuhan detail).
+>
+> **Regenerasi:**
+> 1. `node docs/generate-svgs.js` — render tiap diagram → `diagrams/individual/` (via mermaid.ink, butuh internet).
+> 2. `node docs/combine-svgs.js` — gabungkan per kategori → `diagrams/<kategori>.svg`.
 
-### 1.1 Use Case Keseluruhan Sistem
+---
 
-![Use Case - Keseluruhan Sistem](diagrams/usecase-overall.svg)
+## 1. Use Case Diagram
+![Use Case Diagram](diagrams/usecase.svg)
 
-### 1.2 Use Case per Peran
-
-![Use Case - Per Peran](diagrams/usecase-per-role.svg)
+Terpisah: [keseluruhan sistem](diagrams/individual/usecase-overall.svg) · [per peran](diagrams/individual/usecase-per-role.svg)
 
 ---
 
 ## 2. Flowchart
+![Flowchart](diagrams/flowchart.svg)
 
-### 2.1 Alur Autentikasi
-
-![Flowchart - Autentikasi](diagrams/flowchart-auth.svg)
-
-### 2.2 Alur Pengajuan & Persetujuan VoO
-
-![Flowchart - Pengajuan & Persetujuan VoO](diagrams/flowchart-voo.svg)
-
-### 2.3 Alur Pencatatan Pelanggaran
-
-![Flowchart - Pencatatan Pelanggaran](diagrams/flowchart-misconduct.svg)
-
-### 2.4 Alur Pemindaian QR
-
-![Flowchart - Pemindaian QR](diagrams/flowchart-qr-scan.svg)
+Terpisah: [autentikasi](diagrams/individual/flowchart-auth.svg) · [VoO](diagrams/individual/flowchart-voo.svg) · [pelanggaran](diagrams/individual/flowchart-misconduct.svg) · [tindakan disiplin](diagrams/individual/flowchart-disciplinary.svg) · [pemindaian QR](diagrams/individual/flowchart-qr-scan.svg)
 
 ---
 
 ## 3. Activity Diagram
+![Activity Diagram](diagrams/activity.svg)
 
-### 3.1 Aktivitas Pengajuan VoO / Ide Kaizen
-
-![Activity Diagram - Pengajuan VoO](diagrams/activity-voo.svg)
-
-### 3.2 Aktivitas Penanganan Pelanggaran
-
-![Activity Diagram - Penanganan Pelanggaran](diagrams/activity-misconduct.svg)
-
-### 3.3 Aktivitas Login & Navigasi Berdasarkan Peran
-
-![Activity Diagram - Login & Navigasi](diagrams/activity-login.svg)
+Terpisah: [login](diagrams/individual/activity-login.svg) · [pengajuan VoO](diagrams/individual/activity-voo.svg) · [pelanggaran & eskalasi](diagrams/individual/activity-misconduct.svg)
 
 ---
 
 ## 4. Sequence Diagram
+![Sequence Diagram](diagrams/sequence.svg)
 
-### 4.1 Sekuens Login
-
-![Sequence Diagram - Login](diagrams/seq-login.svg)
-
-### 4.2 Sekuens Pengajuan & Persetujuan VoO
-
-![Sequence Diagram - Persetujuan VoO](diagrams/seq-voo-approval.svg)
-
-### 4.3 Sekuens Pencatatan Pelanggaran
-
-![Sequence Diagram - Pencatatan Pelanggaran](diagrams/seq-misconduct.svg)
-
-### 4.4 Sekuens Pemindaian QR Area
-
-![Sequence Diagram - Pemindaian QR](diagrams/seq-qr-scan.svg)
-
-### 4.5 Sekuens Dashboard KPI & Ekspor
-
-![Sequence Diagram - Dashboard KPI & Ekspor](diagrams/seq-dashboard.svg)
-
-### 4.6 Sekuens Penyimpanan Hash Blockchain
-
-![Sequence Diagram - Penyimpanan Hash Blockchain](diagrams/seq-blockchain.svg)
+Terpisah: [login](diagrams/individual/seq-login.svg) · [persetujuan VoO](diagrams/individual/seq-voo-approval.svg) · [pelanggaran](diagrams/individual/seq-misconduct.svg) · [notifikasi realtime](diagrams/individual/seq-realtime-notification.svg) · [pemindaian QR](diagrams/individual/seq-qr-scan.svg) · [dashboard KPI](diagrams/individual/seq-dashboard.svg) · [hash blockchain](diagrams/individual/seq-blockchain.svg)
 
 ---
 
-## 5. Diagram Tambahan
+## 5. Class Diagram
+![Class Diagram](diagrams/class.svg)
 
-### 5.1 Gambaran Umum Arsitektur Sistem
+Terpisah: [model domain](diagrams/individual/class-domain.svg) · [lapisan backend](diagrams/individual/class-backend.svg)
 
-![Arsitektur - Gambaran Umum Sistem](diagrams/arch-overview.svg)
+---
 
-### 5.2 Diagram Alur Data
+## 6. Diagram Arsitektur (Tambahan)
+![Diagram Arsitektur](diagrams/arch.svg)
 
-![Arsitektur - Alur Data](diagrams/arch-data-flow.svg)
-
-### 5.3 Perhitungan Skor Kinerja Operator
-
-![Arsitektur - Perhitungan Skor Kinerja](diagrams/arch-performance-score.svg)
+Terpisah: [gambaran umum](diagrams/individual/arch-overview.svg) · [alur data](diagrams/individual/arch-data-flow.svg) · [skor kinerja](diagrams/individual/arch-performance-score.svg)
