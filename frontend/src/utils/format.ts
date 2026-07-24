@@ -71,6 +71,29 @@ export const severityMeta = (s?: string): { label: string; cls: string } => {
   }
 };
 
+// Label klasifikasi VoO (safety/environment/quality/cost/delivery) → Bahasa tampil.
+const CLASSIFICATION_LABELS: Record<string, string> = {
+  safety: 'Safety',
+  environment: 'Environment',
+  quality: 'Quality',
+  cost: 'Cost',
+  delivery: 'Delivery',
+};
+
+// Parse field classification (JSON string array) jadi daftar label rapi.
+export const parseClassification = (raw?: string): string[] => {
+  if (!raw) return [];
+  try {
+    const v = JSON.parse(raw);
+    if (!Array.isArray(v)) return [];
+    return v
+      .filter((x) => typeof x === 'string')
+      .map((x) => CLASSIFICATION_LABELS[x] ?? x);
+  } catch {
+    return [];
+  }
+};
+
 // Parse field photos (JSON string) jadi array URL/base64 dengan aman.
 export const parsePhotos = (raw?: string): string[] => {
   if (!raw) return [];

@@ -24,6 +24,7 @@ export class VooService {
     groupShift?: string;
     sumberVoo?: string;
     kategori4m?: string;
+    classification?: string;
     photos?: string;
   }) {
     const submission = await prisma.vooSubmission.create({
@@ -36,6 +37,7 @@ export class VooService {
         groupShift: data.groupShift || '',
         sumberVoo: data.sumberVoo || '',
         kategori4m: data.kategori4m || '',
+        classification: data.classification || '[]',
         photos: data.photos || '[]'
       },
       include: {
