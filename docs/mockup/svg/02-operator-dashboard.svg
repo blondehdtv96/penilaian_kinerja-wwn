@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 700" width="1060" height="700">
+<rect x="0" y="0" width="1060" height="700" rx="0" fill="#fff" stroke="none" stroke-width="1"/>
+<rect x="10" y="10" width="1040" height="680" rx="0" fill="none" stroke="#000" stroke-width="1"/>
+<text x="530" y="36" font-family="'Times New Roman', Times, serif" font-size="15" fill="#000" text-anchor="middle">Sistem Penilaian Kinerja Operator — PT Bridgestone Tire Indonesia</text>
+<line x1="10" y1="50" x2="1050" y2="50" stroke="#000" stroke-width="1"/>
+<rect x="420" y="50" width="220" height="22" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="530" y="65" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="middle">Dashboard Operator</text>
+<rect x="26" y="84" width="208" height="590" rx="0" fill="#f2f2f2" stroke="#000" stroke-width="1"/>
+<rect x="38" y="96" width="26" height="26" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="51" y="114" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#000" text-anchor="middle" font-weight="bold">B</text>
+<text x="72" y="108" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start" font-weight="bold">PT Bridgestone</text>
+<text x="72" y="120" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="start">Tire Curing Indonesia</text>
+<rect x="38" y="132" width="184" height="46" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="58" cy="155" r="12" fill="none" stroke="#000" stroke-width="1"/>
+<text x="78" y="148" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start" font-weight="bold">Operator 1</text>
+<text x="78" y="160" font-family="Arial, Helvetica, sans-serif" font-size="7" fill="#555" text-anchor="start">operator1@bridgestone.com</text>
+<text x="78" y="172" font-family="Arial, Helvetica, sans-serif" font-size="7" fill="#555" text-anchor="start" letter-spacing="0.5">OPERATOR</text>
+<text x="40" y="200" font-family="Arial, Helvetica, sans-serif" font-size="7" fill="#8a8a8a" text-anchor="start" letter-spacing="1">NAVIGASI UTAMA</text>
+<rect x="34" y="210" width="192" height="22" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<rect x="42" y="217" width="8" height="8" rx="0" fill="none" stroke="#000" stroke-width="1"/>
+<text x="58" y="225" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#000" text-anchor="start" font-weight="bold">Dashboard</text>
+<rect x="42" y="241" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="249" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Scan Area QR</text>
+<rect x="42" y="265" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="273" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Ajukan VoO / Ide Kaizen</text>
+<rect x="42" y="289" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="297" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Pengajuan Saya</text>
+<rect x="42" y="313" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="321" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Pelanggaran Saya</text>
+<rect x="42" y="337" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="345" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Profil Saya</text>
+<circle cx="46" cy="628" r="3" fill="#000" stroke="#000" stroke-width="1"/>
+<text x="56" y="631" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="start">Blockchain Aktif</text>
+<rect x="38" y="640" width="184" height="24" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="130" y="656" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="middle" font-weight="normal">Keluar</text>
+<rect x="250" y="84" width="784" height="590" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<rect x="264" y="96" width="400" height="26" rx="0" fill="#f2f2f2" stroke="#000" stroke-width="1"/>
+<circle cx="280" cy="109" r="5" fill="none" stroke="#555" stroke-width="1"/>
+<text x="294" y="113" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">Cari operator, event, area…</text>
+<circle cx="950" cy="109" r="9" fill="none" stroke="#555" stroke-width="1"/>
+<text x="950" y="112" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="middle">⚑</text>
+<circle cx="980" cy="109" r="9" fill="none" stroke="#555" stroke-width="1"/>
+<text x="980" y="112" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="middle">☾</text>
+<circle cx="1010" cy="109" r="11" fill="#f2f2f2" stroke="#000" stroke-width="1"/>
+<line x1="250" y1="134" x2="1034" y2="134" stroke="#bbb" stroke-width="1"/>
+<text x="264" y="164" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#000" text-anchor="start" font-weight="bold">Dashboard</text>
+<text x="264" y="184" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#555" text-anchor="start">EMP1001 · Curing</text>
+<rect x="950.6" y="147" width="69.4" height="24" rx="0" fill="#d9d9d9" stroke="#000" stroke-width="1"/>
+<text x="985.3000000000001" y="163" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="middle" font-weight="bold">Scan QR</text>
+<rect x="264" y="194" width="420" height="150" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="280" y="218" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="start">Skor Kinerja</text>
+<text x="280" y="256" font-family="Arial, Helvetica, sans-serif" font-size="34" fill="#000" text-anchor="start" font-weight="bold">84.4</text>
+<text x="280" y="272" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#8a8a8a" text-anchor="start">indeks akumulatif</text>
+<rect x="280" y="286" width="190" height="44" rx="0" fill="#f2f2f2" stroke="#000" stroke-width="1"/>
+<text x="292" y="308" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#000" text-anchor="start" font-weight="bold">16</text>
+<text x="292" y="322" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="start">VoO disetujui</text>
+<rect x="484" y="286" width="190" height="44" rx="0" fill="#f2f2f2" stroke="#000" stroke-width="1"/>
+<text x="496" y="308" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#000" text-anchor="start" font-weight="bold">1</text>
+<text x="496" y="322" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="start">Pelanggaran</text>
+<rect x="702" y="194" width="318" height="150" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="716" y="218" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#000" text-anchor="start" font-weight="bold">Identitas</text>
+<line x1="702" y1="230" x2="1020" y2="230" stroke="#bbb" stroke-width="1"/>
+<text x="718" y="246" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="start"></text>
+<text x="998" y="246" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="end"></text>
+<line x1="718" y1="254" x2="1004" y2="254" stroke="#999" stroke-width="1"/>
+<text x="718" y="269" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">ID Karyawan</text>
+<text x="998" y="269" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">EMP1001</text>
+<line x1="718" y1="276" x2="1004" y2="276" stroke="#d5d5d5" stroke-width="1"/>
+<text x="718" y="291" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">Section</text>
+<text x="998" y="291" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">Curing</text>
+<line x1="718" y1="298" x2="1004" y2="298" stroke="#d5d5d5" stroke-width="1"/>
+<text x="718" y="313" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">Group</text>
+<text x="998" y="313" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">A</text>
+<line x1="718" y1="320" x2="1004" y2="320" stroke="#d5d5d5" stroke-width="1"/>
+<text x="718" y="335" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">Posisi</text>
+<text x="998" y="335" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">Curing Operator</text>
+<line x1="718" y1="342" x2="1004" y2="342" stroke="#d5d5d5" stroke-width="1"/>
+<rect x="264" y="360" width="756" height="130" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="278" y="384" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#000" text-anchor="start" font-weight="bold">Pelanggaran Saya</text>
+<text x="1006" y="384" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="end">1 catatan</text>
+<line x1="264" y1="396" x2="1020" y2="396" stroke="#bbb" stroke-width="1"/>
+<text x="280" y="416" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="start">Jenis</text>
+<text x="510" y="416" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="start">Tingkat</text>
+<text x="640" y="416" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="start">Status Konseling</text>
+<text x="984" y="416" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="end">Tanggal</text>
+<line x1="280" y1="424" x2="1004" y2="424" stroke="#999" stroke-width="1"/>
+<text x="280" y="441" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">Late Arrival</text>
+<rect x="516" y="429" width="47.599999999999994" height="15" rx="7" fill="#f2f2f2" stroke="#bbb" stroke-width="1"/>
+<text x="539.8" y="440" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="middle">Rendah</text>
+<rect x="646" y="429" width="114.8" height="15" rx="7" fill="#f2f2f2" stroke="#bbb" stroke-width="1"/>
+<text x="703.4" y="440" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="middle">Menunggu konseling</text>
+<text x="984" y="441" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">12 Jul 2026</text>
+<line x1="280" y1="450" x2="1004" y2="450" stroke="#d5d5d5" stroke-width="1"/>
+<rect x="264" y="506" width="756" height="130" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="278" y="530" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#000" text-anchor="start" font-weight="bold">Pengajuan VoO Terbaru</text>
+<text x="1006" y="530" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="end">Lihat Semua</text>
+<line x1="264" y1="542" x2="1020" y2="542" stroke="#bbb" stroke-width="1"/>
+<text x="280" y="562" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="start">Judul</text>
+<text x="560" y="562" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="start">Tipe</text>
+<text x="750" y="562" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="start">Status</text>
+<text x="984" y="562" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="end">Poin</text>
+<line x1="280" y1="570" x2="1004" y2="570" stroke="#999" stroke-width="1"/>
+<text x="280" y="587" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">Perbaikan Alur Material</text>
+<text x="560" y="587" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">VoO / Ide Kaizen</text>
+<rect x="756" y="575" width="131.6" height="15" rx="7" fill="#f2f2f2" stroke="#bbb" stroke-width="1"/>
+<text x="821.8" y="586" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="middle">Diteruskan ke Manager</text>
+<text x="984" y="587" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">—</text>
+<line x1="280" y1="596" x2="1004" y2="596" stroke="#d5d5d5" stroke-width="1"/>
+</svg>

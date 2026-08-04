@@ -10,6 +10,7 @@
  *
  * Run: node node_modules/tsx/dist/cli.mjs scripts/seed-violation-types.ts
  */
+import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
