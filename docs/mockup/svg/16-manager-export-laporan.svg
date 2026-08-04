@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 700" width="1060" height="700">
+<rect x="0" y="0" width="1060" height="700" rx="0" fill="#fff" stroke="none" stroke-width="1"/>
+<rect x="10" y="10" width="1040" height="680" rx="0" fill="none" stroke="#000" stroke-width="1"/>
+<text x="530" y="36" font-family="'Times New Roman', Times, serif" font-size="15" fill="#000" text-anchor="middle">Sistem Penilaian Kinerja Operator — PT Bridgestone Tire Indonesia</text>
+<line x1="10" y1="50" x2="1050" y2="50" stroke="#000" stroke-width="1"/>
+<rect x="420" y="50" width="220" height="22" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="530" y="65" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="middle">Export Laporan</text>
+<rect x="26" y="84" width="208" height="590" rx="0" fill="#f2f2f2" stroke="#000" stroke-width="1"/>
+<rect x="38" y="96" width="26" height="26" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="51" y="114" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#000" text-anchor="middle" font-weight="bold">B</text>
+<text x="72" y="108" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start" font-weight="bold">PT Bridgestone</text>
+<text x="72" y="120" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="start">Tire Curing Indonesia</text>
+<rect x="38" y="132" width="184" height="46" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="58" cy="155" r="12" fill="none" stroke="#000" stroke-width="1"/>
+<text x="78" y="148" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start" font-weight="bold">Section Manager</text>
+<text x="78" y="160" font-family="Arial, Helvetica, sans-serif" font-size="7" fill="#555" text-anchor="start">sectionmanager@bridgestone.com</text>
+<text x="78" y="172" font-family="Arial, Helvetica, sans-serif" font-size="7" fill="#555" text-anchor="start" letter-spacing="0.5">SECTION MANAGER</text>
+<text x="40" y="200" font-family="Arial, Helvetica, sans-serif" font-size="7" fill="#8a8a8a" text-anchor="start" letter-spacing="1">NAVIGASI UTAMA</text>
+<rect x="42" y="217" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="225" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Dashboard KPI</text>
+<rect x="42" y="241" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="249" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Pembinaan &amp; Pelanggaran</text>
+<rect x="42" y="265" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="273" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Monitor Operator</text>
+<rect x="42" y="289" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="297" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Persetujuan Final</text>
+<rect x="42" y="313" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="321" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Ranking Operator</text>
+<rect x="42" y="337" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="345" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Analisis Tren</text>
+<rect x="34" y="354" width="192" height="22" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<rect x="42" y="361" width="8" height="8" rx="0" fill="none" stroke="#000" stroke-width="1"/>
+<text x="58" y="369" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#000" text-anchor="start" font-weight="bold">Export Laporan</text>
+<rect x="42" y="385" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="393" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Blockchain</text>
+<rect x="42" y="409" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="417" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Log Audit</text>
+<rect x="42" y="433" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="441" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Katalog Pelanggaran</text>
+<rect x="42" y="457" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="465" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Profil Saya</text>
+<circle cx="46" cy="628" r="3" fill="#000" stroke="#000" stroke-width="1"/>
+<text x="56" y="631" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="start">Blockchain Aktif</text>
+<rect x="38" y="640" width="184" height="24" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="130" y="656" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="middle" font-weight="normal">Keluar</text>
+<rect x="250" y="84" width="784" height="590" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<rect x="264" y="96" width="400" height="26" rx="0" fill="#f2f2f2" stroke="#000" stroke-width="1"/>
+<circle cx="280" cy="109" r="5" fill="none" stroke="#555" stroke-width="1"/>
+<text x="294" y="113" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">Cari operator, event, area…</text>
+<circle cx="950" cy="109" r="9" fill="none" stroke="#555" stroke-width="1"/>
+<text x="950" y="112" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="middle">⚑</text>
+<circle cx="980" cy="109" r="9" fill="none" stroke="#555" stroke-width="1"/>
+<text x="980" y="112" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="middle">☾</text>
+<circle cx="1010" cy="109" r="11" fill="#f2f2f2" stroke="#000" stroke-width="1"/>
+<line x1="250" y1="134" x2="1034" y2="134" stroke="#bbb" stroke-width="1"/>
+<text x="264" y="164" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#000" text-anchor="start" font-weight="bold">Export Laporan</text>
+<text x="264" y="184" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#555" text-anchor="start">Laporan kinerja &amp; ekspor data</text>
+<rect x="925.8" y="147" width="94.2" height="24" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="972.9" y="163" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="middle" font-weight="normal">Unduh Excel</text>
+<rect x="858.8" y="147" width="57" height="24" rx="0" fill="#d9d9d9" stroke="#000" stroke-width="1"/>
+<text x="887.3" y="163" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="middle" font-weight="bold">Cetak</text>
+<rect x="264" y="194" width="756" height="460" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="284" y="234" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#000" text-anchor="start" font-weight="bold">Laporan Kinerja Operator</text>
+<text x="284" y="254" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="start">Dibuat: 04 Agu 2026, 12.54 · PT Bridgestone Tire Indonesia</text>
+<rect x="950" y="216" width="40" height="34" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="970" y="239" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#000" text-anchor="middle" font-weight="bold">B</text>
+<rect x="284" y="274" width="168.5" height="70" rx="0" fill="#f2f2f2" stroke="#000" stroke-width="1"/>
+<text x="296" y="308" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#000" text-anchor="start" font-weight="bold">5</text>
+<text x="296" y="328" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="start">Operator</text>
+<rect x="466.5" y="274" width="168.5" height="70" rx="0" fill="#f2f2f2" stroke="#000" stroke-width="1"/>
+<text x="478.5" y="308" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#000" text-anchor="start" font-weight="bold">3</text>
+<text x="478.5" y="328" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="start">Total VoO</text>
+<rect x="649" y="274" width="168.5" height="70" rx="0" fill="#f2f2f2" stroke="#000" stroke-width="1"/>
+<text x="661" y="308" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#000" text-anchor="start" font-weight="bold">1</text>
+<text x="661" y="328" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="start">VoO Disetujui</text>
+<rect x="831.5" y="274" width="168.5" height="70" rx="0" fill="#f2f2f2" stroke="#000" stroke-width="1"/>
+<text x="843.5" y="308" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#000" text-anchor="start" font-weight="bold">1</text>
+<text x="843.5" y="328" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="start">Pelanggaran</text>
+<text x="284" y="384" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#000" text-anchor="start" font-weight="bold">Rincian Operator</text>
+<text x="284" y="424" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="start">#</text>
+<text x="310" y="424" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="start">Nama</text>
+<text x="480" y="424" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="start">ID</text>
+<text x="630" y="424" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="start">Section</text>
+<text x="854" y="424" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="end">Skor</text>
+<text x="914" y="424" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="end">VoO</text>
+<text x="994" y="424" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="end">Pelanggaran</text>
+<line x1="284" y1="432" x2="1000" y2="432" stroke="#999" stroke-width="1"/>
+<text x="284" y="450" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">1</text>
+<text x="310" y="450" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">Operator 3</text>
+<text x="480" y="450" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">EMP1003</text>
+<text x="630" y="450" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">Curing</text>
+<text x="854" y="450" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">93.8</text>
+<text x="914" y="450" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">8</text>
+<text x="994" y="450" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">4</text>
+<line x1="284" y1="460" x2="1000" y2="460" stroke="#d5d5d5" stroke-width="1"/>
+<text x="284" y="478" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">2</text>
+<text x="310" y="478" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">Operator 1</text>
+<text x="480" y="478" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">EMP1001</text>
+<text x="630" y="478" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">Curing</text>
+<text x="854" y="478" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">84.4</text>
+<text x="914" y="478" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">16</text>
+<text x="994" y="478" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">1</text>
+<line x1="284" y1="488" x2="1000" y2="488" stroke="#d5d5d5" stroke-width="1"/>
+<text x="284" y="506" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">3</text>
+<text x="310" y="506" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">Operator 2</text>
+<text x="480" y="506" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">EMP1002</text>
+<text x="630" y="506" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">Curing</text>
+<text x="854" y="506" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">57.7</text>
+<text x="914" y="506" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">9</text>
+<text x="994" y="506" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">2</text>
+<line x1="284" y1="516" x2="1000" y2="516" stroke="#d5d5d5" stroke-width="1"/>
+<text x="284" y="534" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">4</text>
+<text x="310" y="534" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">Operator 5</text>
+<text x="480" y="534" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">EMP1005</text>
+<text x="630" y="534" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">Curing</text>
+<text x="854" y="534" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">55.8</text>
+<text x="914" y="534" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">7</text>
+<text x="994" y="534" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">2</text>
+<line x1="284" y1="544" x2="1000" y2="544" stroke="#d5d5d5" stroke-width="1"/>
+<text x="284" y="562" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">5</text>
+<text x="310" y="562" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">Operator 4</text>
+<text x="480" y="562" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">EMP1004</text>
+<text x="630" y="562" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">Curing</text>
+<text x="854" y="562" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">55.2</text>
+<text x="914" y="562" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">12</text>
+<text x="994" y="562" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">4</text>
+<line x1="284" y1="572" x2="1000" y2="572" stroke="#d5d5d5" stroke-width="1"/>
+</svg>

@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 800" width="1060" height="800">
+<rect x="0" y="0" width="1060" height="800" rx="0" fill="#fff" stroke="none" stroke-width="1"/>
+<rect x="10" y="10" width="1040" height="780" rx="0" fill="none" stroke="#000" stroke-width="1"/>
+<text x="530" y="36" font-family="'Times New Roman', Times, serif" font-size="15" fill="#000" text-anchor="middle">Sistem Penilaian Kinerja Operator — PT Bridgestone Tire Indonesia</text>
+<line x1="10" y1="50" x2="1050" y2="50" stroke="#000" stroke-width="1"/>
+<rect x="420" y="50" width="220" height="22" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="530" y="65" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="middle">Analisis Tren</text>
+<rect x="26" y="84" width="208" height="690" rx="0" fill="#f2f2f2" stroke="#000" stroke-width="1"/>
+<rect x="38" y="96" width="26" height="26" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="51" y="114" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#000" text-anchor="middle" font-weight="bold">B</text>
+<text x="72" y="108" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start" font-weight="bold">PT Bridgestone</text>
+<text x="72" y="120" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="start">Tire Curing Indonesia</text>
+<rect x="38" y="132" width="184" height="46" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<circle cx="58" cy="155" r="12" fill="none" stroke="#000" stroke-width="1"/>
+<text x="78" y="148" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start" font-weight="bold">Section Manager</text>
+<text x="78" y="160" font-family="Arial, Helvetica, sans-serif" font-size="7" fill="#555" text-anchor="start">sectionmanager@bridgestone.com</text>
+<text x="78" y="172" font-family="Arial, Helvetica, sans-serif" font-size="7" fill="#555" text-anchor="start" letter-spacing="0.5">SECTION MANAGER</text>
+<text x="40" y="200" font-family="Arial, Helvetica, sans-serif" font-size="7" fill="#8a8a8a" text-anchor="start" letter-spacing="1">NAVIGASI UTAMA</text>
+<rect x="42" y="217" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="225" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Dashboard KPI</text>
+<rect x="42" y="241" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="249" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Pembinaan &amp; Pelanggaran</text>
+<rect x="42" y="265" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="273" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Monitor Operator</text>
+<rect x="42" y="289" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="297" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Persetujuan Final</text>
+<rect x="42" y="313" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="321" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Ranking Operator</text>
+<rect x="34" y="330" width="192" height="22" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<rect x="42" y="337" width="8" height="8" rx="0" fill="none" stroke="#000" stroke-width="1"/>
+<text x="58" y="345" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#000" text-anchor="start" font-weight="bold">Analisis Tren</text>
+<rect x="42" y="361" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="369" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Export Laporan</text>
+<rect x="42" y="385" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="393" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Blockchain</text>
+<rect x="42" y="409" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="417" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Log Audit</text>
+<rect x="42" y="433" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="441" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Katalog Pelanggaran</text>
+<rect x="42" y="457" width="8" height="8" rx="0" fill="none" stroke="#999" stroke-width="1"/>
+<text x="58" y="465" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#555" text-anchor="start" font-weight="normal">Profil Saya</text>
+<circle cx="46" cy="728" r="3" fill="#000" stroke="#000" stroke-width="1"/>
+<text x="56" y="731" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="start">Blockchain Aktif</text>
+<rect x="38" y="740" width="184" height="24" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="130" y="756" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="middle" font-weight="normal">Keluar</text>
+<rect x="250" y="84" width="784" height="690" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<rect x="264" y="96" width="400" height="26" rx="0" fill="#f2f2f2" stroke="#000" stroke-width="1"/>
+<circle cx="280" cy="109" r="5" fill="none" stroke="#555" stroke-width="1"/>
+<text x="294" y="113" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#8a8a8a" text-anchor="start">Cari operator, event, area…</text>
+<circle cx="950" cy="109" r="9" fill="none" stroke="#555" stroke-width="1"/>
+<text x="950" y="112" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="middle">⚑</text>
+<circle cx="980" cy="109" r="9" fill="none" stroke="#555" stroke-width="1"/>
+<text x="980" y="112" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="middle">☾</text>
+<circle cx="1010" cy="109" r="11" fill="#f2f2f2" stroke="#000" stroke-width="1"/>
+<line x1="250" y1="134" x2="1034" y2="134" stroke="#bbb" stroke-width="1"/>
+<text x="264" y="164" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#000" text-anchor="start" font-weight="bold">Analisis Tren</text>
+<text x="264" y="184" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#555" text-anchor="start">Tren VoO / Ide Kaizen vs Pelanggaran — 12 bulan terakhir</text>
+<rect x="264" y="194" width="178.5" height="100" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="276" y="214" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="start">Total VoO (12 bln)</text>
+<text x="276" y="242" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#000" text-anchor="start" font-weight="bold">3</text>
+
+<rect x="456.5" y="194" width="178.5" height="100" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="468.5" y="214" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="start">Total Pelanggaran (12 bln)</text>
+<text x="468.5" y="242" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#000" text-anchor="start" font-weight="bold">1</text>
+
+<rect x="649" y="194" width="178.5" height="100" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="661" y="214" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="start">VoO Bulan Ini</text>
+<text x="661" y="242" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#000" text-anchor="start" font-weight="bold">0</text>
+
+<rect x="841.5" y="194" width="178.5" height="100" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="853.5" y="214" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="start">Rata-rata VoO / bln</text>
+<text x="853.5" y="242" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#000" text-anchor="start" font-weight="bold">0.3</text>
+
+<rect x="264" y="310" width="756" height="250" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="278" y="334" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#000" text-anchor="start" font-weight="bold">Tren 12 Bulan</text>
+<text x="1006" y="334" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="end">VoO · Pelanggaran</text>
+<line x1="264" y1="346" x2="1020" y2="346" stroke="#bbb" stroke-width="1"/>
+<rect x="310" y="516" width="12" height="4" rx="0" fill="#8f8f8f" stroke="#000" stroke-width="1"/>
+<rect x="324" y="517" width="12" height="3" rx="0" fill="#d0d0d0" stroke="#000" stroke-width="1"/>
+<text x="323" y="538" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="middle">Sep</text>
+<rect x="362" y="516" width="12" height="4" rx="0" fill="#8f8f8f" stroke="#000" stroke-width="1"/>
+<rect x="376" y="517" width="12" height="3" rx="0" fill="#d0d0d0" stroke="#000" stroke-width="1"/>
+<text x="375" y="538" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="middle">Okt</text>
+<rect x="414" y="516" width="12" height="4" rx="0" fill="#8f8f8f" stroke="#000" stroke-width="1"/>
+<rect x="428" y="517" width="12" height="3" rx="0" fill="#d0d0d0" stroke="#000" stroke-width="1"/>
+<text x="427" y="538" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="middle">Nov</text>
+<rect x="466" y="516" width="12" height="4" rx="0" fill="#8f8f8f" stroke="#000" stroke-width="1"/>
+<rect x="480" y="517" width="12" height="3" rx="0" fill="#d0d0d0" stroke="#000" stroke-width="1"/>
+<text x="479" y="538" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="middle">Des</text>
+<rect x="518" y="516" width="12" height="4" rx="0" fill="#8f8f8f" stroke="#000" stroke-width="1"/>
+<rect x="532" y="517" width="12" height="3" rx="0" fill="#d0d0d0" stroke="#000" stroke-width="1"/>
+<text x="531" y="538" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="middle">Jan</text>
+<rect x="570" y="516" width="12" height="4" rx="0" fill="#8f8f8f" stroke="#000" stroke-width="1"/>
+<rect x="584" y="517" width="12" height="3" rx="0" fill="#d0d0d0" stroke="#000" stroke-width="1"/>
+<text x="583" y="538" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="middle">Feb</text>
+<rect x="622" y="516" width="12" height="4" rx="0" fill="#8f8f8f" stroke="#000" stroke-width="1"/>
+<rect x="636" y="517" width="12" height="3" rx="0" fill="#d0d0d0" stroke="#000" stroke-width="1"/>
+<text x="635" y="538" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="middle">Mar</text>
+<rect x="674" y="516" width="12" height="4" rx="0" fill="#8f8f8f" stroke="#000" stroke-width="1"/>
+<rect x="688" y="517" width="12" height="3" rx="0" fill="#d0d0d0" stroke="#000" stroke-width="1"/>
+<text x="687" y="538" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="middle">Apr</text>
+<rect x="726" y="516" width="12" height="4" rx="0" fill="#8f8f8f" stroke="#000" stroke-width="1"/>
+<rect x="740" y="517" width="12" height="3" rx="0" fill="#d0d0d0" stroke="#000" stroke-width="1"/>
+<text x="739" y="538" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="middle">Mei</text>
+<rect x="778" y="516" width="12" height="4" rx="0" fill="#8f8f8f" stroke="#000" stroke-width="1"/>
+<rect x="792" y="517" width="12" height="3" rx="0" fill="#d0d0d0" stroke="#000" stroke-width="1"/>
+<text x="791" y="538" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="middle">Jun</text>
+<rect x="830" y="400" width="12" height="120" rx="0" fill="#8f8f8f" stroke="#000" stroke-width="1"/>
+<rect x="844" y="465" width="12" height="55" rx="0" fill="#d0d0d0" stroke="#000" stroke-width="1"/>
+<text x="843" y="538" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="middle">Jul</text>
+<rect x="882" y="516" width="12" height="4" rx="0" fill="#8f8f8f" stroke="#000" stroke-width="1"/>
+<rect x="896" y="517" width="12" height="3" rx="0" fill="#d0d0d0" stroke="#000" stroke-width="1"/>
+<text x="895" y="538" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#555" text-anchor="middle">Agu</text>
+<line x1="300" y1="520" x2="994" y2="520" stroke="#bbb" stroke-width="1"/>
+<rect x="264" y="576" width="756" height="180" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+<text x="278" y="600" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#000" text-anchor="start" font-weight="bold">Rincian Bulanan</text>
+<line x1="264" y1="612" x2="1020" y2="612" stroke="#bbb" stroke-width="1"/>
+<text x="284" y="642" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="start">Bulan</text>
+<text x="738" y="642" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="end">VoO</text>
+<text x="908" y="642" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="end">Pelanggaran</text>
+<text x="994" y="642" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#555" text-anchor="end">Selisih</text>
+<line x1="284" y1="650" x2="1000" y2="650" stroke="#999" stroke-width="1"/>
+<text x="284" y="669" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">Jun</text>
+<text x="738" y="669" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">0</text>
+<text x="908" y="669" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">0</text>
+<text x="994" y="669" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">+0</text>
+<line x1="284" y1="680" x2="1000" y2="680" stroke="#d5d5d5" stroke-width="1"/>
+<text x="284" y="699" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">Jul</text>
+<text x="738" y="699" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">3</text>
+<text x="908" y="699" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">1</text>
+<text x="994" y="699" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">+2</text>
+<line x1="284" y1="710" x2="1000" y2="710" stroke="#d5d5d5" stroke-width="1"/>
+<text x="284" y="729" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="start">Agu</text>
+<text x="738" y="729" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">0</text>
+<text x="908" y="729" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">0</text>
+<text x="994" y="729" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#000" text-anchor="end">+0</text>
+<line x1="284" y1="740" x2="1000" y2="740" stroke="#d5d5d5" stroke-width="1"/>
+</svg>
