@@ -102,14 +102,15 @@ async function main() {
   const staffProduksiRole = await prisma.role.create({
     data: {
       name: 'Staff Produksi',
-      description: 'Monitor VoO/Kaizen submissions and misconduct records — read-only access',
+      description: 'Monitor VoO/Kaizen submissions and misconduct records (read-only) and manage Operator user accounts',
       permissions: JSON.stringify([
         'voo.view',
         'misconduct.view',
         'counseling.view',
         'kartu_kuning.view',
         'surat_peringatan.view',
-        'profile.view'
+        'profile.view',
+        'operator.manage'
       ])
     }
   });

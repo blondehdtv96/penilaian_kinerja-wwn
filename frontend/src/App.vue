@@ -118,6 +118,7 @@ const allMenu: MenuItem[] = [
   { title: 'Katalog Pelanggaran', path: '/violation-types', icon: listOutline, roles: ['Section Manager'] },
   { title: 'Monitor VoO / Kaizen', path: '/staff/voo-monitor', icon: bulbOutline, roles: ['Staff Produksi'] },
   { title: 'Monitor Pelanggaran', path: '/staff/misconduct-monitor', icon: alertCircleOutline, roles: ['Staff Produksi'] },
+  { title: 'Kelola Operator', path: '/staff/operators', icon: peopleOutline, roles: ['Staff Produksi'] },
   { title: 'Kelola User', path: '/admin/users', icon: peopleOutline, roles: ['Super Admin'] },
   { title: 'Kelola Role', path: '/admin/roles', icon: shieldCheckmarkOutline, roles: ['Super Admin'] },
   { title: 'Lokasi QR', path: '/admin/qr-locations', icon: locationOutline, roles: ['Super Admin'] },

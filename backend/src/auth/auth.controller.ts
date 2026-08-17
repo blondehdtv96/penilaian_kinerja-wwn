@@ -10,7 +10,7 @@ export class AuthController {
       if (!username || !password) {
         return res.status(400).json({ success: false, message: 'Username and password required' });
       }
-      const result = await authService.login(username, password);
+      const result = await authService.login(username, password, req.ip || req.socket.remoteAddress);
       res.json({ success: true, data: result });
     } catch (error: any) {
       res.status(401).json({ success: false, message: error.message });

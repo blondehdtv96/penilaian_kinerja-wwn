@@ -3,6 +3,19 @@ import { Request, Response, NextFunction } from 'express';
 
 const prisma = new PrismaClient();
 
+// Field names never written to the audit trail, regardless of route (credentials
+// must not end up readable by anyone with Section Manager access to /audit-logs).
+const REDACTED_FIELDS = new Set(['password', 'currentPassword', 'newPassword', 'token']);
+
+function redactBody(body: any): any {
+  if (!body || typeof body !== 'object') return body;
+  const clone: any = Array.isArray(body) ? [...body] : { ...body };
+  for (const key of Object.keys(clone)) {
+    if (REDACTED_FIELDS.has(key)) clone[key] = '[redacted]';
+  }
+  return clone;
+}
+
 // Append-only event log middleware
 export const auditLog = (module: string) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -17,7 +30,7 @@ export const auditLog = (module: string) => {
             userId: user?.userId || 0,
             action: req.method,
             module,
-            details: `${req.method} ${req.originalUrl} - ${JSON.stringify(req.body).substring(0, 500)}`,
+            details: `${req.method} ${req.originalUrl} - ${JSON.stringify(redactBody(req.body)).substring(0, 500)}`,
             ipAddress: req.ip || req.socket.remoteAddress || ''
           }
         }).catch(err => console.error('Audit log error:', err));

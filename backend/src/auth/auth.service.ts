@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 const prisma = new PrismaClient();
 
 export class AuthService {
-  async login(username: string, password: string) {
+  async login(username: string, password: string, ipAddress?: string) {
     const user = await prisma.user.findUnique({
       where: { username },
       include: { role: true, operator: true }
@@ -17,6 +17,11 @@ export class AuthService {
 
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) throw new Error('Invalid credentials');
+
+    // Fire-and-forget: a logging failure must not block a successful login.
+    prisma.eventLog.create({
+      data: { userId: user.id, action: 'LOGIN', module: 'auth', details: `Login: ${user.username}`, ipAddress: ipAddress || '' }
+    }).catch(err => console.error('Audit log error:', err));
 
     const permissions: string[] = JSON.parse(user.role.permissions || '[]');
 

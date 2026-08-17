@@ -14,8 +14,9 @@ import qrLocationRoutes from './qr-locations/qr-locations.routes';
 import userRoutes from './users/users.routes';
 import roleRoutes from './roles/roles.routes';
 import superadminRoutes from './superadmin/superadmin.routes';
+import staffProduksiRoutes from './staff-produksi/staff-produksi.routes';
 import notificationRoutes from './notifications/notifications.routes';
-import { getAuditLogs } from './middleware/audit.middleware';
+import { getAuditLogs, auditLog } from './middleware/audit.middleware';
 import { authMiddleware, checkRole } from './middleware/auth.middleware';
 import { setIo } from './socket/io';
 import { initSocket } from './socket/socket.handlers';
@@ -41,16 +42,21 @@ app.get('/api/health', (req, res) => {
 });
 
 // Routes
+// (auditLog(module) tags mutating requests into EventLog so they show up on the
+// Section Manager "Log Audit" page — see middleware/audit.middleware.ts. It reads
+// req.user lazily when the response is sent, so mount order relative to each
+// router's own authMiddleware doesn't matter.)
 app.use('/api/auth', authRoutes);
-app.use('/api/operators', operatorRoutes);
-app.use('/api/voo', vooRoutes);
-app.use('/api/records', misconductRoutes);
+app.use('/api/operators', auditLog('operators'), operatorRoutes);
+app.use('/api/voo', auditLog('voo'), vooRoutes);
+app.use('/api/records', auditLog('records'), misconductRoutes);
 app.use('/api/blockchain', blockchainRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/qr-locations', qrLocationRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/superadmin', superadminRoutes);
+app.use('/api/staff-produksi', auditLog('users'), staffProduksiRoutes);
 app.use('/api/notifications', notificationRoutes);
 
 app.get('/api/audit-logs', authMiddleware, checkRole(['Section Manager']), getAuditLogs);
@@ -82,6 +88,7 @@ httpServer.listen(PORT, () => {
   console.log(`  GET  /api/dashboard/export/excel`);
   console.log(`  GET  /api/qr-locations`);
   console.log(`  GET  /api/users`);
+  console.log(`  GET  /api/staff-produksi/operators`);
   console.log(`  GET  /api/roles`);
   console.log(`  GET  /api/audit-logs`);
 });

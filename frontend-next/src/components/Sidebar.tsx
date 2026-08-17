@@ -49,6 +49,9 @@ const menus = {
     { href: '/manager/blockchain', label: 'Blockchain', icon: '🔗' },
     { href: '/manager/audit', label: 'Audit Logs', icon: '🔍' },
   ],
+  'Staff Produksi': [
+    { href: '/staff-produksi/operators', label: 'Kelola Operator', icon: '👷' },
+  ],
 };
 
 export default function Sidebar({ children }: { children: React.ReactNode }) {

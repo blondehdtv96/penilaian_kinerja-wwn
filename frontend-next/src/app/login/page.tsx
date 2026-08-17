@@ -23,6 +23,7 @@ export default function LoginPage() {
         'Operator': '/operator/scan',
         'Foreman': '/foreman/approve',
         'Section Manager': '/dashboard',
+        'Staff Produksi': '/staff-produksi/operators',
       };
       router.push(roleRedirects[user.role] || '/');
     } catch (err: any) {
@@ -88,6 +89,7 @@ export default function LoginPage() {
             <p>Section Manager: section_manager / manager123</p>
             <p>Foreman: foreman01 / foreman123</p>
             <p>Operator: operator01 / operator123</p>
+            <p>Staff Produksi: staff_produksi / staff123</p>
           </div>
         </div>
       </div>
