@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { SuperAdminController } from './superadmin.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
+import { auditLog } from '../middleware/audit.middleware';
 
 const router = Router();
 const controller = new SuperAdminController();
@@ -26,27 +27,27 @@ router.use(requireSuperAdmin);
 // USER MANAGEMENT
 // ============================================================
 router.get('/users', controller.getAllUsers);
-router.post('/users', controller.createUser);
-router.put('/users/:id', controller.updateUser);
-router.delete('/users/:id', controller.deleteUser);
-router.patch('/users/:id/toggle-status', controller.toggleUserStatus);
-router.post('/users/:id/reset-password', controller.resetPassword);
+router.post('/users', auditLog('users'), controller.createUser);
+router.put('/users/:id', auditLog('users'), controller.updateUser);
+router.delete('/users/:id', auditLog('users'), controller.deleteUser);
+router.patch('/users/:id/toggle-status', auditLog('users'), controller.toggleUserStatus);
+router.post('/users/:id/reset-password', auditLog('users'), controller.resetPassword);
 
 // ============================================================
 // ROLE MANAGEMENT
 // ============================================================
 router.get('/roles', controller.getAllRoles);
-router.post('/roles', controller.createRole);
-router.put('/roles/:id', controller.updateRole);
-router.delete('/roles/:id', controller.deleteRole);
+router.post('/roles', auditLog('roles'), controller.createRole);
+router.put('/roles/:id', auditLog('roles'), controller.updateRole);
+router.delete('/roles/:id', auditLog('roles'), controller.deleteRole);
 
 // ============================================================
 // QR LOCATION MANAGEMENT
 // ============================================================
 router.get('/qr-locations', controller.getAllQrLocations);
-router.post('/qr-locations', controller.createQrLocation);
-router.put('/qr-locations/:id', controller.updateQrLocation);
-router.delete('/qr-locations/:id', controller.deleteQrLocation);
+router.post('/qr-locations', auditLog('qr-locations'), controller.createQrLocation);
+router.put('/qr-locations/:id', auditLog('qr-locations'), controller.updateQrLocation);
+router.delete('/qr-locations/:id', auditLog('qr-locations'), controller.deleteQrLocation);
 
 // ============================================================
 // AUDIT LOGS

@@ -46,6 +46,16 @@ export const operatorAPI = {
   ranking: (section?: string) => api.get('/operators/ranking', { params: { section } }),
 };
 
+// Staff Produksi: CRUD for Operator user accounts
+export const staffProduksiAPI = {
+  getOperators: () => api.get('/staff-produksi/operators'),
+  createOperator: (data: any) => api.post('/staff-produksi/operators', data),
+  updateOperator: (id: number, data: any) => api.put(`/staff-produksi/operators/${id}`, data),
+  deleteOperator: (id: number) => api.delete(`/staff-produksi/operators/${id}`),
+  toggleStatus: (id: number) => api.patch(`/staff-produksi/operators/${id}/toggle-status`, {}),
+  resetPassword: (id: number, newPassword: string) => api.post(`/staff-produksi/operators/${id}/reset-password`, { newPassword }),
+};
+
 // VoO Submissions
 export const vooAPI = {
   getAll: (params?: any) => api.get('/voo', { params }),

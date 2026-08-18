@@ -238,6 +238,28 @@ export interface AdminUser {
   _count?: { vooSubmissions: number; eventLogs: number };
 }
 
+export interface StaffOperatorUser {
+  id: number;
+  username: string;
+  email: string;
+  fullName: string;
+  nik?: string | null;
+  isActive: boolean;
+  createdAt: string;
+  role: { id: number; name: string };
+  operator: {
+    id: number;
+    employeeId: string;
+    section: string;
+    group: string;
+    position: string;
+    performanceScore: number;
+    totalMerit: number;
+    totalMisconduct: number;
+  } | null;
+  _count?: { vooSubmissions: number; eventLogs: number };
+}
+
 export interface AdminRole {
   id: number;
   name: string;
