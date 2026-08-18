@@ -66,42 +66,6 @@
               {{ auth.loading ? 'Memproses…' : 'Masuk' }}
             </button>
           </form>
-
-          <div class="demo">
-            <div class="demo-head">Akun demo — klik untuk mengisi</div>
-            <div class="demo-grid">
-              <button
-                v-for="acc in demoAccounts"
-                :key="acc.username"
-                type="button"
-                class="demo-item"
-                @click="fill(acc)"
-              >
-                <span class="demo-role">{{ acc.label }}</span>
-                <span class="demo-user">{{ acc.username }}</span>
-              </button>
-            </div>
-
-            <div class="demo-divider">
-              <span>Staff Produksi</span>
-            </div>
-            <div class="demo-grid demo-grid-staff">
-              <button
-                v-for="acc in staffProduksiAccounts"
-                :key="acc.username"
-                type="button"
-                class="demo-item demo-item-staff"
-                @click="fill(acc)"
-              >
-                <div class="demo-item-inner">
-                  <span class="demo-role">{{ acc.label }}</span>
-                  <span class="demo-badge">Monitor</span>
-                </div>
-                <span class="demo-user">{{ acc.username }}</span>
-                <span class="demo-desc">Akses VoO &amp; Misconduct Monitor</span>
-              </button>
-            </div>
-          </div>
         </div>
 
         <p class="foot">Audit trail terjamin blockchain · v2.0</p>
@@ -130,24 +94,6 @@ const username = ref('');
 const password = ref('');
 const showPw = ref(false);
 const error = ref('');
-
-interface DemoAccount { label: string; username: string; password: string; badge?: string }
-const demoAccounts: DemoAccount[] = [
-  { label: 'Super Admin', username: 'superadmin', password: 'superadmin123' },
-  { label: 'Section Manager', username: 'section_manager', password: 'manager123' },
-  { label: 'Foreman', username: 'foreman01', password: 'foreman123' },
-  { label: 'Operator', username: 'operator01', password: 'operator123' },
-];
-
-const staffProduksiAccounts: DemoAccount[] = [
-  { label: 'Staff Produksi', username: 'staff_produksi', password: 'staff123', badge: 'Staff' },
-];
-
-const fill = (acc: DemoAccount) => {
-  username.value = acc.username;
-  password.value = acc.password;
-  error.value = '';
-};
 
 const submit = async () => {
   error.value = '';
@@ -213,49 +159,6 @@ const submit = async () => {
 .pw-toggle:hover { color: var(--db-ink); background: var(--db-icon-bg); }
 
 .btn-block { margin-top: 4px; }
-
-.demo { margin-top: 22px; border-top: 1px solid var(--db-line); padding-top: 16px; }
-.demo-head {
-  font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--db-ink-3); margin-bottom: 10px;
-}
-.demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.demo-item {
-  display: flex; flex-direction: column; gap: 2px; text-align: left;
-  background: var(--db-icon-bg); border: 1px solid var(--db-line); border-radius: 10px;
-  padding: 9px 11px; transition: border-color 0.15s ease;
-}
-.demo-item:hover { border-color: var(--db-brand); }
-.demo-role { font-size: 12.5px; font-weight: 600; color: var(--db-ink); }
-.demo-user { font-size: 11px; color: var(--db-ink-3); }
-
-.demo-divider {
-  display: flex; align-items: center; gap: 10px;
-  margin: 14px 0 10px; font-size: 10.5px; font-weight: 700;
-  letter-spacing: 0.06em; text-transform: uppercase; color: var(--db-ink-3);
-}
-.demo-divider::before,
-.demo-divider::after {
-  content: ''; flex: 1; height: 1px; background: var(--db-line);
-}
-
-.demo-grid-staff { grid-template-columns: 1fr; }
-
-.demo-item-staff {
-  background: linear-gradient(135deg, rgba(var(--db-brand-rgb, 239,68,68), 0.04), var(--db-icon-bg));
-  border-color: rgba(239, 68, 68, 0.18);
-}
-.demo-item-staff:hover { border-color: var(--db-brand); background: rgba(239, 68, 68, 0.07); }
-
-.demo-item-inner {
-  display: flex; align-items: center; justify-content: space-between; gap: 6px;
-}
-.demo-badge {
-  font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
-  background: var(--db-brand); color: #fff;
-  padding: 2px 7px; border-radius: 20px;
-}
-.demo-desc { font-size: 10.5px; color: var(--db-ink-3); margin-top: 1px; }
 
 .foot { font-size: 11.5px; color: var(--db-ink-3); }
 
