@@ -26,7 +26,7 @@
           <input type="password" v-model="f.password" :required="!editing" autocomplete="new-password" />
         </div>
 
-        <template v-if="isOperatorRole && !editing">
+        <template v-if="isOperatorRole">
           <div class="op-divider">Data Operator</div>
           <div class="field"><label>ID Karyawan</label><input v-model.trim="op.employeeId" required /></div>
           <div class="field"><label>Section</label><input v-model.trim="op.section" /></div>
@@ -78,8 +78,8 @@
 </template>
 
 <script setup lang="ts">
-import { IonIcon, IonSpinner } from '@ionic/vue';
-import { computed, onMounted, reactive, ref } from 'vue';
+import { IonIcon, IonSpinner, onIonViewWillEnter } from '@ionic/vue';
+import { computed, reactive, ref } from 'vue';
 import { addOutline, closeOutline, saveOutline, alertCircleOutline, createOutline, trashOutline, pauseOutline, playOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { superadminService } from '@/services/superadmin.service';
@@ -105,6 +105,7 @@ const isOperatorRole = computed(() => roles.value.find((r) => r.id === f.roleId)
 
 const load = async () => {
   loading.value = true;
+  error.value = '';
   try {
     const [u, r] = await Promise.all([superadminService.listUsers(), superadminService.listRoles()]);
     if (u.data?.success) users.value = u.data.data;
@@ -127,6 +128,9 @@ const openCreate = () => {
 const openEdit = (u: AdminUser) => {
   editing.value = u;
   Object.assign(f, { fullName: u.fullName, username: u.username, email: u.email, nik: u.nik || '', roleId: u.roleId, password: '', isActive: u.isActive });
+  Object.assign(op, u.operator
+    ? { employeeId: u.operator.employeeId, section: u.operator.section, group: u.operator.group, position: u.operator.position }
+    : { employeeId: '', section: '', group: '', position: '' });
   formError.value = '';
   showForm.value = true;
 };
@@ -141,6 +145,10 @@ const submit = async () => {
     if (editing.value) {
       const payload: any = { email: f.email, fullName: f.fullName, nik: f.nik, roleId: f.roleId, isActive: f.isActive };
       if (f.password) payload.password = f.password;
+      if (isOperatorRole.value) {
+        payload.createOperator = true;
+        payload.operatorData = { ...op, position: op.position || 'Operator' };
+      }
       await superadminService.updateUser(editing.value.id, payload);
     } else {
       const payload: any = { username: f.username, email: f.email, password: f.password, fullName: f.fullName, nik: f.nik, roleId: f.roleId, isActive: f.isActive };
@@ -168,7 +176,7 @@ const remove = async (u: AdminUser) => {
   try { await superadminService.deleteUser(u.id); await load(); } catch (e: any) { error.value = e?.response?.data?.message || 'Gagal menghapus.'; }
 };
 
-onMounted(load);
+onIonViewWillEnter(load);
 </script>
 
 <style scoped>

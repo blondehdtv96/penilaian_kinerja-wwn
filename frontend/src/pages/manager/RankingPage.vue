@@ -45,8 +45,8 @@
 </template>
 
 <script setup lang="ts">
-import { IonSpinner } from '@ionic/vue';
-import { computed, onMounted, ref } from 'vue';
+import { IonSpinner, onIonViewWillEnter } from '@ionic/vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import PageShell from '@/components/PageShell.vue';
 import { operatorService } from '@/services/operators.service';
@@ -66,6 +66,8 @@ const ranked = computed(() => (section.value ? all.value.filter((o) => o.section
 const podium = computed(() => ranked.value.slice(0, 3));
 
 const load = async () => {
+  loading.value = true;
+  error.value = '';
   try {
     const { data } = await operatorService.ranking();
     if (data?.success) all.value = data.data;
@@ -77,7 +79,7 @@ const load = async () => {
   }
 };
 
-onMounted(load);
+onIonViewWillEnter(load);
 useRealtime(['voo:changed', 'record:changed'], load);
 </script>
 

@@ -60,8 +60,8 @@
 </template>
 
 <script setup lang="ts">
-import { IonIcon, IonSpinner } from '@ionic/vue';
-import { onMounted, reactive, ref } from 'vue';
+import { IonIcon, IonSpinner, onIonViewWillEnter } from '@ionic/vue';
+import { reactive, ref } from 'vue';
 import { addOutline, closeOutline, saveOutline, alertCircleOutline, createOutline, banOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { recordsService } from '@/services/records.service';
@@ -137,7 +137,7 @@ const deactivate = async (t: ViolationTypeItem) => {
   }
 };
 
-onMounted(load);
+onIonViewWillEnter(load);
 </script>
 
 <style scoped>

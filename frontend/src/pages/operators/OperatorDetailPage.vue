@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { IonIcon, IonSpinner } from '@ionic/vue';
-import { onMounted, ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { arrowBackOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
@@ -42,18 +42,26 @@ const back = () => router.back();
 
 const load = async () => {
   const id = Number(route.params.id);
+  // Vue Router me-reuse instance komponen ini saat berpindah antar
+  // /operators/:id dengan id berbeda (route record sama) — reset dulu agar
+  // data operator sebelumnya tidak sempat tampil untuk operator yang baru.
+  op.value = null;
+  error.value = '';
+  loading.value = true;
   try {
     const { data } = await operatorService.getById(id);
+    if (route.params.id && Number(route.params.id) !== id) return; // sudah pindah lagi — buang response basi
     if (data?.success) op.value = data.data;
     else error.value = 'Operator tidak ditemukan.';
   } catch (e: any) {
+    if (Number(route.params.id) !== id) return;
     error.value = e?.response?.data?.message || 'Gagal memuat operator.';
   } finally {
-    loading.value = false;
+    if (Number(route.params.id) === id) loading.value = false;
   }
 };
 
-onMounted(load);
+watch(() => route.params.id, load, { immediate: true });
 useRealtime(['voo:changed', 'record:changed'], load);
 </script>
 

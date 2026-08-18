@@ -56,8 +56,8 @@
 </template>
 
 <script setup lang="ts">
-import { IonIcon, IonSpinner } from '@ionic/vue';
-import { computed, onMounted, ref } from 'vue';
+import { IonIcon, IonSpinner, onIonViewWillEnter } from '@ionic/vue';
+import { computed, ref } from 'vue';
 import { trendingUpOutline, trendingDownOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { dashboardService } from '@/services/dashboard.service';
@@ -95,6 +95,8 @@ const bars = computed(() => {
 });
 
 const load = async () => {
+  loading.value = true;
+  error.value = '';
   try {
     const { data } = await dashboardService.kpi();
     if (data?.success) t.value = data.data.trends;
@@ -106,6 +108,6 @@ const load = async () => {
   }
 };
 
-onMounted(load);
+onIonViewWillEnter(load);
 useRealtime(['voo:changed', 'record:changed'], load, { throttleMs: 800 });
 </script>

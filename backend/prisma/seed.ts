@@ -135,7 +135,7 @@ async function main() {
   });
 
   // Section Manager
-  const smUser = await prisma.user.create({
+  await prisma.user.create({
     data: {
       username: 'section_manager',
       email: 'sectionmanager@bridgestone.com',
@@ -146,25 +146,14 @@ async function main() {
     }
   });
 
-  // Foremen
-  const foreman1 = await prisma.user.create({
+  // Foreman
+  await prisma.user.create({
     data: {
       username: 'foreman01',
       email: 'foreman01@bridgestone.com',
       password: await hash('foreman123'),
       fullName: 'Foreman Line 1',
       nik: 'NIP-FM-001',
-      roleId: foremanRole.id
-    }
-  });
-
-  const foreman2 = await prisma.user.create({
-    data: {
-      username: 'foreman02',
-      email: 'foreman02@bridgestone.com',
-      password: await hash('foreman123'),
-      fullName: 'Foreman Line 2',
-      nik: 'NIP-FM-002',
       roleId: foremanRole.id
     }
   });
@@ -181,114 +170,52 @@ async function main() {
     }
   });
 
-  // Operators
-  const sections = ['Curing', 'Curing', 'Curing', 'Curing', 'Curing'];
-  const groups = ['A', 'B', 'C', 'D', 'Non-Shift'];
-  const positions = ['Curing Operator', 'Curing Operator', 'Curing Operator', 'Curing Operator', 'Curing Operator'];
+  // Operator
+  const opUser = await prisma.user.create({
+    data: {
+      username: 'operator01',
+      email: 'operator01@bridgestone.com',
+      password: await hash('operator123'),
+      fullName: 'Operator Curing',
+      nik: 'NIP-OP-001',
+      roleId: operatorRole.id
+    }
+  });
 
-  const operators = [];
-  for (let i = 0; i < 5; i++) {
-    const empId = `EMP${(1001 + i).toString()}`;
-    const opUser = await prisma.user.create({
-      data: {
-        username: `operator${(i + 1).toString().padStart(2, '0')}`,
-        email: `operator${i + 1}@bridgestone.com`,
-        password: await hash('operator123'),
-        fullName: `Operator ${i + 1}`,
-        nik: `NIP-OP-${(i + 1).toString().padStart(3, '0')}`,
-        roleId: operatorRole.id
-      }
-    });
+  const opQrData = JSON.stringify({ employeeId: 'EMP1001', name: 'Operator Curing' });
+  const opQrImage = await QRCode.toDataURL(opQrData);
 
-    const qrData = JSON.stringify({ employeeId: empId, name: `Operator ${i + 1}` });
-    const qrImage = await QRCode.toDataURL(qrData);
+  await prisma.operator.create({
+    data: {
+      userId: opUser.id,
+      employeeId: 'EMP1001',
+      section: 'Curing',
+      group: 'A',
+      position: 'Curing Operator',
+      qrCode: opQrImage
+    }
+  });
 
-    const op = await prisma.operator.create({
-      data: {
-        userId: opUser.id,
-        employeeId: empId,
-        section: sections[i],
-        group: groups[i],
-        position: positions[i],
-        qrCode: qrImage,
-        performanceScore: Math.round((50 + Math.random() * 50) * 10) / 10,
-        totalMerit: Math.floor(Math.random() * 20),
-        totalMisconduct: Math.floor(Math.random() * 5)
-      }
-    });
-    operators.push(op);
-  }
-
-  console.log('Created 9 users (1 Super Admin, 1 SM, 2 Foremen, 1 Staff Produksi, 5 Operators)');
+  console.log('Created 5 users (1 per role: Super Admin, Section Manager, Foreman, Staff Produksi, Operator)');
 
   // ================================================================
   // 3. QR LOCATION AREAS
   // ================================================================
-  const qrAreas = [
-    { name: 'Area Curing', code: 'QR-CUR', area: 'Curing', description: 'Area kerja Curing' },
-  ];
-
-  for (const area of qrAreas) {
-    const qrData = JSON.stringify({ locationCode: area.code, name: area.name });
-    const qrImage = await QRCode.toDataURL(qrData);
-    await prisma.qrLocation.create({
-      data: { ...area, qrImage }
-    });
-  }
-
-  console.log('Created 1 QR location area (Curing)');
-
-  // ================================================================
-  // 4. SAMPLE VOO SUBMISSIONS
-  // ================================================================
-  const sampleVoos = [
-    { title: 'Perbaikan Alur Material', desc: 'Mengurangi waste pada proses搬运 material', type: 'VoO' },
-    { title: 'Ide Kaizen Safety Guard', desc: 'Penambahan safety guard pada mesin pressing', type: 'IdeKaizen' },
-    { title: 'Efisiensi Waktu Setup', desc: 'Mengurangi waktu setup mesin dari 30 menit ke 15 menit', type: 'VoO' },
-  ];
-
-  for (let i = 0; i < sampleVoos.length; i++) {
-    await prisma.vooSubmission.create({
-      data: {
-        operatorId: operators[i % operators.length].id,
-        submittedById: operators[i % operators.length].userId,
-        title: sampleVoos[i].title,
-        description: sampleVoos[i].desc,
-        type: sampleVoos[i].type,
-        status: i === 0 ? 'approved_foreman' : i === 1 ? 'approved_final' : 'pending',
-        points: i === 1 ? 15 : 0,
-        foremanApprovedBy: i >= 0 ? foreman1.id : null,
-        managerApprovedBy: i === 1 ? smUser.id : null,
-      }
-    });
-  }
-
-  console.log('Created 3 sample VoO submissions');
-
-  // ================================================================
-  // 5. SAMPLE MISCONDUCT
-  // ================================================================
-  await prisma.misconduct.create({
-    data: {
-      operatorId: operators[0].id,
-      createdById: foreman1.id,
-      type: 'Late Arrival',
-      severity: 'low',
-      description: 'Terlambat 15 menit tanpa pemberitahuan',
-      points: 5
-    }
+  const areaQrData = JSON.stringify({ locationCode: 'QR-CUR', name: 'Area Curing' });
+  const areaQrImage = await QRCode.toDataURL(areaQrData);
+  await prisma.qrLocation.create({
+    data: { name: 'Area Curing', code: 'QR-CUR', area: 'Curing', description: 'Area kerja Curing', qrImage: areaQrImage }
   });
 
-  console.log('Created 1 sample misconduct');
+  console.log('Created 1 QR location area (Curing)');
 
   console.log('\n=== Seeding Complete ===');
   console.log('Credentials:');
   console.log('  Super Admin:     superadmin / superadmin123');
   console.log('  Section Manager: section_manager / manager123');
   console.log('  Foreman:         foreman01 / foreman123');
-  console.log('                 foreman02 / foreman123');
   console.log('  Staff Produksi:  staff_produksi / staff123');
-  console.log('  Operators:       operator01-05 / operator123');
+  console.log('  Operator:        operator01 / operator123');
 }
 
 main()

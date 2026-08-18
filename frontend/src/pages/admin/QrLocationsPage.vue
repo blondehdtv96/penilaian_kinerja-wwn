@@ -39,8 +39,8 @@
 </template>
 
 <script setup lang="ts">
-import { IonIcon, IonSpinner } from '@ionic/vue';
-import { onMounted, reactive, ref } from 'vue';
+import { IonIcon, IonSpinner, onIonViewWillEnter } from '@ionic/vue';
+import { reactive, ref } from 'vue';
 import { addOutline, closeOutline, saveOutline, alertCircleOutline, trashOutline, scanOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { superadminService } from '@/services/superadmin.service';
@@ -58,6 +58,7 @@ const toggleForm = () => { showForm.value = !showForm.value; formError.value = '
 
 const load = async () => {
   loading.value = true;
+  error.value = '';
   try {
     const { data } = await superadminService.listQrLocations();
     if (data?.success) items.value = data.data;
@@ -89,7 +90,7 @@ const remove = async (l: AdminQrLocation) => {
   try { await superadminService.deleteQrLocation(l.id); await load(); } catch (e: any) { error.value = e?.response?.data?.message || 'Gagal menghapus.'; }
 };
 
-onMounted(load);
+onIonViewWillEnter(load);
 </script>
 
 <style scoped>

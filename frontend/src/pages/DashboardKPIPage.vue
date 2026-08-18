@@ -138,8 +138,8 @@
 </template>
 
 <script setup lang="ts">
-import { IonIcon, IonSpinner } from '@ionic/vue';
-import { computed, onMounted, ref } from 'vue';
+import { IonIcon, IonSpinner, onIonViewWillEnter } from '@ionic/vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import {
   calendarOutline, downloadOutline, peopleOutline, bulbOutline, alertCircleOutline,
@@ -280,7 +280,7 @@ const downloadExcel = async () => {
   }
 };
 
-onMounted(load);
+onIonViewWillEnter(load);
 // Dashboard agregat: throttle lebih panjang agar tak refetch beruntun saat burst event.
 useRealtime(['voo:changed', 'record:changed'], load, { throttleMs: 800 });
 </script>

@@ -59,8 +59,8 @@
 </template>
 
 <script setup lang="ts">
-import { IonIcon, IonSpinner } from '@ionic/vue';
-import { onMounted, ref } from 'vue';
+import { IonIcon, IonSpinner, onIonViewWillEnter } from '@ionic/vue';
+import { ref } from 'vue';
 import { checkmarkCircleOutline, timeOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import MonthYearFilter, { type MonthYearValue } from '@/components/MonthYearFilter.vue';
@@ -76,6 +76,8 @@ const error = ref('');
 const period = ref<MonthYearValue>({ month: null, year: null });
 
 const load = async () => {
+  loading.value = true;
+  error.value = '';
   try {
     const { data } = await recordsService.listMyMisconduct({
       month: period.value.month || undefined,
@@ -90,7 +92,7 @@ const load = async () => {
   }
 };
 
-onMounted(load);
+onIonViewWillEnter(load);
 useRealtime('record:changed', load);
 </script>
 

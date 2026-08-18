@@ -32,11 +32,26 @@ export class OperatorService {
   }
 
   async getByUserId(userId: number) {
+    // Token berisi userId yang sudah tidak ada di DB (mis. sesi lama dari
+    // sebelum database di-reset/di-seed ulang) harus memaksa re-login (401),
+    // bukan tampil sebagai "Operator profile not found" yang membingungkan
+    // dan tidak pernah hilang sampai user logout manual.
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      const err: any = new Error('Sesi tidak valid, silakan login ulang.');
+      err.statusCode = 401;
+      throw err;
+    }
+
     const op = await prisma.operator.findUnique({
       where: { userId },
       include: { user: { select: { id: true, fullName: true, username: true, email: true } } }
     });
-    if (!op) throw new Error('Operator profile not found');
+    if (!op) {
+      const err: any = new Error('Operator profile not found');
+      err.statusCode = 404;
+      throw err;
+    }
 
     // Hitung jumlah pelanggaran secara langsung dari data aktual agar akurat
     // meskipun counter tersimpan belum tersinkron (mis. data lama).

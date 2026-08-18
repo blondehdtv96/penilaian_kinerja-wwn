@@ -39,8 +39,8 @@
 </template>
 
 <script setup lang="ts">
-import { IonIcon, IonSpinner } from '@ionic/vue';
-import { computed, onMounted, ref } from 'vue';
+import { IonIcon, IonSpinner, onIonViewWillEnter } from '@ionic/vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { searchOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
@@ -68,6 +68,8 @@ const filtered = computed(() => {
 });
 
 const load = async () => {
+  loading.value = true;
+  error.value = '';
   try {
     const { data } = await operatorService.getAll();
     if (data?.success) items.value = data.data;
@@ -79,7 +81,7 @@ const load = async () => {
   }
 };
 
-onMounted(load);
+onIonViewWillEnter(load);
 useRealtime(['voo:changed', 'record:changed'], load);
 </script>
 

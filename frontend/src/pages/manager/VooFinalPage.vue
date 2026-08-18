@@ -163,8 +163,8 @@
 </template>
 
 <script setup lang="ts">
-import { IonIcon, IonSpinner } from '@ionic/vue';
-import { computed, onMounted, ref } from 'vue';
+import { IonIcon, IonSpinner, onIonViewWillEnter } from '@ionic/vue';
+import { computed, ref } from 'vue';
 import { checkmarkOutline, closeOutline, eyeOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { vooService } from '@/services/voo.service';
@@ -253,7 +253,7 @@ const reject = async (id: number) => {
   }
 };
 
-onMounted(load);
+onIonViewWillEnter(load);
 useRealtime('voo:changed', load);
 </script>
 

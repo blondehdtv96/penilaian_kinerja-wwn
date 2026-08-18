@@ -72,8 +72,8 @@
 </template>
 
 <script setup lang="ts">
-import { IonIcon, IonSpinner } from '@ionic/vue';
-import { onMounted, reactive, ref } from 'vue';
+import { IonIcon, IonSpinner, onIonViewWillEnter } from '@ionic/vue';
+import { reactive, ref } from 'vue';
 import { addOutline, closeOutline, saveOutline, alertCircleOutline, createOutline, trashOutline, pauseOutline, playOutline, keyOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { staffProduksiService } from '@/services/staff-produksi.service';
@@ -96,6 +96,7 @@ const op = reactive({ employeeId: '', section: '', group: '', position: '' });
 
 const load = async () => {
   loading.value = true;
+  error.value = '';
   try {
     const r = await staffProduksiService.listOperators();
     if (r.data?.success) operators.value = r.data.data;
@@ -173,7 +174,7 @@ const remove = async (u: StaffOperatorUser) => {
   try { await staffProduksiService.deleteOperator(u.id); await load(); } catch (e: any) { error.value = e?.response?.data?.message || 'Gagal menghapus.'; }
 };
 
-onMounted(load);
+onIonViewWillEnter(load);
 </script>
 
 <style scoped>

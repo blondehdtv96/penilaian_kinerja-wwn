@@ -27,7 +27,7 @@ export class OperatorController {
       const result = await service.getByUserId(req.user.userId);
       res.json({ success: true, data: result });
     } catch (error: any) {
-      res.status(500).json({ success: false, message: error.message });
+      res.status(error.statusCode || 500).json({ success: false, message: error.message });
     }
   };
 

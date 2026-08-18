@@ -152,14 +152,30 @@ const showTip = (e: MouseEvent, label: string) => {
 };
 const hideTip = () => { tip.value = null; };
 
+// Heartbeat validitas sesi: token bisa jadi basi (mis. setelah database
+// di-reset/di-seed ulang, userId di token lama sudah tidak ada) tanpa user
+// pernah melihat error apa pun sampai request berikutnya gagal. Alih-alih
+// menunggu itu terjadi di halaman manapun lalu menampilkan pesan yang
+// membingungkan, validasi sesi secara berkala di latar belakang — begitu
+// backend membalas 401, interceptor di services/api.ts otomatis membersihkan
+// sesi & redirect ke /login, tanpa user perlu me-refresh halaman.
+let sessionCheck: ReturnType<typeof setInterval> | null = null;
+
 onMounted(() => {
   init();
   if (auth.isAuthenticated) {
     socket.connect();
     useNotificationsStore().fetch();
+    auth.refreshUser();
+    sessionCheck = setInterval(() => {
+      if (auth.isAuthenticated) auth.refreshUser();
+    }, 30000);
   }
 });
-onUnmounted(() => teardown());
+onUnmounted(() => {
+  teardown();
+  if (sessionCheck) clearInterval(sessionCheck);
+});
 </script>
 
 <style scoped>

@@ -79,7 +79,7 @@ export class SuperAdminService {
       updateData.password = await bcrypt.hash(data.password, 10);
     }
 
-    return await prisma.user.update({
+    const user = await prisma.user.update({
       where: { id },
       data: updateData,
       include: {
@@ -87,6 +87,41 @@ export class SuperAdminService {
         operator: true
       }
     });
+
+    // If role was changed to Operator, ensure a linked operator profile exists
+    // (this used to only happen at creation time, leaving users edited into the
+    // Operator role without a profile — causing "Operator profile not found").
+    if (user.role.name === 'Operator' && data.createOperator && data.operatorData) {
+      if (!user.operator) {
+        const qrData = JSON.stringify({ employeeId: data.operatorData.employeeId, name: user.fullName });
+        const qrCode = await QRCode.toDataURL(qrData);
+
+        await prisma.operator.create({
+          data: {
+            userId: user.id,
+            employeeId: data.operatorData.employeeId,
+            section: data.operatorData.section || '',
+            group: data.operatorData.group || '',
+            position: data.operatorData.position || 'Operator',
+            qrCode
+          }
+        });
+      } else {
+        await prisma.operator.update({
+          where: { id: user.operator.id },
+          data: {
+            employeeId: data.operatorData.employeeId,
+            section: data.operatorData.section || '',
+            group: data.operatorData.group || '',
+            position: data.operatorData.position || 'Operator'
+          }
+        });
+      }
+
+      return prisma.user.findUnique({ where: { id }, include: { role: true, operator: true } });
+    }
+
+    return user;
   }
 
   async deleteUser(id: number) {
