@@ -31,8 +31,8 @@
 </template>
 
 <script setup lang="ts">
-import { IonSpinner } from '@ionic/vue';
-import { onMounted, ref } from 'vue';
+import { IonSpinner, onIonViewWillEnter } from '@ionic/vue';
+import { ref } from 'vue';
 import PageShell from '@/components/PageShell.vue';
 import MonthYearFilter, { type MonthYearValue } from '@/components/MonthYearFilter.vue';
 import { auditService } from '@/services/audit.service';
@@ -80,7 +80,7 @@ const load = async () => {
   }
 };
 
-onMounted(load);
+onIonViewWillEnter(load);
 </script>
 
 <style scoped>

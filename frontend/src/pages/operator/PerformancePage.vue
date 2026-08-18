@@ -86,8 +86,8 @@
 </template>
 
 <script setup lang="ts">
-import { IonSpinner, IonIcon } from '@ionic/vue';
-import { onMounted, ref } from 'vue';
+import { IonSpinner, IonIcon, onIonViewWillEnter } from '@ionic/vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { documentTextOutline, checkmarkCircleOutline, timeOutline, qrCodeOutline, alertCircleOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
@@ -110,6 +110,15 @@ const error = ref('');
 
 const load = async () => {
   error.value = '';
+  // IonRouterOutlet meng-cache instance halaman antar navigasi (agar transisi
+  // & swipe-back ala iOS mulus) — onMounted TIDAK terpanggil lagi saat halaman
+  // ini dikunjungi ulang (mis. setelah logout lalu login sebagai operator
+  // lain). Reset dulu semua state di sini agar data operator sebelumnya tidak
+  // sempat tampil sebelum data yang baru datang.
+  loading.value = true;
+  op.value = null;
+  recent.value = [];
+  misconducts.value = [];
   // Muat tiap bagian secara independen: kegagalan salah satu panggilan tidak boleh
   // mengosongkan seluruh dashboard. Profil adalah bagian utama; VoO & pelanggaran
   // bersifat pelengkap (best-effort).
@@ -135,7 +144,7 @@ const load = async () => {
   loading.value = false;
 };
 
-onMounted(load);
+onIonViewWillEnter(load);
 useRealtime(['voo:changed', 'record:changed'], load);
 </script>
 

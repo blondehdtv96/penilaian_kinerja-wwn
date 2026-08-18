@@ -40,8 +40,8 @@
 </template>
 
 <script setup lang="ts">
-import { IonIcon, IonSpinner } from '@ionic/vue';
-import { onMounted, ref } from 'vue';
+import { IonIcon, IonSpinner, onIonViewWillEnter } from '@ionic/vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { addOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
@@ -57,6 +57,8 @@ const loading = ref(true);
 const error = ref('');
 
 const load = async () => {
+  loading.value = true;
+  error.value = '';
   try {
     const { data } = await vooService.getMy();
     if (data?.success) items.value = data.data;
@@ -68,7 +70,7 @@ const load = async () => {
   }
 };
 
-onMounted(load);
+onIonViewWillEnter(load);
 useRealtime('voo:changed', load);
 </script>
 

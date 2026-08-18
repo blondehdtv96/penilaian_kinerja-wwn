@@ -287,15 +287,20 @@ const loadOperatorData = async (id: number) => {
       recordsService.listKartuKuning(id),
       recordsService.listSuratPeringatan(id),
     ]);
+    // Operator bisa saja sudah diganti lagi selagi request ini masih berjalan
+    // (mis. klik cepat A lalu B) — buang response basi agar tidak menimpa
+    // data operator yang sedang aktif dengan data operator sebelumnya.
+    if (operatorId.value !== id) return;
     if (opRes.data?.success) operatorDetail.value = opRes.data.data;
     if (misRes.data?.success) misconducts.value = misRes.data.data;
     if (counRes.data?.success) counselings.value = counRes.data.data;
     if (kkRes.data?.success) kartuKunings.value = kkRes.data.data;
     if (spRes.data?.success) suratPeringatans.value = spRes.data.data;
   } catch (e: any) {
+    if (operatorId.value !== id) return;
     error.value = e?.response?.data?.message || 'Gagal memuat data operator.';
   } finally {
-    loadingData.value = false;
+    if (operatorId.value === id) loadingData.value = false;
   }
 };
 
@@ -303,8 +308,11 @@ const loadPendingMisconducts = async (id: number) => {
   loadingPending.value = true;
   try {
     const { data } = await recordsService.listMisconduct({ operatorId: id, counselingStatus: 'pending' });
+    if (operatorId.value !== id) return; // basi — operator sudah diganti
     if (data?.success) pendingMisconducts.value = data.data;
-  } catch { /* abaikan */ } finally { loadingPending.value = false; }
+  } catch { /* abaikan */ } finally {
+    if (operatorId.value === id) loadingPending.value = false;
+  }
 };
 
 const reloadCurrentOperator = () => {

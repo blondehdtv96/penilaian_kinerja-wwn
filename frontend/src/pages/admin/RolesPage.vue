@@ -51,8 +51,8 @@
 </template>
 
 <script setup lang="ts">
-import { IonIcon, IonSpinner } from '@ionic/vue';
-import { onMounted, reactive, ref } from 'vue';
+import { IonIcon, IonSpinner, onIonViewWillEnter } from '@ionic/vue';
+import { reactive, ref } from 'vue';
 import { addOutline, closeOutline, saveOutline, alertCircleOutline, createOutline, trashOutline } from 'ionicons/icons';
 import PageShell from '@/components/PageShell.vue';
 import { superadminService } from '@/services/superadmin.service';
@@ -77,6 +77,7 @@ const permCount = (r: AdminRole) => permArray(r).length;
 
 const load = async () => {
   loading.value = true;
+  error.value = '';
   try {
     const { data } = await superadminService.listRoles();
     if (data?.success) roles.value = data.data;
@@ -118,7 +119,7 @@ const remove = async (r: AdminRole) => {
   try { await superadminService.deleteRole(r.id); await load(); } catch (e: any) { error.value = e?.response?.data?.message || 'Gagal menghapus role.'; }
 };
 
-onMounted(load);
+onIonViewWillEnter(load);
 </script>
 
 <style scoped>

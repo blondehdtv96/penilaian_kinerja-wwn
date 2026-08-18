@@ -234,7 +234,7 @@ export interface AdminUser {
   roleId: number;
   createdAt: string;
   role: { id: number; name: string };
-  operator?: { id: number; employeeId: string } | null;
+  operator?: { id: number; employeeId: string; section: string; group: string; position: string } | null;
   _count?: { vooSubmissions: number; eventLogs: number };
 }
 

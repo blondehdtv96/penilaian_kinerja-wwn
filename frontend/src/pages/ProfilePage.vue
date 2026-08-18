@@ -168,7 +168,7 @@ const logout = () => {
 .edit-form label { font-size: 13px; font-weight: 600; color: var(--db-ink-2); }
 .edit-form input {
   width: 100%; padding: 10px 12px; border: 1px solid var(--db-line);
-  border-radius: 10px; font-size: 14px; background: var(--db-bg, #fff);
+  border-radius: 10px; font-size: 14px; background: var(--db-card); color: var(--db-ink);
 }
 .edit-form .op-divider {
   font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;

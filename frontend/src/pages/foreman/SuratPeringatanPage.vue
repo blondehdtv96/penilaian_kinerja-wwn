@@ -144,6 +144,10 @@ watch(operatorId, async (id) => {
   if (!id) { issuedLevels.value = []; return; }
   try {
     const { data } = await recordsService.listSuratPeringatan(id);
+    // Operator bisa sudah diganti lagi sebelum request ini selesai — buang
+    // response basi agar level SP yang disarankan tidak berasal dari riwayat
+    // operator yang salah.
+    if (operatorId.value !== id) return;
     if (data?.success) {
       const levels = data.data.map((sp: SuratPeringatanItem) => sp.level);
       issuedLevels.value = levels;
